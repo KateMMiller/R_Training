@@ -1,0 +1,10 @@
+#### Assignments
+Please complete the assignments below. Note that the readings are to expose you to new topics, but you're not expected to understand or digest 100% of the material. 
+<ul>
+  <li>R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a></li>
+  <li>STAT545: <a href="https://stat545.com/r-basics.html">Chapter 2. R basics and workflows</a></li>
+  <li>STAT545: <a href="https://stat545.com/basic-data-care.html">Chapter 5. Basic care and feeding of data in R</a></li>
+  <li>STAT545: <a href="https://stat545.com/dplyr-intro.html">Chapter 6. Intro to dplyr</a></li>
+  <li>Answer the questions for this day and review today's code. Answers are in the Answers tab.</li>
+  <li>Complete the Feedback form by the end of the day</li>
+</ul>

@@ -1,0 +1,15 @@
+#### Getting Help{.tabset} 
+<h2>Getting Help</h2>
+There are a number of options to get help with R. If you're trying to figure out how to use a function, you can type ?function_name. For example <i>?plot</i> will show the R documentation for that function in the Help panel. <i>?dplyr::filter</i> works too, if you need to connect the package to the function (eg filter is also a function in stats, which is loaded as part of base R). 
+
+```{r, c4, echo=T, eval=F}
+?plot
+?dplyr::filter
+```
+
+To view all of the functions and links to their individual help files, type in help(package=packagename). For example, the code below will bring up the help files for the dplyr package.
+```{r, c5, echo=T, eval=F}
+help(package=dplyr)
+```
+
+Online resources include <a href="https://stackexchange.com/">Stackexchange</a>, and <a href="https://stackoverflow.com//">Stackoverflow</a>. For tidyverse-related packages/questions, there's really good documentation for each package and function <a href="https://tidyverse.tidyverse.org/"> here</a>. Google searches are usually my first step, and I include "in R" in every search related to R code. 

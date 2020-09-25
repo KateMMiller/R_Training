@@ -1,0 +1,135 @@
+<h2>Day 1</h2>
+<details><summary class='ques2'>Question 1: How do you find the value of the 3rd row of domSpp?</summary>
+```{r, c105,echo=T, results='show'}
+df[3, c("domSpp")]
+```
+</details>
+</br>
+<details><summary class='ques2'>Question 2: How would you make numtrees an integer?</summary> 
+```{r, c106,echo=T, results='show'}
+df$numtrees <- as.integer(df$numtrees)
+str(df)
+```
+</details>
+</br>
+<details><summary class='ques2'>Question 3: How would you calculate the percent of trees that are dead?</summary>
+```{r, c107,echo=T, results='hide'}
+# base R version (2 options)
+df$numdead <- df$numtrees - df$numLive
+df$pctdead <- df$numdead/df$numtrees*100
+
+df$pctdead <- with(df, (numtrees - numLive)/numtrees*100)
+
+# tidyverse version (2 options)
+df <- df %>% mutate(numdead = numtrees - numLive,
+                    pctdead = numdead/numtrees*100)
+
+df <- df %>% mutate(pctdead = (numtrees - numLive)/numtrees*100)
+```
+</details>
+</br>
+<h2>Day 2</h2>
+<details><summary class='ques2'>Question 4: How would you select only the plots in VAFO and HOFU from the loc table?</summary>
+```{r, c108, echo=T, results='hide'}
+loc_VAFO_HOFU <- loc[loc$Unit_ID %in% c("VAFO", "HOFU") & !is.na(loc$Unit_ID),]
+
+loc_VAFO_HOFU_tidy <- loc %>% filter(Unit_ID %in% c("VAFO", "HOFU"))
+
+```
+</details>
+</br>
+<details><summary class='ques2'>Question 5: How many plots are in VAFO and HOFU combined (based on loc table)?</summary>
+```{r, c109,echo=T, results='show'}
+loc_VAFO_HOFU_tidy <- loc %>% filter(Unit_ID %in% c("VAFO", "HOFU"))
+length(unique(loc_VAFO_HOFU_tidy$Plot_Number)) # NA was counted as one of the unique values. Oops!
+length(unique(loc_VAFO_HOFU_tidy$Plot_Number[!is.na(loc_VAFO_HOFU_tidy$Plot_Number)])) #Not very readable!
+
+loc_VAFO_HOFU_tidy_no_nas <- loc %>% filter(Unit_ID %in% c("VAFO", "HOFU") & !is.na(Plot_Number))
+length(unique(loc_VAFO_HOFU_tidy_no_nas$Plot_Number)) 
+
+```
+Note that MIDN plot numbers are unique, so there's only one plot 1 in the entire loc table.
+</details>
+</br>
+<details><summary class='ques2'>Question 6: How would you calculate the min and max for seed_den_m2?</summary>
+```{r, c110,echo=T, results='show'}
+reg_by_park2 <- regdf %>% group_by(Unit_Code) %>% 
+                          summarize(min_seed_dens = min(seed_den_m2),
+                          max_seed_dens = max(seed_den_m2))
+
+reg_by_park2
+```
+</details>
+</br>
+<details><summary class='ques2'>Question 7: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary>
+```{r, c111,echo=T, results='hide'}
+eventQAQC <- event %>% filter(Event_QAQC == TRUE)
+locevent_QAQC <- merge(loc, eventQAQC, by="Location_ID", all.x = F, all.y = T)
+```
+This is technically a right join, because I'm telling R to take all of the records from the right table (eventQAQC) and only join records in left (loc) table that match. This is just a style preference. I prefer to keep higher level tables to the left of lower level tables (eg tables with 1 to many relationships). The loc (tbl_Locations) table is higher level than the event (tbl_Events) table, because the loc table has the 1 plot record and the event table has the many visits for the plot records. If this is confusing, don't worry about it. You'll just notice that it's the order I generally organize data in my code.  
+</details>
+</br>
+<h2>Day 3</h2>
+<details><summary class='ques2'>Question 8: How many plots were sampled in APCO in 2018?</summary>
+```{r, c112,echo=T}
+apco <- joinLocEvent(park = "APCO", from = 2018, to = 2018)
+length(unique(apco$Plot_Number))
+```
+</details>
+</br>
+
+<details><summary class='ques2'>Question 9: Which plot in FRSP has the highest density of live trees in the 90-99.9cm size class for any year?</summary>
+```{r, c113,echo=T}
+frsp_tree_dist <- sumTreeDBHDist(park = "FRSP", status = 'live')
+
+frsp_tree_max90 <- frsp_tree_dist %>% arrange(desc(d90_99.9))
+head(frsp_tree_max90) # FRSP-288 
+
+# If you wanted to pull out the top record for that size class, you can also do one of the two options below
+frsp_top_90 <- frsp_tree_dist[which.max(frsp_tree_dist$d90_99.9),] #The ugly base R approach 
+frsp_top_90_tidy <- frsp_tree_dist %>% arrange(desc(d90_99.9)) %>% slice(1) #The tidyverse approach
+head(frsp_top_90)
+```
+</details>
+</br>
+<details><summary class='ques2'>Question 10: How would you create a wide matrix for FRSP plots in 2019 that has plots for rows, and exotic species as columns?</summary>
+
+<p class='ques'>Answer has been updated 6/9/2020 based on fixes in forestMIDN.</p>
+```{r, c114,echo=T}
+frsp_exo <- makeSppList(park = "FRSP", from = 2019, to = 2019, speciesType = "exotic") 
+
+# Old school spread version
+frsp_wide_spread <- frsp_exo %>% select(Plot_Name, Latin_Name, present) %>% 
+                                 arrange(Latin_Name, Plot_Name) %>% 
+                                 spread("Latin_Name", "present", fill = 0)
+
+# Newer pivot version
+frsp_wide_pivot <- frsp_exo %>% select(Plot_Name, Latin_Name, present) %>% 
+                                arrange(Latin_Name, Plot_Name) %>% 
+                                pivot_wider(names_from = "Latin_Name", 
+                                            values_from = "present",
+                                            values_fill = 0) 
+
+head(frsp_wide_pivot)
+```
+</details>
+</br>
+<h2>Day 4</h2>
+<details><summary class='ques2'>Question 11: Take the gett_final graph and make 2 more changes to it.</summary>
+
+You may have chosen other things to do than I did. Here are a couple of changes to the ggplot bar chart
+```{r, c115,echo=T}
+
+ ggplot(data = gett_stats, aes(x = size_class_fact, y = mean_dens))+
+              geom_bar(stat = 'identity', fill = "steelblue4")+
+              geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens), width = 0.2, lwd = 0.7)+
+              labs(x = "Regeneration Size Class", y = "Stems per sq.m")+
+              theme_FVM()+
+              theme(axis.text.x = element_text(angle = 45, hjust = 1))+ #hjust is centering horizontally
+              scale_x_discrete(labels = c('15-30cm', '30-100cm', '100-150cm', '>150cm', '1-10cm DBH'))
+             
+```
+
+Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars. lwd is the weight of the line. 
+</details>
+</br>

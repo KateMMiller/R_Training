@@ -1,0 +1,51 @@
+#### Saving data to Shapefile
+Many of the metrics we're going to summarize will be saved as shapefiles to map in QGIS. The process is relatively straightforward. The keys are to have the X, Y Coordinates included in your final summary (may have to do some table joining to get them back), and to know which Coordinate Reference System to specify (abbreviated CRS). MIDN covers 2 UTM Zones, which can be extra tricky. The datum and projection for each park are listed below. 
+
+<ul>
+<li><b>NAD83 UTM Zone 17N:</b> APCO, BOWA</li>
+<li><b>NAD83 UTM Zone 18N:</b> COLO, FRSP, GETT, GEWA, HOFU, PETE, RICH, SAHI, THST, VAFO</li>
+</ul>
+
+Most of the major coordinate systems have a registered EPSG Code assigned to it, including ours. Using the EPSG code is the fastest way to assign the coordinate system for our shapefile. For APCO and BOWA, the EPSG Code is 26917. For the other parks it's 26918 (notice the last digit is the only difference, and matches the UTM Zone above). 
+
+To start out, let's use gett_exo_wide from the previous section to create our first shapefile. The first thing we need to do is add the X, Y Coordinates back into the dataset. 
+
+```{r, c63, echo=T, results='hide'}
+head(gett_exo_wide) # Created at the end of Data Wrangling Part II.
+
+gett_19 <- joinLocEvent(park = "GETT", from = 2019, to = 2019)
+
+gett_for_shp <- merge(gett_19[ , c("Plot_Name", "X_Coord", "Y_Coord")], gett_exo_wide, by = "Plot_Name", 
+                      all.x = TRUE, all.y = TRUE)
+
+# Note that if we had used the code below to generate gett_exo_wide, the coordinates would already be in there
+gett_exo_wide <- gett_exospp %>% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, spp_pres) %>% 
+                                 arrange(Latin_Name, Plot_Name) %>% 
+                                 pivot_wider(names_from = "Latin_Name", 
+                                             values_from = "spp_pres", 
+                                             values_fill = 0) %>% 
+                                 arrange(Plot_Name)
+```
+
+Now that our dataframe has the GPS Coordinates, we need to tell R that these columns are X Y coordinates, and then tell R what the projection and datum are. The rgdal package has the functions to do this.
+
+```{r, c64, echo=T, results="hide", message=FALSE, eval=F}
+head(gett_exo_wide)
+
+# Step 1: Create spatial object by specifying the coordinates
+coordinates(gett_exo_wide) <- ~X_Coord + Y_Coord
+names(gett_exo_wide[1:5])
+plot(gett_exo_wide) # These points now plot in space
+# Step 2: Define the coordinate system 
+proj4string(gett_exo_wide) <- CRS("+init=epsg:26918")
+# Step 3: Write the spatial object to a shapefile
+writeOGR(gett_exo_wide, dsn = "./shapefiles", layer = "GETT_exo_2019", driver = "ESRI Shapefile")
+```
+A lot of this may be unfamiliar to you, especially since ArcGIS does a lot of this work behind the scenes. 
+<ul><li>First notice that after you assign the coordinates in Step 1, the X_Coord and Y_Coord columns disappear from your dataframe. If you try to run that line of code again, you'll get an error because those columns aren't in the dataframe anymore. No need to fret. You've just created a spatial object, and the coordinates are stored in a different slot than the data. </li>
+<li>In the second step, we're telling R that the datum and projection (in proj4 format) for our spatial dataset is the EPSG Code 26918 (code for NAD83, UTM Zone 18N).</li> 
+<li>Finally, we're using the writeOGR command to output to a shapefile. The dsn is the location you're saving the shapefile too.</li>
+<li>Notice that we're using ./shapefiles, which is a folder within the project we created on day 1. Note that the layer name is what the shapefile will be called. Column names usually end up getting abbreviated (don't worry if you get a warning message). </li>
+<li>Finally, writeOGR by default will not allow you to overwrite an existing file. While it's safe to have that as a default, sometimes you want to overwrite shapefiles. To do that, add overwrite_layer=TRUE to the function.</li></ul>
+
+That's it for Day 3. Oofta- we covered a lot of ground the last 2 days! Please save your work, answer the questions for today, and complete the feedback form.  

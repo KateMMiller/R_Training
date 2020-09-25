@@ -1,0 +1,81 @@
+body {
+  font-family: "TimesNewRoman", TimesNewRoman, serif;
+  font-size: 11px;
+}
+
+h1 {
+   font-family: "Arial",Arial,sans-serif;
+   font-size: 20px;
+   padding-top:5px;
+   margin-top:5px;
+}
+
+h2 {
+  font-family: "Arial",Arial,sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+h3 {
+  font-family: "Arial",Arial,sans-serif;
+  font-size:14px;
+  font-style: italic;
+  font-weight: bold;
+  padding:0px 0px 0px 0px;
+  margin:0px 0px 0px 0px;
+}
+
+h3.title{
+  padding-bottom:10px
+}
+
+h4 {
+  font-family: "Times New Roman",Times, sans-serif;
+  font-size:14px;
+  font-style: italic;
+  padding-bottom:0px;
+}
+
+h5 {
+  font-family: "Times New Roman",Times,sans-serif;
+  font-size:12px;
+  padding:0px 0px 0px 0px;
+  margin:0px 0px 0px 0px;
+}
+
+.code{
+  color:#00008B;
+}
+
+.ques{
+  color:Red;
+}
+
+.drop{
+  font-family: "Arial",Arial,sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  padding:0px 0px 0px 0px;
+  margin:0px 0px 0px 0px;
+}
+
+.ques2{
+  font-family: "Arial",Arial,sans-serif;
+  font-size: 14px;
+  padding:0px 0px 0px 0px;
+  margin:0px 0px 0px 0px;
+}
+
+.tabset{
+color:black;
+font-size: 16px;
+}
+
+.litcited{
+  padding-left:36px;
+  text-indent:-36px;
+}
+
+.title{
+  display:none;
+}

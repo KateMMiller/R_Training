@@ -1,0 +1,9 @@
+#### Assignments
+Please complete the assignments below. 
+<ul>
+  <li>R4DS: <a href="https://r4ds.had.co.nz/data-visualisation.html">Chapter 3. Data visualization</a></li>
+  <li>Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.1. Basic plotting with ggplot2</a></li>
+  <li>Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.2. Customizing ggplot2 plots</a></li>
+  <li>Answer the questions for this day and review today's code. Answers are in the Answers tab.</li>
+  <li>Complete the Feedback form by the end of the day</li>
+</ul>

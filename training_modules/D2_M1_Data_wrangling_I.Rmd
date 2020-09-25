@@ -1,0 +1,167 @@
+#### Data Wrangling Part I{.tabset}
+
+Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script, and load the packages we'll use today.
+```{r, c18, echo=T, eval=F}
+library(tidyverse)
+library(forestMIDN)
+```
+
+<details open><summary class='drop'>Read in and View Data</summary>
+Let's read in and explore some of the MIDN forest data tables. First, let's load in our plant lookup table using base R functions to read in data.
+
+Read in the Plant species lookup table (tlu_Plants.csv) from the MIDN database. Remember that the data folder is one level higher in your directory, so you need to use ".." to go backwards and find it.
+```{r, c19, echo=T, results='hide'}
+plants <- read.csv("../data/tlu_Plants.csv")
+```
+
+Note that there's now an object in your global environment named plants. You can view the structure and the data by clicking on it in the global environment panel. You can also look at the data using a number of functions that work better for larger datasets (eg you don't want to print the whole dataset to the console because there's 1000+ records).
+
+```{r, c20, echo=T, results='hide', eval=FALSE}
+head(plants) # shows the first 6 lines of the dataframe, including the names of the columns
+tail(plants[1:15]) # shows last 6 records in the dataframe (truncated for first 15 columns)
+names(plants) # shows the column names of the dataframe
+str(plants[1:15]) # shows the type of data in each column (truncated to the first 15 columns)
+
+plants[1,] # returns the first row and all of the columns of the plants table
+plants[1:4,c(9,10)] # returns the first four rows and the 9th and 10th column of the plants table
+plants[1:4, c("Latin_Name", "Accepted_Latin_Name")] # does the same as the line above
+View(plants) # opens a new tab of the data, where you can sort and filter to explore the data
+
+sort(unique(plants$Latin_Name))[1:10] # makes list of all of the unique species in Latin_Name, sorts alphabetically, and gives first 10.
+
+length(unique(plants$Latin_Name)) # number of unique rows in specified column
+```
+
+Note that the length(unique(data$column)) gives you the number of unique records within a field. In this case there are 1307 unique species in our plant lookup table.
+</details>
+</br>
+<details open><summary class='drop'>Selecting and Filtering Data</summary>
+Now load the location table, which stores all of the plot-related information. Let's do some row and column subsetting. Note that subsetting is a generic term for reducing the size of a dataset based on some defined conditions. Filtering typically means reducing rows. Selecting usually means reducing columns. I tend to use filter and subset interchangeably (sorry if that's confusing).
+```{r, c21, echo=T, results='hide'}
+# Loading the location table, which stores all of the plot-related information
+loc <- read.csv("../data/tbl_Locations.csv")
+
+# Reduce number of columns by selecting
+  # First see what the column names are
+names(loc)
+  # Now type in the columns you want in quotes and separated by a comma
+loc2 <- loc[ , c("Location_ID", "X_Coord", "Y_Coord", "Unit_ID", "Loc_Type", "Plot_Number")] 
+loc2b <- loc[ , c(1:3, 11, 12, 14)] # The same as above, but fragile to column order changing
+
+# Reduce number of rows by filtering
+  # First see what the different types are
+sort(unique(loc2$Loc_Type)) # BN, Deer, TEST, VS. We want VS
+
+loc3 <- loc2[loc2$Loc_Type == "VS", ] # Subset data to only include "VS" location types
+loc3b <- subset(loc2, Loc_Type == "VS") # Another base R approach
+```
+
+Note the use of == to subset. In R, when you're trying to match against something (like species == 'white_oak', or invasive_pres == TRUE), you use double == signs. When assigning something to an object (like mutate(newcolum = x + y)), you use a single = sign. 
+
+If you want to pull out all records that are NOT equal to a value, you use !=. That is, in R, ! means NOT. For example invasive_pres != TRUE means to pull in records where invasive_pres is NOT TRUE.
+
+Now the tidyverse way to do steps to get from loc to loc3 in the previous code chunk using the select and filter command and pipes (%>%). The select function is used for columns and the filter command is used for rows. Notice the lack of quotes for the column names. One of the benefits of the tidyverse packages is that you don't have to quote column names, whereas you do in base R. It saves typing time and was a conscious decision of the tidyverse developers.
+```{r, c22, echo=T, results='hide'}
+loc3_tidy <- loc %>% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Loc_Type, Plot_Number) %>% 
+                     filter(Loc_Type == "VS")
+```
+
+
+Now let's check our work to see if the three approaches to subsetting returned the same results.
+```{r, c23, echo=T, results='hide'}
+nrow(loc3) #417
+nrow(loc3b) #416
+nrow(loc3_tidy) #416
+
+table(complete.cases(loc3$Loc_Type)) # 1 FALSE means there's an NA in there
+table(complete.cases(loc3b$Loc_Type)) # All TRUE
+table(complete.cases(loc3_tidy$Loc_Type)) # All TRUE
+```
+
+Notice that the first subset we did for loc3 has 1 more row than the other 2. That's because there's an NA in the Loc_Type column, and it's not automatically removed in the base R subset with brackets. We often have to tell base R what to do with NAs. A lot of functions have the option na.rm = TRUE to remove NAs as part of the function call. In the case of subsetting with brackets, you want to say take everything that is not NA. To do this run the code below.
+
+```{r, c24, echo=T, results='hide'}
+loc3 <- loc2[loc2$Loc_Type == "VS" & !is.na(loc2$Loc_Type), ]
+table(complete.cases(loc3$Loc_Type)) # Now all TRUE
+nrow(loc3) # Now the same number of rows as the other 2.
+
+```
+This example also shows why it's important to always check that any subsetting or summarizing of your data worked correctly. For the park summaries, we'll want to always check that the data we're summarizing are based on the correct number of plots. The nrow() and length(unique(data\$Plot_Number)) will help you do that. View(data), head(data), table(complete.cases(data\$column_name)) are also helpful.
+</details>
+</br>
+<details open><summary class='drop'>Filtering with multiple values</summary>
+This section shows you how to filter rows based on multiple possible values. For the loc table, say we want to pull out Deer and BN (bonus) plots. The easiest way to do this is with <b>%in% c("value1", "value2")</b>, which basically says, match all records that have one of the values in the list. 
+
+```{r, c25, echo=T, results='hide'}
+table(loc2$Loc_Type) # using this to see the levels again
+# Base R
+loc_deer_BN <- loc2[loc2$Loc_Type %in% c("Deer", "BN"), ]
+
+# Tidyverse
+loc_deer_BN_tidy <- loc2 %>% filter(Loc_Type %in% c('Deer', 'BN'))
+
+nrow(loc_deer_BN) #16
+nrow(loc_deer_BN_tidy) #16
+```
+The nice thing about using %in% is that it only pulls records that match exactly one of the values you give it, and you don't have to worry about it also including NAs. 
+
+<p class="ques">Question 4: How would you select only the plots in VAFO and HOFU from the loc table?</p>
+
+<p class="ques">Question 5: How many plots are in VAFO and HOFU combined (based on loc table)?</p>
+</details>
+</br>
+<details open><summary class='drop'>Sorting Data</summary>
+Next topic is sorting data in R, which you can do alphabetically or numerically. Typically when you read in a dataset in R, the order is exactly the order of that in the original file. There are multiple ways to sort data in R. Let's start by sorting the loc table by Unit_ID and Plot_Number. 
+```{r, c26, echo=T, results='hide'}
+head(loc2) # check original before sorting
+
+# Base R- I always forget the exact code and have to look it up.
+loc2_sort <- loc2[order(loc2$Unit_ID, loc2$Plot_Number), ]
+head(loc2_sort)
+
+# Sort in reverse
+loc2_sort_desc <- loc2[order(desc(loc2$Unit_ID), -loc2$Plot_Number), ]
+head(loc2_sort_desc)
+# desc is for text, - is for numbers
+
+# Tidyverse version
+loc2_sort_tidy <- loc2 %>% arrange(Unit_ID, Plot_Number)
+head(loc2_sort_tidy)
+
+#Tidyverse reverse sort
+loc2_sort_tidy_rev <- loc2 %>% arrange(desc(Unit_ID), desc(Plot_Number))
+head(loc2_sort_tidy_rev)
+```
+</details>
+</br>
+<details open><summary class='drop'>Summarizing Data</summary>
+The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park. 
+
+To demonstrate how this works, let's load in a test dataset.
+```{r, c27, echo=T, results='hide'}
+regdf <- read.csv('../data/Regen_test_data.csv')
+head(regdf)
+```
+The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let's say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code). 
+
+```{r, c28, echo=T, results='hide'}
+
+reg_by_park <- regdf %>% group_by(Unit_Code) %>% 
+                         summarize(avg_seed_dens = mean(seed_den_m2),
+                                   avg_sap_dens = mean(sap_den_m2),
+                                   avg_stock = mean(stock),
+                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
+                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
+                                   se_stock = sd(stock)/sqrt(n()),
+                                   numplots = n()
+                                   )
+```
+```{r, c29, echo=T}
+print(reg_by_park)
+```
+
+In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.
+
+<p class='ques'>Question 6: How would you calculate the min and max for seed_den_m2?</p>
+</details>
+</br>

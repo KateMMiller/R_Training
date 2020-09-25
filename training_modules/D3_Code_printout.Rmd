@@ -1,0 +1,4 @@
+This tab prints all of the code chunks in this file in one long file.
+```{r show-code, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+
+```

@@ -1,0 +1,82 @@
+---
+output: 
+  html_document:
+    css: custom_styles.css
+title: "R training for ACAD"
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+ACAD R Training {.tabset .tabset-pills}
+--------------------------------------------------
+### Day 1{.tabset}
+
+```{r Intro_to_R_tab, child = "./training_modules/D1_M1_Intro_to_R_tab.Rmd"}
+
+```
+
+```{r Project_and_file_setup, child = "./training_modules/D1_M2_Project_and_file_setup.Rmd"}
+
+```
+
+```{r Getting_help, child = "./training_modules/D1_M3_Getting_help.Rmd"}
+
+```
+
+```{r Types_of_data, child = "./training_modules/D1_M4_Types_of_Data.Rmd"}
+
+```
+
+```{r Data_summary_I, child = "./training_modules/D1_M5_Data_summary_I.Rmd"}
+
+```
+
+```{r D1_Assignments, child = "./training_modules/D1_Reading_Assignments.Rmd"}
+
+```
+
+
+### Day 2{.tabset}
+```{r Data_wrangling_I, child = "./training_modules/D2_M1_Data_wrangling_I.Rmd"}
+
+```
+
+```{r Saving_data, child = "./training_modules/D2_M2_Saving_data_to_file.Rmd"}
+
+```
+
+```{r Joining_dataframes, child = "./training_modules/D2_M3_Joining_dataframes.Rmd"}
+
+```
+
+```{r D2_Assignments, child = "./training_modules/D2_Reading_Assignments.Rmd"}
+
+```
+
+### Day 3{.tabset}
+```{r Data_wrangling_II, child = "./training_modules/D3_M1_Data_wrangling_II.Rmd"}
+
+```
+
+```{r Saving_to_shapefile, child = "./training_modules/D3_M2_Saving_to_shapefile.Rmd"}
+
+```
+
+```{r Plotting_with_ggplot2, child = "./training_modules/D3_M3_Plotting_with_ggplot2.Rmd"}
+
+```
+
+```{r D3_Assignments, child = "./training_modules/D3_Reading_Assignments.Rmd"}
+
+```
+
+### Answers
+```{r Answers, child = "./training_modules/D1-3_Answers.Rmd"}
+
+```
+
+### Code printout {.tabset}
+```{r Code_printout, child = "./training_modules/D3_Code_Printout.Rmd"}
+
+```

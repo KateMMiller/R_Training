@@ -1,0 +1,11 @@
+#### Assignments
+Please complete the assignments below. 
+
+<ul>
+  <li>R4DS: <a href="https://r4ds.had.co.nz/tidy-data.html">Chapter 12. Tidy data</a></li>
+  <li>R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational data</a></li>
+  <li>STAT545: <a href="https://stat545.com/dplyr-single.html">Chapter 7. Single table dplyr functions</a></li>
+  <li>STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables</a></li>
+  <li>Answer the questions for this day and review today's code</li>
+  <li>Complete the Feedback form by the end of the day</li>
+</ul>

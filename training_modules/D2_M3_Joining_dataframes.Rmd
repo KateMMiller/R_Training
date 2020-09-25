@@ -1,0 +1,121 @@
+#### Joining dataframes
+
+<h2>Joining dataframes</h2>
+Because our data are stored in a relational database, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables, we often have to join the tables together to work with them. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys. Let's load some of our forest data tables, and use the primary keys to join them together.
+
+```{r, c32, echo=T, results='hide'}
+loc<-read.csv("../data/tbl_Locations.csv")
+event<-read.csv("../data/tbl_Events.csv")
+```
+```{r, c33, echo=T, eval=F}
+View(loc) #Location_ID
+View(event) #Location_ID links to tbl_Location; Event_ID links other visit-level tables to this table
+```
+```{r, c34, echo=T}
+intersect(names(loc), names(event)) # way to check columns two tables have in common.
+
+```
+The primary key to join the loc and event table is Location_ID, which the intersect function also shows is a column they have in common. Notice that while the loc table has a lot of important information in it, there's no information about when and how often a plot has been sampled. The event table, on the other hand has all of the dates a plot was sampled, but it doesn't have the park or plot columns to determine which parks/plots those dates are associated with. We need to join the data from both tables (I'm using dataframe and table interchangeably here) together, to determine that.
+
+As you read in the training materials yesterday afternoon, there are different flavors of joining tables. The main joins we use are 
+<ul>
+  <li> <b>Left joins:</b> take all of the records in the primary key on the left side dataframe (ie the first dataframe specified in 
+  the function) and tries to find one or more matching records in the right side dataframe (ie the second dataframe speficied). Any records in 
+  the left dataframe that don't have a match in the right dataframe will still be included in the final result, but all of the columns 
+  coming from the right dataframe will be NA (blank). Records on the right dataframe without a match in the left dataframe are 
+  dropped from the result.</li>
+  <li> <b>Full joins:</b> take all of the records from both sides of the join. Records on both sides without matches are included in 
+  the results with blanks in the cells that came from the table missing a match.</li>
+</ul>
+
+Let's try this out on simple datasets first, then we'll build up to our forest data. Another great example with visuals can be found <a href="https://mgimond.github.io/ES218/Week03c.html">here</a>.
+```{r, c34a, echo=T, results ='hide'}
+tree <- data.frame(plot = c("p1","p1","p1","p2","p2","p3","p4","p4"), 
+                  treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
+                  species = c("ACERUB" ,"PINTAE", "PINTAE", "QUEALB", "QUEALB", 
+                              "QUEPHE", "FAGGRA", "QUERUB"))
+tree
+
+tree_data <- data.frame(plot = c("p1", "p1", "p1", "p1", "p1","p1", "p2", "p2", "p5", "p7"),
+                        year = c(2012, 2012, 2012, 2016, 2016, 2016, 2012, 2012, 2016, 2016),
+                        treenum = c(1, 2, 3, 1, 2, 3, 11, 12, 51, 71),
+                        DBH = c(12.5, 14.5, 16.1, 12.8, 14.9, 17.2, 28.1, 35.4, 36.1, 45.2))
+
+tree_full_join <- full_join(tree, tree_data, by = c("plot", "treenum"))
+tree_left_join <- left_join(tree, tree_data, by = c("plot", "treenum"))
+
+```
+```{r, c34b, echo=T}
+nrow(tree_full_join)
+nrow(tree_left_join)
+print(tree_full_join)
+print(tree_left_join)
+```
+Note the left join has fewer records, and doesn't include p5 and p7 in the plot column from tree_data. There's also no tree data for plots p3 and p4 because there wasn't any data in the tree_data that matched. The full join includes plots and tree numbers from both tables, but there are NAs where there wasn't a matching record in one of the tables.
+
+Now we're going to get more advanced and join the loc and event tables from our forest database.
+```{r, c35, echo=T, results='hide'}
+# base R version
+names(loc) # to help me pick the columns to include in the join
+names(event)
+loc_event_full <- merge(loc[ , c("Location_ID", "X_Coord", "Y_Coord", "Unit_ID", "Plot_Number", "Rejected")], 
+                     event[, c("Location_ID", "Event_ID", "Start_Date", "Event_QAQC")], 
+                     by = "Location_ID", 
+                     all.x = TRUE, all.y = TRUE)
+```
+```{r, c36, echo=T, eval=F}
+View(loc_event_full) # Now you can see all the times a plot has been sampled. You'll also see that some plots 
+# don't have sample dates. That's because the loc table includes plots that were rejected and never sampled.
+```
+```{r, c37, echo=T}
+loc_event_left <- merge(loc[ , c("Location_ID", "X_Coord", "Y_Coord", "Unit_ID", "Plot_Number", "Rejected", "Loc_Type")], 
+                     event[, c("Location_ID", "Event_ID", "Start_Date", "Event_QAQC")], 
+                     by = "Location_ID", 
+                     all.x = TRUE, all.y = FALSE)
+
+nrow(loc_event_full) # same number of rows because all events have a location record
+nrow(loc_event_left) # same number of rows because all events have a location record
+
+# tidyverse version
+loc2 <- loc %>% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Plot_Number, Rejected, Loc_Type)
+event2 <- event %>% select(Location_ID, Event_ID, Start_Date, Event_QAQC)
+
+loc_event_full_tidy <- full_join(loc2, event2, by = "Location_ID")
+nrow(loc_event_full_tidy) # same number of rows because all events have a location record
+
+loc_event_left_tidy <- left_join(loc2, event2, by = "Location_ID")
+nrow(loc_event_left_tidy) # same number of rows because all events have a location record
+
+```
+
+Getting more advanced, let's filter the loc table so that we only have active plots (ie no rejected plots), and only include plots that are part of the random sample design (Loc_Type == "VS"). Let's also filter the event table to only include visits that are not QAQC visits (We resample 5% of plots each year to check the crew's accuracy, but we generally don't want to include them in analyses.). Next, join the resulting loc and event tables.
+
+```{r, c38, echo=T, results='hide'}
+loc2 <- loc %>% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Plot_Number, Rejected, Loc_Type) %>% 
+                filter(Rejected == FALSE & Loc_Type == "VS")
+table(loc2$Rejected)
+
+event2 <- event %>% select(Location_ID, Event_ID, Start_Date, Event_QAQC) %>% 
+                    filter(Event_QAQC == FALSE)
+table(event2$Event_QAQC)
+
+locevent_full <- merge(loc2, event2, by = "Location_ID", all.x = TRUE, all.y = TRUE) # I learned merge first, 
+# and tend to use it more often, but full_join works here too.
+locevent_left <- merge(loc2, event2, by = "Location_ID", all.x = TRUE, all.y = FALSE)
+
+nrow(locevent_full) #1200
+nrow(locevent_left) #1150
+```
+```{r, c39, echo=T, eval=F}
+View(locevent_full)
+View(locevent_left)
+```
+Notice that when you view locevent_full, there are events with NAs. That's because there are sampling events for deer and BN plots that are in the event table, but don't have matches in the location table, because we filtered out all non-VS plots in the loc table first. When you do the left join to get locevent_left, you don't have those blanks, because you only matched the events that match the plots you care about in the loc table. 
+
+<p class="ques"> Question 7: How would you take only QA/QC events and join the loc table to QA/QC events only (this is a hard one, I know!)?</p>
+
+----------------
+
+I should mention that this is pretty advanced stuff. I coded for years before attempting this in R. If you don't quite understand the concepts, don't worry. The forestMIDN package does most of the heavy lifting with joining tables for you! I'm just giving you a hint of what's under the hood, so you understand what you're doing when you use the functions. The key is to understand which function in that package you need to use for your summary, and how to ask it to give you the data you want. Tomorrow, we take a tour of the forestMIDN package.
+
+That's it for Day 2! Please save your script and complete the tasks in the assignments tab.

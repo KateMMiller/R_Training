@@ -1,0 +1,88 @@
+#### Data Wrangling Part II
+Before we start, let's restart our R session to clear our history and global environment by pressing CTRL + SHFT + F10. You essentially just closed and reopened RStudio, without having to do it physically. So, we'll need to load the packages and import the data again.
+```{r, c72,echo=T, results='hide', message=FALSE}
+library(tidyverse)
+library(forestMIDN)
+library(rgdal)
+
+importCSV("../data")
+
+```
+
+<h2>Data Wrangling Part II- Reshaping Data</h2>
+Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which most of our MIDN forest data start as, consists of each row being an observation (ie if there are 3 visits to a plot, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, numseeds). In summary tables, we often want to reshape the data to be wide, so that there's only one row per plot, a column for each cycle, and the numseeds as the value in the cell. 
+
+```{r, c58, echo=T}
+regen_long <- data.frame(plot = c("p1","p1","p1","p2","p2","p2","p3","p3","p3","p4","p4"),
+                         cycle = c("c1","c2","c3","c1","c2","c3","c1","c2","c3","c1","c2"),
+                         numsds = c(1,4,5,3,2,6,4,9,10,3,1))
+print(regen_long)
+```
+
+To make this wide, we're essentially going to make a pivot table using functions in tidyr. There are two functions you can use. The spread() function was original to tidyr, is what I know the best, and still performs faster on larger datasets than pivot_wider(), the replacement for spread. I show both options, so you can use whichever function makes the most sense to you. 
+```{r,c59, echo=T}
+regen_wide <- regen_long %>% spread("cycle", "numsds") #retired spread function
+regen_wide
+regen_wide2 <- regen_long %>% pivot_wider(names_from = "cycle", values_from = "numsds") #replacement in tidyr
+regen_wide2
+```
+
+Note the NA in c3 for p4. That's because the long version didn't have a data point for that combination. The tidyr package will assign NA when reshaping for combinations not represented in the original dataset. For plots that haven't been sampled in the 3rd cycle in this scenrio, NA makes sense. However, say p4 had been sampled in c3, and there just weren't any seedlings found. You can tell tidyr to fill blanks with 0. This is a handy feature, but it's not to be abused. <b>You should always think carefully before filling blanks with 0s.</b>
+
+```{r,c60, echo=T}
+regen_wide_fill0 <- regen_long %>% spread("cycle", "numsds", fill=0)
+regen_wide_fill0
+
+regen_wide2_fill0 <- regen_long %>% pivot_wider(names_from = "cycle", values_from = "numsds", values_fill=0)
+regen_wide2_fill0
+
+```
+
+Now, say you want to take the wide version of the dataframe and make it long, so that you have a row for every time a plot has been sampled, a column for cycle, and a column for the numseeds. You can use gather(), the original tidyr function, or pivot_longer(), the new one.
+
+```{r, c61, echo=T}
+regen_long2 <- regen_wide_fill0 %>% gather("cycle", "numseeds", -plot)
+regen_long2
+
+names(regen_wide_fill0)
+regen_long2b <- regen_wide_fill0 %>% pivot_longer(cols=c(c1, c2, c3), names_to = "cycle", values_to = "numseeds")
+
+```
+Both functions above are keeping a plot column, and to take the columns c1, c2, and c3 and put their names into a new cycle column, and their values into a new numseeds column. Because we used the wide dataset where NAs were filled with 0, cycle 3 for plot p4 now has 0 instead of NA. 
+
+This approach comes in handy when you want to generate a consistent species list for each plot and show 0s where it didn't occur. For example, say we want a list of all all species found in GETT in 2019 and we want to calculate the number of plots each of those species occurred in. 
+
+```{r, c62, echo=T, results='hide'}
+gett_exospp <- makeSppList(park = "GETT", from = 2019, to = 2019, QAQC=FALSE)
+# Need to add a column that says the species is present.
+gett_exospp$spp_pres<-1
+
+gett_exo_wide  <- gett_exospp %>% select(Plot_Name, Latin_Name, spp_pres) %>% # helps to take only the columns you're interested in
+                                 arrange(Latin_Name, Plot_Name) %>% #arrange is piped here so columns will be alphabetical
+                                 pivot_wider(names_from = "Latin_Name", 
+                                             values_from = "spp_pres", 
+                                             values_fill = 0) %>% 
+                                 arrange(Plot_Name)
+head(gett_exo_wide) 
+#Now to make the the long version of wide, we species we didn't find on a plot are not included and have a 0.
+
+gett_exo_long <- gett_exo_wide %>% pivot_longer(-Plot_Name, 
+                                                names_to = "Latin_Name", 
+                                                values_to = "Present") %>% 
+                                   arrange(Plot_Name, Latin_Name)
+
+head(gett_exo_long)
+
+```
+
+For the pivot_longer, there are a lot of columns that I want to put into the new Latin_Name column. Instead of having to list every single column, I'm telling R to use all but Plot_Name column. Then I sorted by Plot_Name and Latin_Name using arrange.
+
+<p class='ques'>Question 10: How would you create a wide matrix for FRSP plots in 2019 that has plots for rows, and exotic species as columns?</p>
+
+
+Open the R_training.Rproj project, start a new Day_3.R script, and load the packages we'll use today.
+```{r, c40, echo=T, eval=F}
+library(tidyverse)
+library(forestMIDN)
+library(rgdal) # for saving to shapefile
+```

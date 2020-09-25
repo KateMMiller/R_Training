@@ -1,0 +1,30 @@
+#### Data Summary I{.tabset}
+
+<h2>Data Summary I</h2>
+Using the df we created, let's perform some basic summary statistics. Base R has a number of summary statistics built into it that are really useful, including mean, min, and max. These will come in handy when we start summarizing the data for our parks. 
+
+```{r, c15, echo=T, results='show'}
+min(df$numtrees)
+max(df$numtrees)
+mean(df$numtrees)
+```
+
+The summary() function in R is another way to summarize your data. It knows the type of variable for each column, and gives you a meaningful summary of each type. 
+```{r, c16, echo=T, results='show'}
+summary(df)
+```
+You can also calculate new fields from existing fields in your data.
+```{r, c17, echo=T, results='show'}
+df$numdead <- df$numtrees - df$numLive # base R version
+df <- df %>% mutate(numdead = numtrees - numLive) # tidyverse version. 
+```
+
+The <b>mutate</b> function is in the dplyr package of the tidyverse. It creates a new column in your dataframe, named numdead, and tells it to equal numtrees - numLive in the same way the base R version does. Mutate just spares you having to write df$ over and over. 
+
+<p class='ques'>Question 3: How would you calculate the percent of trees that are dead? </p>
+
+----
+That's the end of Day 1! Be sure to save your Day 1 R script, and complete the assigned tasks in the Assignments tab.  Also, I provide one or a few ways to get the answer to the questions, but it's likely you'll come up with your own. That's how coding in R works!
+
+Lastly, don't worry if you don't understand everything. The key here was to expose you to the many different ways to work with and view data in R. We don't expect you to understand/remember everything the first time (I was lost on how to use brackets [ , ] for a long time). Learning R requires repetition, and there will be a lot of repetition this week (and this season)!
+
