@@ -29,26 +29,25 @@ df <- df %>% mutate(pctdead = (numtrees - numLive)/numtrees*100)
 </details>
 </br>
 <h2>Day 2</h2>
-<details><summary class='ques2'>Question 4: How would you select only the plots in VAFO and HOFU from the loc table?</summary>
+<details><summary class='ques2'>Question 4: How would you select only the plots in ACAD and MIMA from the loc table?</summary>
 ```{r, c108, echo=T, results='hide'}
-loc_VAFO_HOFU <- loc[loc$Unit_ID %in% c("VAFO", "HOFU") & !is.na(loc$Unit_ID),]
+loc_ACAD <- loc[loc$Unit_ID %in% c("ACAD", "MIMA") & !is.na(loc$Unit_ID),]
 
-loc_VAFO_HOFU_tidy <- loc %>% filter(Unit_ID %in% c("VAFO", "HOFU"))
+loc_VAFO_HOFU_tidy <- loc %>% filter(Unit_ID %in% c("ACAD", "MIMA"))
 
 ```
 </details>
 </br>
-<details><summary class='ques2'>Question 5: How many plots are in VAFO and HOFU combined (based on loc table)?</summary>
+<details><summary class='ques2'>Question 5: How many plots are in MABI and SARA (based on loc table)?</summary>
 ```{r, c109,echo=T, results='show'}
-loc_VAFO_HOFU_tidy <- loc %>% filter(Unit_ID %in% c("VAFO", "HOFU"))
-length(unique(loc_VAFO_HOFU_tidy$Plot_Number)) # NA was counted as one of the unique values. Oops!
-length(unique(loc_VAFO_HOFU_tidy$Plot_Number[!is.na(loc_VAFO_HOFU_tidy$Plot_Number)])) #Not very readable!
+loc_MABI_SARA_tidy <- loc %>% filter(Unit_ID %in% c("MABI", "SARA")) %>% select(Unit_ID, Plot_Number) %>% unique()
+nrow(loc_MABI_SARA_tidy)
 
-loc_VAFO_HOFU_tidy_no_nas <- loc %>% filter(Unit_ID %in% c("VAFO", "HOFU") & !is.na(Plot_Number))
-length(unique(loc_VAFO_HOFU_tidy_no_nas$Plot_Number)) 
+loc_MABI_SARA_tidy_no_nas <- loc %>% filter(Unit_ID %in% c("MABI", "SARA") & !is.na(Plot_Number)) %>% select(Unit_ID, Plot_Number) %>% unique()
+nrow(loc_MABI_SARA_tidy_no_nas)
 
 ```
-Note that MIDN plot numbers are unique, so there's only one plot 1 in the entire loc table.
+
 </details>
 </br>
 <details><summary class='ques2'>Question 6: How would you calculate the min and max for seed_den_m2?</summary>
@@ -70,47 +69,48 @@ This is technically a right join, because I'm telling R to take all of the recor
 </details>
 </br>
 <h2>Day 3</h2>
-<details><summary class='ques2'>Question 8: How many plots were sampled in APCO in 2018?</summary>
+<details><summary class='ques2'>Question 8: How many plots were sampled in ACAD in 2018?</summary>
 ```{r, c112,echo=T}
-apco <- joinLocEvent(park = "APCO", from = 2018, to = 2018)
-length(unique(apco$Plot_Number))
+acad <- joinLocEvent(park = "ACAD", from = 2018, to = 2018)
+length(unique(acad$Plot_Number))
 ```
 </details>
 </br>
 
-<details><summary class='ques2'>Question 9: Which plot in FRSP has the highest density of live trees in the 90-99.9cm size class for any year?</summary>
+<details><summary class='ques2'>Question 9: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary>
 ```{r, c113,echo=T}
-frsp_tree_dist <- sumTreeDBHDist(park = "FRSP", status = 'live')
+acad_tree_dist <- sumTreeDBHDist(park = "ACAD", status = 'live')
 
-frsp_tree_max90 <- frsp_tree_dist %>% arrange(desc(d90_99.9))
-head(frsp_tree_max90) # FRSP-288 
+acad_tree_max70 <- acad_tree_dist %>% arrange(desc(d70_79.9))
+head(acad_tree_max70) # ACAD-124
 
 # If you wanted to pull out the top record for that size class, you can also do one of the two options below
-frsp_top_90 <- frsp_tree_dist[which.max(frsp_tree_dist$d90_99.9),] #The ugly base R approach 
-frsp_top_90_tidy <- frsp_tree_dist %>% arrange(desc(d90_99.9)) %>% slice(1) #The tidyverse approach
-head(frsp_top_90)
+acad_top_70 <- acad_tree_dist[which.max(acad_tree_dist$d70_79.9),] #The ugly base R approach 
+acad_top_70_tidy <- acad_tree_dist %>% arrange(desc(d70_79.9)) %>% slice(1) #The tidyverse approach
+head(acad_top_70)
 ```
 </details>
 </br>
-<details><summary class='ques2'>Question 10: How would you create a wide matrix for FRSP plots in 2019 that has plots for rows, and exotic species as columns?</summary>
+<details><summary class='ques2'>Question 10: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary>
 
-<p class='ques'>Answer has been updated 6/9/2020 based on fixes in forestMIDN.</p>
 ```{r, c114,echo=T}
-frsp_exo <- makeSppList(park = "FRSP", from = 2019, to = 2019, speciesType = "exotic") 
+acad_exo <- makeSppList(park = "ACAD", from = 2019, to = 2019, speciesType = "exotic") 
+acad_exo <- acad_exo %>% mutate(present = ifelse(Exotic == TRUE & !is.na(Exotic), 1, 0))
+head(acad_exo)
 
 # Old school spread version
-frsp_wide_spread <- frsp_exo %>% select(Plot_Name, Latin_Name, present) %>% 
+acad_wide_spread <- acad_exo %>% select(Plot_Name, Latin_Name, present) %>% 
                                  arrange(Latin_Name, Plot_Name) %>% 
                                  spread("Latin_Name", "present", fill = 0)
 
 # Newer pivot version
-frsp_wide_pivot <- frsp_exo %>% select(Plot_Name, Latin_Name, present) %>% 
+acad_wide_pivot <- acad_exo %>% select(Plot_Name, Latin_Name, present) %>% 
                                 arrange(Latin_Name, Plot_Name) %>% 
                                 pivot_wider(names_from = "Latin_Name", 
                                             values_from = "present",
                                             values_fill = 0) 
 
-head(frsp_wide_pivot)
+head(acad_wide_pivot)
 ```
 </details>
 </br>
@@ -120,11 +120,11 @@ head(frsp_wide_pivot)
 You may have chosen other things to do than I did. Here are a couple of changes to the ggplot bar chart
 ```{r, c115,echo=T}
 
- ggplot(data = gett_stats, aes(x = size_class_fact, y = mean_dens))+
+ ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_dens))+
               geom_bar(stat = 'identity', fill = "steelblue4")+
               geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens), width = 0.2, lwd = 0.7)+
               labs(x = "Regeneration Size Class", y = "Stems per sq.m")+
-              theme_FVM()+
+              theme_FHM()+
               theme(axis.text.x = element_text(angle = 45, hjust = 1))+ #hjust is centering horizontally
               scale_x_discrete(labels = c('15-30cm', '30-100cm', '100-150cm', '>150cm', '1-10cm DBH'))
              

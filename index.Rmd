@@ -10,73 +10,80 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ACAD R Training {.tabset .tabset-pills}
 --------------------------------------------------
+### Prep for Training{.tabset}
+```{r Install_instructions, child = "D0_Install_R_and_RStudio.Rmd"}
+
+```
+
 ### Day 1{.tabset}
 
-```{r Intro_to_R_tab, child = "./training_modules/D1_M1_Intro_to_R_tab.Rmd"}
+```{r Intro_to_R_tab, child = "D1_M1_Intro_to_R_tab.Rmd"}
 
 ```
 
-```{r Project_and_file_setup, child = "./training_modules/D1_M2_Project_and_file_setup.Rmd"}
+```{r Project_setup, child = "D1_M2_Project_and_file_setup.Rmd"}
 
 ```
 
-```{r Getting_help, child = "./training_modules/D1_M3_Getting_help.Rmd"}
+```{r Getting_help, child = "D1_M3_Getting_help.Rmd"}
 
 ```
 
-```{r Types_of_data, child = "./training_modules/D1_M4_Types_of_Data.Rmd"}
+```{r Types_of_data, child = "D1_M4_Types_of_Data.Rmd"}
 
 ```
 
-```{r Data_summary_I, child = "./training_modules/D1_M5_Data_summary_I.Rmd"}
+```{r Data_summary_I, child = "D1_M5_Data_summary_I.Rmd"}
 
 ```
 
-```{r D1_Assignments, child = "./training_modules/D1_Reading_Assignments.Rmd"}
+```{r D1_Assignments, child = "D1_Reading_Assignments.Rmd"}
 
 ```
 
 
 ### Day 2{.tabset}
-```{r Data_wrangling_I, child = "./training_modules/D2_M1_Data_wrangling_I.Rmd"}
+```{r Data_wrangling_I, child = "D2_M1_Data_wrangling_I.Rmd"}
 
 ```
 
-```{r Saving_data, child = "./training_modules/D2_M2_Saving_data_to_file.Rmd"}
+```{r Saving_data, child = "D2_M2_Saving_data_to_file.Rmd"}
 
 ```
 
-```{r Joining_dataframes, child = "./training_modules/D2_M3_Joining_dataframes.Rmd"}
+```{r Joining_dataframes, child = "D2_M3_Joining_dataframes.Rmd"}
 
 ```
 
-```{r D2_Assignments, child = "./training_modules/D2_Reading_Assignments.Rmd"}
+```{r D2_Assignments, child = "D2_Reading_Assignments.Rmd"}
 
 ```
 
 ### Day 3{.tabset}
-```{r Data_wrangling_II, child = "./training_modules/D3_M1_Data_wrangling_II.Rmd"}
+
+
+```{r Data_wrangling_II, child = "D3_M1_Data_wrangling_II.Rmd"}
 
 ```
 
-```{r Saving_to_shapefile, child = "./training_modules/D3_M2_Saving_to_shapefile.Rmd"}
+```{r Saving_to_shapefile, child = "D3_M2_Saving_to_shapefile.Rmd"}
 
 ```
 
-```{r Plotting_with_ggplot2, child = "./training_modules/D3_M3_Plotting_with_ggplot2.Rmd"}
+```{r Plotting_with_ggplot2, child = "D3_M3_Plotting_with_ggplot2.Rmd"}
 
 ```
 
-```{r D3_Assignments, child = "./training_modules/D3_Reading_Assignments.Rmd"}
+```{r D3_Assignments, child = "D3_Reading_Assignments.Rmd"}
 
 ```
 
 ### Answers
-```{r Answers, child = "./training_modules/D1-3_Answers.Rmd"}
+```{r Answers, child = "D1-3_Answers.Rmd"}
 
 ```
 
 ### Code printout {.tabset}
-```{r Code_printout, child = "./training_modules/D3_Code_Printout.Rmd"}
+```{r Code_printout, child = "D3_Code_Printout.Rmd"}
 
 ```

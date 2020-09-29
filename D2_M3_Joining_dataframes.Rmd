@@ -4,8 +4,8 @@
 Because our data are stored in a relational database, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables, we often have to join the tables together to work with them. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys. Let's load some of our forest data tables, and use the primary keys to join them together.
 
 ```{r, c32, echo=T, results='hide'}
-loc<-read.csv("../data/tbl_Locations.csv")
-event<-read.csv("../data/tbl_Events.csv")
+loc<-read.csv("./data/NETN_forest_csvs/tbl_Locations.csv")
+event<-read.csv("./data/NETN_forest_csvs/tbl_Events.csv")
 ```
 ```{r, c33, echo=T, eval=F}
 View(loc) #Location_ID
@@ -116,6 +116,6 @@ Notice that when you view locevent_full, there are events with NAs. That's becau
 
 ----------------
 
-I should mention that this is pretty advanced stuff. I coded for years before attempting this in R. If you don't quite understand the concepts, don't worry. The forestMIDN package does most of the heavy lifting with joining tables for you! I'm just giving you a hint of what's under the hood, so you understand what you're doing when you use the functions. The key is to understand which function in that package you need to use for your summary, and how to ask it to give you the data you want. Tomorrow, we take a tour of the forestMIDN package.
+I should mention that this is pretty advanced stuff. I coded for years before attempting this in R. If you don't quite understand the concepts, don't worry. The forestNETN package does most of the heavy lifting with joining tables for you! I'm just giving you a hint of what's under the hood, so you understand what you're doing when you use the functions. The key is to understand which function in that package you need to use for your summary, and how to ask it to give you the data you want. Tomorrow, we take a tour of the forestNETN package.
 
 That's it for Day 2! Please save your script and complete the tasks in the assignments tab.

@@ -1,16 +1,16 @@
 #### Data Wrangling Part II
 Before we start, let's restart our R session to clear our history and global environment by pressing CTRL + SHFT + F10. You essentially just closed and reopened RStudio, without having to do it physically. So, we'll need to load the packages and import the data again.
-```{r, c72,echo=T, results='hide', message=FALSE}
+
+```{r, c72, echo=T, results = 'hide', message=FALSE}
 library(tidyverse)
-library(forestMIDN)
+library(forestNETN)
 library(rgdal)
 
-importCSV("../data")
-
+importCSV("./data/NETN_forest_csvs")
 ```
 
 <h2>Data Wrangling Part II- Reshaping Data</h2>
-Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which most of our MIDN forest data start as, consists of each row being an observation (ie if there are 3 visits to a plot, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, numseeds). In summary tables, we often want to reshape the data to be wide, so that there's only one row per plot, a column for each cycle, and the numseeds as the value in the cell. 
+Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which most of our NETN forest data start as, consists of each row being an observation (ie if there are 3 visits to a plot, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, numseeds). In summary tables, we often want to reshape the data to be wide, so that there's only one row per plot, a column for each cycle, and the numseeds as the value in the cell. 
 
 ```{r, c58, echo=T}
 regen_long <- data.frame(plot = c("p1","p1","p1","p2","p2","p2","p3","p3","p3","p4","p4"),
@@ -53,25 +53,25 @@ Both functions above are keeping a plot column, and to take the columns c1, c2, 
 This approach comes in handy when you want to generate a consistent species list for each plot and show 0s where it didn't occur. For example, say we want a list of all all species found in GETT in 2019 and we want to calculate the number of plots each of those species occurred in. 
 
 ```{r, c62, echo=T, results='hide'}
-gett_exospp <- makeSppList(park = "GETT", from = 2019, to = 2019, QAQC=FALSE)
+acad_exospp <- makeSppList(park = "ACAD", from = 2019, to = 2019, QAQC = FALSE, speciesType = "exotic")
 # Need to add a column that says the species is present.
-gett_exospp$spp_pres<-1
-
-gett_exo_wide  <- gett_exospp %>% select(Plot_Name, Latin_Name, spp_pres) %>% # helps to take only the columns you're interested in
+acad_exospp$spp_pres<-1
+head(acad_exospp)
+acad_exo_wide  <- acad_exospp %>% select(Plot_Name, Latin_Name, spp_pres) %>% # helps to take only the columns you're interested in
                                  arrange(Latin_Name, Plot_Name) %>% #arrange is piped here so columns will be alphabetical
-                                 pivot_wider(names_from = "Latin_Name", 
-                                             values_from = "spp_pres", 
-                                             values_fill = 0) %>% 
+                                 pivot_wider(names_from = "Latin_Name",
+                                             values_from = "spp_pres",
+                                             values_fill = 0) %>%
                                  arrange(Plot_Name)
-head(gett_exo_wide) 
+head(acad_exo_wide)
 #Now to make the the long version of wide, we species we didn't find on a plot are not included and have a 0.
 
-gett_exo_long <- gett_exo_wide %>% pivot_longer(-Plot_Name, 
-                                                names_to = "Latin_Name", 
-                                                values_to = "Present") %>% 
+acad_exo_long <- acad_exo_wide %>% pivot_longer(-Plot_Name,
+                                                names_to = "Latin_Name",
+                                                values_to = "Present") %>%
                                    arrange(Plot_Name, Latin_Name)
 
-head(gett_exo_long)
+head(acad_exo_long)
 
 ```
 
@@ -83,6 +83,6 @@ For the pivot_longer, there are a lot of columns that I want to put into the new
 Open the R_training.Rproj project, start a new Day_3.R script, and load the packages we'll use today.
 ```{r, c40, echo=T, eval=F}
 library(tidyverse)
-library(forestMIDN)
+library(forestNETN)
 library(rgdal) # for saving to shapefile
 ```

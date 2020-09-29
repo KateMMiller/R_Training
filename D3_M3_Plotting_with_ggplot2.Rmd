@@ -1,21 +1,13 @@
 #### Plotting with ggplot2{.tabset}
-Open your project, make a new Day 4 script, and load the packages we'll use today.
-We also need to reinstall the latest version of forestMIDN, which fixes bugs we found on Tuesday.
-```{r, c65, echo=T, eval=F}
-library(tidyverse)
-devtools::install_github("katemmiller/forestMIDN") #press enter- don't need to update other packages
-library(forestMIDN)
-```
-
-To get started with ggplot2, we need to make a dataset to plot. Instead of making up a simple dataset, let's use what we've learned to make a real dataset from MIDN forest data. Let's start with a plot of the mean regeneration density by size class for the most recent 4-years at GETT. Let's also only include species that make it into the canopy (e.g., no pawpaw). We specify this by using canopyForm = "canopy".
+To get started with ggplot2, we need to make a dataset to plot. Instead of making up a simple dataset, let's use what we've learned to make a real dataset from NETN forest data. Let's start with a plot of the mean regeneration density by size class for the most recent 4-years at ACAD. Let's also only include species that make it into the canopy (e.g., no pawpaw). We specify this by using canopyForm = "canopy".
 ```{r, c66, echo=T, results='hide'}
 
-gett_regen <- joinRegenData(park = "GETT", from = 2016, to = 2019, canopyForm = "canopy")
+acad_regen <- joinRegenData(park = "ACAD", from = 2016, to = 2019, canopyForm = "canopy")
 
-head(gett_regen) # this dataframe includes species, so there are multiple rows per plot. 
+head(acad_regen) # this dataframe includes species, so there are multiple rows per plot. 
 
 # We need to group_by Plot_Name, and sum seedling densities to get plot-level seedling densities.
-gett_regen2 <- gett_regen %>% group_by(Plot_Name) %>% 
+acad_regen2 <- acad_regen %>% group_by(Plot_Name) %>% 
                               summarize(seed15_30 = sum(seed15.30),
                                         seed30_100 = sum(seed30.100),
                                         seed100_150 = sum(seed100.150),
@@ -25,16 +17,16 @@ gett_regen2 <- gett_regen %>% group_by(Plot_Name) %>%
 
 # This is the shortest way to get a dataset that has a mean seedling density for each size class and a se for each size class. 
 # Note we want to make this long, so every plot has each of the size classes
-gett_regen_long <- gett_regen2 %>% pivot_longer(-Plot_Name, names_to = "size_class", values_to = "density")
+acad_regen_long <- acad_regen2 %>% pivot_longer(-Plot_Name, names_to = "size_class", values_to = "density")
 
 # Now we calculate the mean and se for each size class at the park level
-gett_stats <- gett_regen_long %>% group_by(size_class) %>% 
+acad_stats <- acad_regen_long %>% group_by(size_class) %>% 
                                   summarize(mean_dens = mean(density),
                                             se_dens = sd(density)/sqrt(n()))
 # We have our dataset to plot. 
 ```
 
-The pros with using ggplot are that you can get a plot with very little work. The cons are that as soon as you want to change something, like removing the grid lines, customizing a legend, changing the font size, etc., it's quite tedious to do. Using the default formatting that comes with ggplot, let's plot the gett_regen2 dataset.
+The pros with using ggplot are that you can get a plot with very little work. The cons are that as soon as you want to change something, like removing the grid lines, customizing a legend, changing the font size, etc., it's quite tedious to do. Using the default formatting that comes with ggplot, let's plot the acad_regen2 dataset.
 
 The first step in ggplot is to specify the data set and the x and y (and grouping, if you have any) values with the ggplot() function.
 After you set that up, you have to decide what kind of plot you want to us. The most common ones I use are:
@@ -50,59 +42,59 @@ After you set that up, you have to decide what kind of plot you want to us. The 
 As long as the mapping is the same (eg x/y values fit on the plot), you can add multiple geoms, such as points and lines that connect the points, or geom_errorbar to the geom_bar. You can even include different datasets. Just know that the ranges of the x and y axis default to the x and y you set in ggplot(). You can manually change the range of an axis to fix that, but it requires more tinkering. You can also keep adding things to the object with +.
 
 ```{r,c67, echo=T}
-gett_base <- ggplot(data = gett_stats, aes(x = size_class, y = mean_dens))
+acad_base <- ggplot(data = acad_stats, aes(x = size_class, y = mean_dens))
 
 # Make a point plot
-gett_base + geom_point()
+acad_base + geom_point()
 
 # Make a bar chart
-gett_bar <- gett_base + geom_bar(stat = 'identity')
-gett_bar
+acad_bar <- acad_base + geom_bar(stat = 'identity')
+acad_bar
 
 # Add error bars to the previous bar chart
-gett_bar + geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens))+
+acad_bar + geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens))+
            labs(x = "Regeneration Size Class", y = "Stems per sq.m")
 
 ```
 
 Note that the x-axis plots the size classes alphabetically instead of from small to big size classes. To fix this (this is where ggplot starts to get fiddly), we want to make the size_class column an ordered factor, and we set the order the levels. 
 ```{r, c68,echo=T}
-gett_stats$size_class_fact <- ordered(gett_stats$size_class, 
+acad_stats$size_class_fact <- ordered(acad_stats$size_class, 
                                       levels = c('seed15_30', 'seed30_100', 'seed100_150', 'seed150p', 'sapling'))
 
-gett_bar2 <- ggplot(data = gett_stats, aes(x = size_class_fact, y = mean_dens))+
+acad_bar2 <- ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_dens))+
              geom_bar(stat = 'identity')+ 
              geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens))+
              labs(x = "Regeneration Size Class", y = "Stems per sq.m")
 
-gett_bar2
+acad_bar2
 ```
 
 That's more like it, but I still don't like how the figure looks. For example, I don't like the gridlines in the figure. Those settings are buried in theme(), and to change it you need to +theme(change_settings_here)
 
 ```{r,c69, echo=T}
 
-gett_bar2 + theme(panel.grid.minor = element_blank(),
+acad_bar2 + theme(panel.grid.minor = element_blank(),
                   panel.grid.major = element_blank())
 ```
 
-That's a little better, but I still don't like it. And, I never remember exactly what I need to type to remove the gridlines, take the grey fill off the background, etc. So I made my own theme that does all of that in the forestMIDN package, called theme_FVM.
+That's a little better, but I still don't like it. And, I never remember exactly what I need to type to remove the gridlines, take the grey fill off the background, etc. So I made my own theme that does all of that in the forestNETN package, called theme_FHM.
 
 ```{r, c70, echo=T}
-gett_bar2+theme_FVM()
+acad_bar2+theme_FHM()
 ```
 
 Much better! But, I still prefer the bars be a different color than grey. Let's fill the bars with a nice blue color. I'll start over on the code too, so you can see it all together. Note the use of "#5E79A8" to the fill bar color. I used the hex code for a blue-grey color I like. Hex codes are a universal color code that specify the intensity of red, green, blue, and makes it easier to use the same color across multiple programs. If you want to pick your own color, you can use <a href="htmlcolorcodes.com">HTML Color Codes</a> website to pick a color and see the code. I also like the color picker, mixer and shades in <a href="https://www.w3schools.com/colors/">w3schools.com</a>. 
 
 ```{r, c71, echo=T}
 
-gett_final <- ggplot(data = gett_stats, aes(x = size_class_fact, y = mean_dens))+
+acad_final <- ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_dens))+
               geom_bar(stat = 'identity', fill = "#5E79A8")+
               geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens))+
               labs(x = "Regeneration Size Class", y = "Stems per sq.m")+
-              theme_FVM()
+              theme_FHM()
 
-gett_final
+acad_final
 ```
 
-<p class='ques'>Question 11: Take the gett_final graph and make 2 more changes to it. For example, make the line width on the error bars bigger, change the font size of the axis text bigger, tilt the x-axis labels (eg seed15_30) 45 degrees, rename x-axis labels, etc.</p>
+<p class='ques'>Question 11: Take the acad_final graph and make 2 more changes to it. For example, make the line width on the error bars bigger, change the font size of the axis text bigger, tilt the x-axis labels (eg seed15_30) 45 degrees, rename x-axis labels, etc.</p>

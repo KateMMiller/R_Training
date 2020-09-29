@@ -1,0 +1,11 @@
+#### Assignments
+Please complete the assignments below  (they're ordered from highest to lowest priority). Note that the readings are to expose you to new topics, but you're not expected to understand or digest 100% of the material. If you've already read Chapter 2 of STAT545, you can skip it.
+<ul>
+  <li>Answer the questions for this day and review today's code. Answers are in the Answers tab.</li>
+  <li>Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview">Feedback form</a> by the end of the day</li>
+  <li>STAT545: <a href="https://stat545.com/r-basics.html">Chapter 2. R basics and workflows</a></li>
+  <li>STAT545: <a href="https://stat545.com/basic-data-care.html">Chapter 5. Basic care and feeding of data in R</a></li>
+  <li>STAT545: <a href="https://stat545.com/dplyr-intro.html">Chapter 6. Intro to dplyr</a></li>
+  <li>R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a></li>
+</ul>
+

@@ -3,15 +3,15 @@
 Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script, and load the packages we'll use today.
 ```{r, c18, echo=T, eval=F}
 library(tidyverse)
-library(forestMIDN)
+library(forestNETN)
 ```
 
 <details open><summary class='drop'>Read in and View Data</summary>
-Let's read in and explore some of the MIDN forest data tables. First, let's load in our plant lookup table using base R functions to read in data.
+Let's read in and explore some of the NETN forest data tables. First, let's load in our plant lookup table using base R functions to read in data.
 
-Read in the Plant species lookup table (tlu_Plants.csv) from the MIDN database. Remember that the data folder is one level higher in your directory, so you need to use ".." to go backwards and find it.
+Read in the Plant species lookup table (tlu_Plants.csv) from the NETN database. Remember that the data folder is one level higher in your directory, so you need to use ".." to go backwards and find it.
 ```{r, c19, echo=T, results='hide'}
-plants <- read.csv("../data/tlu_Plants.csv")
+plants <- read.csv("./data/NETN_forest_csvs/tlu_Plants.csv")
 ```
 
 Note that there's now an object in your global environment named plants. You can view the structure and the data by clicking on it in the global environment panel. You can also look at the data using a number of functions that work better for larger datasets (eg you don't want to print the whole dataset to the console because there's 1000+ records).
@@ -39,7 +39,7 @@ Note that the length(unique(data$column)) gives you the number of unique records
 Now load the location table, which stores all of the plot-related information. Let's do some row and column subsetting. Note that subsetting is a generic term for reducing the size of a dataset based on some defined conditions. Filtering typically means reducing rows. Selecting usually means reducing columns. I tend to use filter and subset interchangeably (sorry if that's confusing).
 ```{r, c21, echo=T, results='hide'}
 # Loading the location table, which stores all of the plot-related information
-loc <- read.csv("../data/tbl_Locations.csv")
+loc <- read.csv("./data/NETN_forest_csvs/tbl_Locations.csv")
 
 # Reduce number of columns by selecting
   # First see what the column names are
@@ -139,7 +139,7 @@ The next topic is summarizing data using group_by() and summarize() functions fr
 
 To demonstrate how this works, let's load in a test dataset.
 ```{r, c27, echo=T, results='hide'}
-regdf <- read.csv('../data/Regen_test_data.csv')
+regdf <- read.csv('./data/misc_files/Regen_test_data.csv')
 head(regdf)
 ```
 The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let's say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code). 

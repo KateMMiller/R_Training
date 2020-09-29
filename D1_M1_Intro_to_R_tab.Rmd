@@ -13,10 +13,10 @@ RStudio is an integrated development environment (IDE) that is a shell around th
 
 <ul class="disc">
   <li><b>Source:</b> the pane is the top left, and is where you can load and write scripts. When you're ready to run the scripts you can  
-  either highlight a line or lines and click "Run" or hit Ctrl+Enter. That essentially sends the code to R (which is living in the 
+  either highlight a line or lines and click "Run" or hit <b>Ctrl+Enter</b>. That essentially sends the code to R (which is living in the 
   console), and you'll typically see some form of output in the console.</li>
     <ul class="square">
-    <li>RStudio color codes functions, datasets, quoted strings, numbers, comments, etc. differently, so it's easier to read 
+    <li>RStudio color codes functions, datasets, quoted strings, numbers, comments, etc. differently to make it easier to read 
     code. You can customize the layout and appearance of your code by clicking on <b>Tools > Global Options</b>. For example, I prefer a dark 
     background, and use the Cobalt Editor Theme (under Appearance). Using that theme, comments are blue, numbers are magenta, quoted
     strings are green, etc.</li>
@@ -32,18 +32,19 @@ RStudio is an integrated development environment (IDE) that is a shell around th
   You can also click on objects and view them.</li>  
     <ul class="square">
     <li>The history tab in this pane shows the code you've run in the current session, and can be a way to recover lines you ran 
-    but maybe overwrote/saved in your script (In other words, I rarely go here, but it's saved me in a big way in the past!)</li>
+    but deleted or overwrote and later realized you needed in your script. In other words, I rarely go here, but it's really saved me
+    before!</li>
     </ul>
   <li><b>Workspace:</b> the pane in the bottom right shows the files within your working directory.</li>
     <ul class="square">
     <li>The Plots tab will show plots that you create.</li>
-    <li>The Packages tab allows you to turn on/off packages, and also view the help files within each package.</li>
+    <li>The Packages tab allows you to turn on/off packages, and also view the help files within each package. You can also do that with code.</li>
     </ul>
 </ul>
 </details>
-</br>
+<br>
 <details open><summary class='drop'>Useful keystrokes</summary>
-Once you get in the swing of coding, you'll find that minimizing the number of times you have to use your mouse will speed up your coding. RStudio has done a really good job of creating a ton of keyboard shortcuts to keep your hands on the keyboard instead of having to click through menus. One way to see all of the shortcuts RStudio has built in is to press <b>Alt+Shift+K</b>, and a window should appear with a bunch of shortcuts listed. These are also listed on <a href="https://rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf">RStudio's IDE Cheat Sheet</a>. The shortcuts I use the most often are listed below:
+Once you get in the swing of coding, you'll find that minimizing the number of times you have to use your mouse will help you code faster. RStudio has done a great job of creating a lot of really useful keyboard shortcuts to keep your hands on the keyboard instead of having to click through menus. One way to see all of the shortcuts RStudio has built in is to press <b>Alt+Shift+K</b>, and a window should appear with a bunch of shortcuts listed. These are also listed on <a href="https://rstudio.com/wp-content/uploads/2016/01/rstudio-IDE-cheatsheet.pdf">RStudio's IDE Cheat Sheet</a>. The shortcuts I use the most often are listed below:
 <ul><li>UNDO: Ctrl+Z</li>
 <li>REDO: Ctrl+Y</li>
 <li>Run highlighted code: Ctrl Enter</li>
@@ -61,11 +62,12 @@ Once you get in the swing of coding, you'll find that minimizing the number of t
 </details>
 </br>
 <details open><summary class='drop'>Global Options</summary>
-There are several settings in the Global Options that we'll want to all have consistent. To make sure you have the correct settings, go to:
+There are several settings in the Global Options that everyone should check to make sure we're all consistent. To make sure you have the correct settings, go to:
 
 <h3>Tools > Global Options</h3> 
 
-Under the General tab, you should see that your R Version is [64-bit] and the version is R-4.0.0. If it's not, you need to change it to that. Most settings can be whatever you prefer, including everything in the Appearance. The most important setting is to make sure you are not saving your history. When R saves your history, you start with the same workspace (including data loaded in the global environment), which seems like a good thing. However, the whole point of using R is that your code should return the same results every time you run it. Clearing your history every time you close RStudio forces you to test that your code is still returning the same results. If you happen to be working with huge datasets that take awhile to load and process, saving your history and RData are useful. Otherwise, clear your history by default by making sure <i>Always save history (even when not saving .RData)</i> is not checked. Also make sure the <i>Restore .RData into your workspace at startup</i> is unchecked. If you need to do that, you can run 1 line of code instead (load.Rdata("filename.Rdata")).  
+Under the General tab, you should see that your R Version is [64-bit] and the version is R-4.0.2. If it's not, you need to change it to that. 
+Next, check to make sure you are not saving your history. When R saves your history, you start with the same workspace (including data loaded in the global environment), which seems like a good thing. However, the whole point of using R is that your code should return the same results every time you run it. Clearing your history every time you close RStudio forces you to test that your code is still returning the same results. If you happen to be working with huge datasets that take awhile to load and process, saving your history and RData are useful. Otherwise, clear your history by default by making sure <i>Always save history (even when not saving .RData)</i> is not checked. Also make sure the <i>Restore .RData into your workspace at startup</i> is unchecked. If you ever need to do that, you can run 1 line of code instead (load.Rdata("filename.Rdata")). Most other settings are whatever you prefer, including everything in the Appearance.   
 </details>
 </br>
 <details open><summary class='drop'>Loading dependencies</summary>
@@ -74,7 +76,7 @@ While base R (everything that comes with the installation from CRAN) comes with 
   <li><i>dplyr:</i> data wrangling functions including filtering (subsetting), arranging, and summarizing</li>
   <li><i>tidyr:</i> reshaping data from long to wide and vice versa</li>
   <li><i>rgdal:</i> to set coordinate systems and create shapefiles </li>
-  <li><i>forestMIDN:</i> for importing, joining, and summarizing data specific to MIDN</li>
+  <li><i>forestNETN:</i> for importing, joining, and summarizing data specific to NETN</li>
   <li><i>devtools:</i> required to install packages from github</li>
 </ul>
 Note that <i>dplyr</i> and <i>tidyr</i> are part of the <i>tidyverse</i>, which is a collection of a lot of really useful packages. Instead of only installing <i>dplyr</i> and <i>tidyr</i> individually, I recommend installing and loading the <i>tidyverse</i>, which will load those packages, along with several other useful packages.
@@ -84,13 +86,13 @@ Note that <i>dplyr</i> and <i>tidyr</i> are part of the <i>tidyverse</i>, which 
 </ul>
 ```{r, c1, echo=T, eval=FALSE}
 install.packages(c("tidyverse", "rgdal", "devtools"))
-devtools::install_github("katemmiller/forestMIDN")
+devtools::install_github("katemmiller/forestNETN")
 
 ```
 You only need to run the previous code chunk once. After these packages are installed, you can just load the libraries. A couple of notes about packages.
 <ul>
   <li> Best practices for writing code are to load all of the packages you will use at the top of the script, so that it's obvious early to another user if they need to install a package.</li> 
-  <li>You only need devtools to install the forestMIDN package on github. Once forestMIDN is installed, you don't need to load devtools again.</li>
+  <li>You only need devtools to install the forestNETN package on github. Once forestNETN is installed, you don't need to load devtools again.</li>
   <li> The tidyverse and rgdal can take awhile to install, but once they're installed they are quick to load.</li>
   <li> Note the use of :: in the code chunk above. That's another way to use functions in a package without loading the package. I only use this for packages like devtools, which I only use once in a script and I use it early. The :: symbol also comes in handy if you're loading packages that have the same function name. </li>
   <li> To install a package, the name needs to be in quotes. To load the package via library(), you don't quote the package name. Don't ask me why...</li>
@@ -100,20 +102,20 @@ You only need to run the previous code chunk once. After these packages are inst
 ```{r, c2, echo=T, results='hide', message=FALSE}
 library(tidyverse)
 library(rgdal)
-library(forestMIDN)
+library(forestNETN)
 
 ```
 
 If you get an error that says there is no package called "x", it means that package didn't install properly, and you should try installing the package again. 
 
-A couple of tips for troubleshooting the forestMIDN package install. 
+A couple of tips for troubleshooting the forestNETN package install. 
 <ol>
 <li>Install Rtools for Windows 64-bit. The download page is <a href="https://cran.r-project.org/bin/windows/Rtools/">here.</a></li> 
 <li>If the error you're getting is mentioning the package backports, try doing the following:</li> 
   <ol style="list-style-type:upper-alpha">
   <li>Download the <a href="https://cran.r-project.org/bin/windows/contrib/4.0/backports_1.1.7.zip">Windows Binaries</a> for backports.</li>
   <li>Install backports from file in RStudio by going to <i>Tools> Install Packages> Install From:</i> Change the Install From option to "Package Archive File" and select backports_1.1.17.zip.</li></ol>
-  <li>Now try installing devtools and forestMIDN (install.packages("devtools"); devtools::install_github('katemmiller/forestMIDN'))</li>
+  <li>Now try installing devtools and forestNETN (install.packages("devtools"); devtools::install_github('katemmiller/forestNETN'))</li>
 </li>
 </ol>
 </details>

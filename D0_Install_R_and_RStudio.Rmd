@@ -1,0 +1,50 @@
+---
+title: "Preparing for Training"
+author: "Kate Miller"
+date: "9/25/2020"
+output: html_document
+---
+#### Install R and RStudio{.tabset}
+The only thing you really need to do to prepare for R training is to install the latest version of R and RStudio. We'll talk about the difference between R and RStudio on the first day, but for now, just make sure they're installed. You may need administrative privileges to install these programs, so please plan ahead. 
+
+Directions for installing R/RStudio are below. If you run into any problems, check the instructions at R for Data Science <a href="https://r4ds.had.co.nz/introduction.html#prerequisites">Section 1.4.1 and 1.4.2</a>. 
+
+Even if you already have R or RStudio installed, please install the latest versions of both programs. R recently went through a major version change from 3.x to 4.x with some potential code-breaking changes. The latest versions are needed to ensure everyone's code behaves the same way. 
+
+<details open><summary class='drop'>Install R 4.0.2</summary>
+The installer for the latest verion of R (assuming you're using a PC) can be downloaded <a href="https://cran.r-project.org/bin/windows/base/R-4.0.2-win.exe">here</a>. After it downloads, open and run the installer with default settings. Note that there's no need to pin R to your taskbar or add a shortcut to your desktop. For 99% of your needs, you'll run R within RStudio, and won't ever open R directly.
+</details>
+<br>
+
+<details open><summary class='drop'>Install RStudio</summary>
+The installer for RStudio for PCs can be downloaded <a href="https://download1.rstudio.org/desktop/windows/RStudio-1.3.1093.exe">here</a>. After it downloads, open and run the installer with default settings. I like having RStudio pinned to my taskbar, so it's easier to find/open, but it's up to you and your preferences.
+</details>
+<br>
+
+<details open><summary class='drop'>Install important libraries</summary>
+One of the great things about R is that users can build and share their own packages (AKA libraries) to add functionality to R. It's a similar idea as extensions in ArcGIS. To use other libraries, you need to first download/install them, and then you need to turn them on in your R session. Some of the packages take awhile to download. To save time during training, please try to install these prior to the first day. You can do that by opening RStudio, and in the window on the left type the code below, one line at a time. After each line, press enter to run it:
+
+```{r install_packages, echo=T, eval=F}
+install.packages(c("tidyverse", "devtools", "rgdal"))
+devtools::install_github("katemmiller/forestNETN")
+```
+
+Next check that this worked by typing the code below (again, one line at a time):
+```{r check_install, echo=T, results='hide', eval=FALSE}
+library(tidyverse)
+library(devtools)
+library(forestNETN)
+```
+
+If you run into any problems, we can troubleshoot the first day. We'll also discuss what the code above means the first day.
+</details>
+<br>
+
+<details open><summary class='drop'>Optional Reading</summary>
+This is optional, as I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
+</details>
+<br>
+
+<details open><summary class='drop'>Structure of training</summary>
+The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement topics and prepare for the next day's training. Please make an effort to at least skim the assignments each day.   
+</details>
