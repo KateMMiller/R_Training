@@ -12,4 +12,6 @@ To view all of the functions and links to their individual help files, type in h
 help(package=dplyr)
 ```
 
-Online resources include <a href="https://stackexchange.com/">Stackexchange</a>, and <a href="https://stackoverflow.com//">Stackoverflow</a>. For tidyverse-related packages/questions, there's really good documentation for each package and function <a href="https://tidyverse.tidyverse.org/"> here</a>. Google searches are usually my first step, and I include "in R" in every search related to R code. 
+Online resources include <a href="https://stackexchange.com/">Stackexchange</a>, and <a href="https://stackoverflow.com//">Stackoverflow</a>. For tidyverse-related packages/questions, there's really good documentation for each package and function <a href="https://tidyverse.tidyverse.org/"> here</a>. Google searches are usually my first step, and I include "in R" and the package name if applicable in every search related to R code. 
+
+<hr>

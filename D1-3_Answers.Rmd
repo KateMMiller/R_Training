@@ -4,15 +4,25 @@
 df[3, c("domSpp")]
 ```
 </details>
-</br>
+<br>
 <details><summary class='ques2'>Question 2: How would you make numtrees an integer?</summary> 
 ```{r, c106,echo=T, results='show'}
 df$numtrees <- as.integer(df$numtrees)
 str(df)
 ```
 </details>
-</br>
-<details><summary class='ques2'>Question 3: How would you calculate the percent of trees that are dead?</summary>
+<br>
+
+<details><summary class='ques2'>Question 3: How would you change the second row in invasive_pres from FALSE to TRUE?</summary> 
+```{r, c106b,echo=T, results='show'}
+df$invasive_pres[2] <- TRUE
+head(df)
+```
+</details>
+<br>
+
+
+<details><summary class='ques2'>Question 4: How would you calculate the percent of trees that are dead in the df data frame?</summary>
 ```{r, c107,echo=T, results='hide'}
 # base R version (2 options)
 df$numdead <- df$numtrees - df$numLive
@@ -27,7 +37,17 @@ df <- df %>% mutate(numdead = numtrees - numLive,
 df <- df %>% mutate(pctdead = (numtrees - numLive)/numtrees*100)
 ```
 </details>
-</br>
+<br>
+
+<details><summary class='ques2'>Question 5: What is the smallest number of dead trees observed in the df dataset?</summary>
+```{r c107b, echo=T, results='show'}
+min(df$numdead) # uses numdead column calculated for previous question. 
+summary(df$numdead)[1] #Min. is the record summary reports for numeric columns
+```
+</details>
+<br>
+
+
 <h2>Day 2</h2>
 <details><summary class='ques2'>Question 4: How would you select only the plots in ACAD and MIMA from the loc table?</summary>
 ```{r, c108, echo=T, results='hide'}
@@ -37,7 +57,7 @@ loc_VAFO_HOFU_tidy <- loc %>% filter(Unit_ID %in% c("ACAD", "MIMA"))
 
 ```
 </details>
-</br>
+<br>
 <details><summary class='ques2'>Question 5: How many plots are in MABI and SARA (based on loc table)?</summary>
 ```{r, c109,echo=T, results='show'}
 loc_MABI_SARA_tidy <- loc %>% filter(Unit_ID %in% c("MABI", "SARA")) %>% select(Unit_ID, Plot_Number) %>% unique()
@@ -49,7 +69,7 @@ nrow(loc_MABI_SARA_tidy_no_nas)
 ```
 
 </details>
-</br>
+<br>
 <details><summary class='ques2'>Question 6: How would you calculate the min and max for seed_den_m2?</summary>
 ```{r, c110,echo=T, results='show'}
 reg_by_park2 <- regdf %>% group_by(Unit_Code) %>% 
@@ -59,7 +79,7 @@ reg_by_park2 <- regdf %>% group_by(Unit_Code) %>%
 reg_by_park2
 ```
 </details>
-</br>
+<br>
 <details><summary class='ques2'>Question 7: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary>
 ```{r, c111,echo=T, results='hide'}
 eventQAQC <- event %>% filter(Event_QAQC == TRUE)
@@ -67,7 +87,7 @@ locevent_QAQC <- merge(loc, eventQAQC, by="Location_ID", all.x = F, all.y = T)
 ```
 This is technically a right join, because I'm telling R to take all of the records from the right table (eventQAQC) and only join records in left (loc) table that match. This is just a style preference. I prefer to keep higher level tables to the left of lower level tables (eg tables with 1 to many relationships). The loc (tbl_Locations) table is higher level than the event (tbl_Events) table, because the loc table has the 1 plot record and the event table has the many visits for the plot records. If this is confusing, don't worry about it. You'll just notice that it's the order I generally organize data in my code.  
 </details>
-</br>
+<br>
 <h2>Day 3</h2>
 <details><summary class='ques2'>Question 8: How many plots were sampled in ACAD in 2018?</summary>
 ```{r, c112,echo=T}
@@ -75,7 +95,7 @@ acad <- joinLocEvent(park = "ACAD", from = 2018, to = 2018)
 length(unique(acad$Plot_Number))
 ```
 </details>
-</br>
+<br>
 
 <details><summary class='ques2'>Question 9: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary>
 ```{r, c113,echo=T}
@@ -90,7 +110,7 @@ acad_top_70_tidy <- acad_tree_dist %>% arrange(desc(d70_79.9)) %>% slice(1) #The
 head(acad_top_70)
 ```
 </details>
-</br>
+<br>
 <details><summary class='ques2'>Question 10: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary>
 
 ```{r, c114,echo=T}
@@ -113,7 +133,7 @@ acad_wide_pivot <- acad_exo %>% select(Plot_Name, Latin_Name, present) %>%
 head(acad_wide_pivot)
 ```
 </details>
-</br>
+<br>
 <h2>Day 4</h2>
 <details><summary class='ques2'>Question 11: Take the gett_final graph and make 2 more changes to it.</summary>
 
@@ -132,4 +152,4 @@ You may have chosen other things to do than I did. Here are a couple of changes 
 
 Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars. lwd is the weight of the line. 
 </details>
-</br>
+<br>

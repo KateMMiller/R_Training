@@ -22,18 +22,22 @@ The installer for RStudio for PCs can be downloaded <a href="https://download1.r
 <br>
 
 <details open><summary class='drop'>Install important libraries</summary>
-One of the great things about R is that users can build and share their own packages (AKA libraries) to add functionality to R. It's a similar idea as extensions in ArcGIS. To use other libraries, you need to first download/install them, and then you need to turn them on in your R session. Some of the packages take awhile to download. To save time during training, please try to install these prior to the first day. You can do that by opening RStudio, and in the window on the left type the code below, one line at a time. After each line, press enter to run it:
+One of the great things about R is that users can build and share their own packages (AKA libraries) to add functionality to R. It's a similar idea as extensions in ArcGIS. To use other libraries, you need to first download/install them, and then you need to turn them on in your R session. Some of the packages take awhile to download. To save time during training, please try to install these prior to the first day. You can do that by opening RStudio, and in the window on the left (the console) paste the code below and press enter.
 
 ```{r install_packages, echo=T, eval=F}
 install.packages(c("tidyverse", "devtools", "rgdal"))
 devtools::install_github("katemmiller/forestNETN")
+devtools::install_github("NCRN/NCRNWater")
+devtools::install_github("NCRN/NCRNbirds")
 ```
 
-Next check that this worked by typing the code below (again, one line at a time):
+Next check that this worked by pasting the code below:
 ```{r check_install, echo=T, results='hide', eval=FALSE}
 library(tidyverse)
 library(devtools)
 library(forestNETN)
+library(NCRNWater)
+library(NCRNbirds)
 ```
 
 If you run into any problems, we can troubleshoot the first day. We'll also discuss what the code above means the first day.
@@ -41,10 +45,13 @@ If you run into any problems, we can troubleshoot the first day. We'll also disc
 <br>
 
 <details open><summary class='drop'>Optional Reading</summary>
-This is optional, as I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
+I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
 </details>
 <br>
 
 <details open><summary class='drop'>Structure of training</summary>
-The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement topics and prepare for the next day's training. Please make an effort to at least skim the assignments each day.   
+The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day's training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview"> Feedback form </a> at the end of each day. 
 </details>
+
+<hr>
+
