@@ -371,8 +371,10 @@ summary {
 <h2>ACAD R Training</h2>
 <div id="prep-for-training" class="section level3 tabset">
 <h3>Prep for Training</h3>
-<p>The only thing you really need to do to prepare for R training is to install the latest version of R and RStudio. We’ll talk about the difference between R and RStudio on the first day, but for now, just make sure they’re installed. You may need administrative privileges to install these programs, so please plan ahead.</p>
-<p>Directions for installing R/RStudio are below. If you run into any problems, check the instructions at R for Data Science <a href="https://r4ds.had.co.nz/introduction.html#prerequisites">Section 1.4.1 and 1.4.2</a>.</p>
+<h2>
+Installing required software
+</h2>
+<p>The only thing you really need to do to prepare for R training is to install the latest version of R and RStudio. We’ll talk about the difference between R and RStudio on the first day, but for now, just make sure they’re installed. You may need administrative privileges to install these programs, so please plan ahead. Directions for installing R/RStudio are below. If you run into any problems, check the instructions at R for Data Science <a href="https://r4ds.had.co.nz/introduction.html#prerequisites">Section 1.4.1 and 1.4.2</a>.</p>
 <p>Even if you already have R or RStudio installed, please install the latest versions of both programs. R recently went through a major version change from 3.x to 4.x with some potential code-breaking changes. The latest versions are needed to ensure everyone’s code behaves the same way.</p>
 <details open>
 <summary class="drop">Install R 4.0.2</summary> The installer for the latest verion of R (assuming you’re using a PC) can be downloaded <a href="https://cran.r-project.org/bin/windows/base/R-4.0.2-win.exe">here</a>. After it downloads, open and run the installer with default settings. Note that there’s no need to pin R to your taskbar or add a shortcut to your desktop. For 99% of your needs, you’ll run R within RStudio, and won’t ever open R directly.
@@ -642,7 +644,7 @@ invisible(lapply(subfolders, function(x){
 if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creating a data folder to store NETN data tables if it doesn&#39;t already exist. </code></pre>
 <p>Now we want to download the NETN data we’re going to explore later in the week. Unfortunately there’s a firewall between Sharepoint/Teams and R, so we can’t download the data directly in R. To download the NETN data, go to the <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">ACAD_R_Training_Info Team</a> and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the <b>data</b> folder you created in the previous step. Then run the code below.</p>
 <pre class="r"><code>list.files(&quot;./data&quot;) # check that you have data.zip in your data folder</code></pre>
-<pre><code>## [1] &quot;data.zip&quot;         &quot;misc_files&quot;       &quot;NETN_forest_csvs&quot; &quot;NETN_water_data&quot;</code></pre>
+<pre><code>## [1] &quot;data.zip&quot;</code></pre>
 <pre class="r"><code>unzip(&quot;./data/data.zip&quot;, exdir = &quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that the unzip worked. There should be multiple folders with datasets in each.</code></pre>
 <pre><code>## [1] &quot;data.zip&quot;         &quot;misc_files&quot;       &quot;NETN_forest_csvs&quot; &quot;NETN_water_data&quot;</code></pre>
@@ -1799,6 +1801,9 @@ invisible(lapply(subfolders, function(x){
   }))
 
 if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creating a data folder to store NETN data tables if it doesn&#39;t already exist. 
+zips &lt;- c(&quot;./data/misc_files&quot;, &quot;./data/NETN_forest_csvs&quot;, &quot;./data/NETN_water_data&quot;, &quot;./data/NETN_bird_data&quot;)
+unlink(zips, recursive=T)
+list.files(&quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that you have data.zip in your data folder
 unzip(&quot;./data/data.zip&quot;, exdir = &quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that the unzip worked. There should be multiple folders with datasets in each.
