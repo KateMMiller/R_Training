@@ -641,13 +641,14 @@ invisible(lapply(subfolders, function(x){
   if(!dir.exists(x)){dir.create(paste(getwd(), x, sep = &#39;/&#39;))}
   }))
 
-if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creating a data folder to store NETN data tables if it doesn&#39;t already exist. </code></pre>
+if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creates a data folder to store training data, if it doesn&#39;t already exist. </code></pre>
 <p>Now we want to download the NETN data we’re going to explore later in the week. Unfortunately there’s a firewall between Sharepoint/Teams and R, so we can’t download the data directly in R. To download the NETN data, go to the <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">ACAD_R_Training_Info Team</a> and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the <b>data</b> folder you created in the previous step. Then run the code below.</p>
 <pre class="r"><code>list.files(&quot;./data&quot;) # check that you have data.zip in your data folder</code></pre>
-<pre><code>## [1] &quot;data.zip&quot;</code></pre>
+<pre><code>## [1] &quot;data.zip&quot;     &quot;example_data&quot;</code></pre>
 <pre class="r"><code>unzip(&quot;./data/data.zip&quot;, exdir = &quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that the unzip worked. There should be multiple folders with datasets in each.</code></pre>
-<pre><code>## [1] &quot;data.zip&quot;         &quot;misc_files&quot;       &quot;NETN_forest_csvs&quot; &quot;NETN_water_data&quot;</code></pre>
+<pre><code>## [1] &quot;data.zip&quot;         &quot;example_data&quot;     &quot;misc_files&quot;       &quot;NETN_forest_csvs&quot;
+## [5] &quot;NETN_water_data&quot;</code></pre>
 <ul>
 <li>
 This approach makes sharing code easier, because the parent directly can vary across machines, as long as the project has the same sub-directory.
@@ -864,6 +865,8 @@ Data Summary I
 <pre><code>## [1] 31</code></pre>
 <pre class="r"><code>mean(df$numtrees)</code></pre>
 <pre><code>## [1] 20.85714</code></pre>
+<pre class="r"><code>range(df$numtrees) #gives min and max</code></pre>
+<pre><code>## [1] 14 31</code></pre>
 <p>The summary() function in R is another really useful function in R that can take just about any named object in your R session and provide you a meaningful summary. For data frames, the summary() function gives different/meaningful summary of each type of data column. The summary() function also works well for summarizing model output, like from ANOVA, linear regression, etc.</p>
 <pre class="r"><code>summary(df)</code></pre>
 <pre><code>##       plot        numtrees        numLive         domSpp         
@@ -893,6 +896,137 @@ Question 5: What is the smallest number of dead trees observed in the df dataset
 <p>That’s the end of Day 1! Be sure to save your Day 1 R script, try to answer the 5 questions from today, and complete the tasks in the Assignments tab as you have time. Answers to the questions are in the Answers tab. Note that I provide one or a few ways to get the answer to the questions, but it’s likely you’ll come up with your own. That’s how coding in R works!</p>
 <p>Lastly, don’t worry if you don’t understand everything. The key here was to expose you to the many different ways to work with and view data in R. Learning R requires repetition, determination, and patience. Just stick with it!</p>
 <hr>
+</div>
+<div id="importing-data-into-r" class="section level4 tabset">
+<h4>Importing Data into R</h4>
+<p>For the training modules that follow, we’re going to work with a larger dataset that contains some wetland plant data. First, import the data by running the code chunk below.</p>
+<pre class="r"><code>wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)</code></pre>
+<p>After running the code above, you should see a new object in your global environment named <b>wetdat</b> You can view the structure and the data by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet.</p>
+<h1>
+Add how to load excel here
+</h1>
+</div>
+<div id="subsetting-data" class="section level4 tabset">
+<h4>Subsetting Data</h4>
+<details open>
+<p><summary class="drop">Subsetting Data</summary> Technically, we already did some subsetting when we were trying to identify and fix problems in the df data frame. Now we’re going to do it more intentionally. Subsetting is a generic term for reducing the size of a dataset, either by reducing the number of rows or colums in the dataset. Filtering typically means reducing rows. Selecting usually means reducing columns.</p>
+<p>Using the wetdat data frame from above, let’s remove all species from the dataset that are considered protected from public (eg sensitive species we don’t want to publish the location to). There’s a logical column called Protected in the dataset that we’re going to use to filter out rows when Protected is TRUE. Let’s also simplify the data frame to only include the columns we care about.</p>
+<pre class="r"><code># Filter to remove protected species
+wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, ]
+nrow(wetdat) #508 rows in original dataset</code></pre>
+<pre><code>## [1] 508</code></pre>
+<pre class="r"><code>nrow(wetdat_pub) #499 rows in filtered dataset</code></pre>
+<pre><code>## [1] 499</code></pre>
+<pre class="r"><code>table(wetdat_pub$Protected) # Only Protected = FALSE</code></pre>
+<pre><code>## 
+## FALSE 
+##   499</code></pre>
+<pre class="r"><code># Select only fields you want
+wetdat_pub &lt;- wetdat_pub[ , c(&quot;Site_Name&quot;, &quot;Site_Type&quot;, &quot;Latin_Name&quot;, &quot;Year&quot;, &quot;Ave_Cov&quot;, &quot;Invasive&quot;, &quot;Protected&quot;)]
+names(wetdat_pub)</code></pre>
+<pre><code>## [1] &quot;Site_Name&quot;  &quot;Site_Type&quot;  &quot;Latin_Name&quot; &quot;Year&quot;       &quot;Ave_Cov&quot;   
+## [6] &quot;Invasive&quot;   &quot;Protected&quot;</code></pre>
+<pre class="r"><code># Previous steps can all happen in 1 line of code:
+wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, 
+                     c(&quot;Site_Name&quot;, &quot;Site_Type&quot;, &quot;Latin_Name&quot;, &quot;Year&quot;, &quot;Ave_Cov&quot;, &quot;Invasive&quot;, &quot;Protected&quot;)]
+
+nrow(wetdat_pub) #499 rows</code></pre>
+<pre><code>## [1] 499</code></pre>
+<pre class="r"><code>names(wetdat_pub) # Only includes fields we want</code></pre>
+<pre><code>## [1] &quot;Site_Name&quot;  &quot;Site_Type&quot;  &quot;Latin_Name&quot; &quot;Year&quot;       &quot;Ave_Cov&quot;   
+## [6] &quot;Invasive&quot;   &quot;Protected&quot;</code></pre>
+<pre class="r"><code>table(wetdat_pub$Protected) #All FALSE</code></pre>
+<pre><code>## 
+## FALSE 
+##   499</code></pre>
+<p>Note the use of == to subset. In R, when you’re trying to match against something (like Protected == FALSE, or Site_Name == “RAM44”), you use double == signs. When assigning something to an object (like mutate(newcolum = x + y)), you use a single = sign.</p>
+<p>If you want to pull out all records that are NOT equal to a value, you use !=. That is, in R, ! means NOT. For example Protected != TRUE means to pull in records where Protected is NOT TRUE (ie FALSE).</p>
+<p>Now the tidyverse way do in the previous code chunk using the select and filter command and pipes (%&gt;%). The select function is used for columns and the filter command is used for rows. Notice the lack of quotes for the column names. One of the benefits of the tidyverse packages is that you don’t have to quote column names, whereas you do in base R. It saves typing time and was a conscious decision of the tidyverse developers.</p>
+<pre class="r"><code>wetdat_tidy &lt;- wetdat %&gt;% filter(Protected == FALSE) %&gt;% 
+                          select(Site_Name, Site_Type, Latin_Name, Year, Ave_Cov, Invasive, Protected)
+                          # Any column name not mentioned in the select is dropped
+
+nrow(wetdat_tidy)
+names(wetdat_tidy)
+table(wetdat_tidy$Protected)
+
+# Even more efficient way to code this:
+wetdat_tidy &lt;- wetdat %&gt;% filter(Protected == FALSE) %&gt;% select(-Common, -PctFreq)</code></pre>
+Note the %&gt;%, called a “pipe”. The way to read what the pipe is doing is it takes the wetdat data frame, pipes it into the filter function, which drops protected species, then that newly filtered dataset is piped into the select function, and the Common and PctFreq columns are dropped. Also notice that column names aren’t quoted in tidy approach. That’s one of the big benefits of tidyverse functions. Not having to quote column names saves you time coding. It’s called non-standard evaluation. It actually causes problems when you write your own functions, but we won’t get into that during this training.
+</details>
+<p><br></p>
+<details open>
+<p><summary class="drop">Filtering with multiple values</summary> This section shows you how to filter rows based on multiple possible values. Using the wetland data again, let’s say we only want to look at the data from 2 sites: SEN-01 and SEN-03. To do that, we create a list of strings we want to match and tell R to take any record that matches any of the strings in that list.</p>
+<pre class="r"><code># Base R
+wetdat_2sites &lt;- wetdat[wetdat$Site_Name %in% c(&quot;SEN-01&quot;, &quot;SEN-03&quot;), ] 
+nrow(wetdat_2sites)
+table(wetdat_2sites$Site_Name)
+
+# Tidyverse
+wetdat_2tidy &lt;- wetdat %&gt;% filter(Site_Name %in% c(&quot;SEN-01&quot;, &quot;SEN-03&quot;))
+nrow(wetdat_2tidy)
+table(wetdat_2tidy$Site_Name)</code></pre>
+<p>The nice thing about using %in% is that it only pulls records that match exactly one of the values you give it, and you don’t have to worry about it also including NAs.</p>
+<p class="ques">
+Question 1: How would you select only the plots in VAFO and HOFU from the loc table?
+</p>
+<p class="ques">
+Question 2: How many plots are in VAFO and HOFU combined (based on loc table)?
+</p>
+</details>
+</br>
+<details open>
+<p><summary class="drop">Sorting Data</summary> Next topic is sorting data in R, which you can do alphabetically or numerically. Typically when you read in a dataset in R, the order is exactly the order of that in the original file. There are multiple ways to sort data in R. Let’s start by sorting the loc table by Unit_ID and Plot_Number.</p>
+<pre class="r"><code># head(loc2) # check original before sorting
+
+# # Base R- I always forget the exact code and have to look it up.
+# loc2_sort &lt;- loc2[order(loc2$Unit_ID, loc2$Plot_Number), ]
+# head(loc2_sort)
+# 
+# # Sort in reverse
+# loc2_sort_desc &lt;- loc2[order(desc(loc2$Unit_ID), -loc2$Plot_Number), ]
+# head(loc2_sort_desc)
+# # desc is for text, - is for numbers
+# 
+# # Tidyverse version
+# loc2_sort_tidy &lt;- loc2 %&gt;% arrange(Unit_ID, Plot_Number)
+# head(loc2_sort_tidy)
+# 
+# #Tidyverse reverse sort
+# loc2_sort_tidy_rev &lt;- loc2 %&gt;% arrange(desc(Unit_ID), desc(Plot_Number))
+# head(loc2_sort_tidy_rev)</code></pre>
+</details>
+</br>
+<details open>
+<p><summary class="drop">Summarizing Data</summary> The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park.</p>
+<p>To demonstrate how this works, let’s load in a test dataset.</p>
+<pre class="r"><code>regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
+head(regdf)</code></pre>
+<p>The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let’s say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code).</p>
+<pre class="r"><code>reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
+                         summarize(avg_seed_dens = mean(seed_den_m2),
+                                   avg_sap_dens = mean(sap_den_m2),
+                                   avg_stock = mean(stock),
+                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
+                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
+                                   se_stock = sd(stock)/sqrt(n()),
+                                   numplots = n()
+                                   )</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>print(reg_by_park)</code></pre>
+<pre><code>## # A tibble: 3 x 8
+##   Unit_Code avg_seed_dens avg_sap_dens avg_stock se_seed_dens se_sap_dens
+##   &lt;chr&gt;             &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+## 1 HOFU              1.32        0.0155      4.76        0.563     0.00596
+## 2 RICH              0.438       0.0733      4.60        0.125     0.0151 
+## 3 VAFO              0.473       0.0316      2.65        0.126     0.00934
+## # ... with 2 more variables: se_stock &lt;dbl&gt;, numplots &lt;int&gt;</code></pre>
+<p>In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.</p>
+<p class="ques">
+Question 6: How would you calculate the min and max for seed_den_m2?
+</p>
+</details>
+<p></br></p>
 </div>
 <div id="assignments" class="section level4">
 <h4>Assignments</h4>
@@ -924,151 +1058,193 @@ R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transforma
 <h3>Day 2</h3>
 <div id="data-wrangling-part-i" class="section level4 tabset">
 <h4>Data Wrangling Part I</h4>
-<p>Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script, and load the packages we’ll use today.</p>
+<p>We already did a bit of data wrangling in the df data frame yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Based on the survey you all filled out, this was the most checked topic to learn, so I’ll cover this in (painful?) detail.</p>
+<p>Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script. Then, load the tidyverse package and the wetland dataset we used at the end of yesterday.</p>
 <pre class="r"><code>library(tidyverse)
-library(forestNETN)</code></pre>
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)</code></pre>
 <details open>
-<p><summary class="drop">Read in and View Data</summary> Let’s read in and explore some of the NETN forest data tables. First, let’s load in our plant lookup table using base R functions to read in data.</p>
-<p>Read in the Plant species lookup table (tlu_Plants.csv) from the NETN database. Remember that the data folder is one level higher in your directory, so you need to use “..” to go backwards and find it.</p>
-<pre class="r"><code>plants &lt;- read.csv(&quot;./data/NETN_forest_csvs/tlu_Plants.csv&quot;)</code></pre>
-<p>Note that there’s now an object in your global environment named plants. You can view the structure and the data by clicking on it in the global environment panel. You can also look at the data using a number of functions that work better for larger datasets (eg you don’t want to print the whole dataset to the console because there’s 1000+ records).</p>
-<pre class="r"><code>head(plants) # shows the first 6 lines of the dataframe, including the names of the columns
-tail(plants[1:15]) # shows last 6 records in the dataframe (truncated for first 15 columns)
-names(plants) # shows the column names of the dataframe
-str(plants[1:15]) # shows the type of data in each column (truncated to the first 15 columns)
-
-plants[1,] # returns the first row and all of the columns of the plants table
-plants[1:4,c(9,10)] # returns the first four rows and the 9th and 10th column of the plants table
-plants[1:4, c(&quot;Latin_Name&quot;, &quot;Accepted_Latin_Name&quot;)] # does the same as the line above
-View(plants) # opens a new tab of the data, where you can sort and filter to explore the data
-
-sort(unique(plants$Latin_Name))[1:10] # makes list of all of the unique species in Latin_Name, sorts alphabetically, and gives first 10.
-
-length(unique(plants$Latin_Name)) # number of unique rows in specified column</code></pre>
-Note that the length(unique(data$column)) gives you the number of unique records within a field. In this case there are 1307 unique species in our plant lookup table.
+<p><summary class="drop">Read in and View Data</summary> For this training module, we’re going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
+<p>You can view the structure of the <b>wetdat</b> by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet. Both of these are acceptable ways to explore data, but I prefer to explore datasets through code, rather than my mouse.</p>
+<p>The code below is usually where I start (though I rarely use tail).</p>
+<pre class="r"><code>head(wetdat) # shows the first 6 lines of the dataframe, including the names of the columns
+tail(wetdat[1:3]) # shows last 6 records of first 3 columns in the dataframe
+names(wetdat) # shows the column names of the dataframe
+table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
+str(wetdat) # shows the type of data in each column
+summary(wetdat) # summarize each field based on data type</code></pre>
 </details>
-</br>
+<p><br></p>
 <details open>
-<p><summary class="drop">Selecting and Filtering Data</summary> Now load the location table, which stores all of the plot-related information. Let’s do some row and column subsetting. Note that subsetting is a generic term for reducing the size of a dataset based on some defined conditions. Filtering typically means reducing rows. Selecting usually means reducing columns. I tend to use filter and subset interchangeably (sorry if that’s confusing).</p>
-<pre class="r"><code># Loading the location table, which stores all of the plot-related information
-loc &lt;- read.csv(&quot;./data/NETN_forest_csvs/tbl_Locations.csv&quot;)
-
-# Reduce number of columns by selecting
-  # First see what the column names are
-names(loc)
-  # Now type in the columns you want in quotes and separated by a comma
-loc2 &lt;- loc[ , c(&quot;Location_ID&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;, &quot;Unit_ID&quot;, &quot;Loc_Type&quot;, &quot;Plot_Number&quot;)] 
-loc2b &lt;- loc[ , c(1:3, 11, 12, 14)] # The same as above, but fragile to column order changing
-
-# Reduce number of rows by filtering
-  # First see what the different types are
-sort(unique(loc2$Loc_Type)) # BN, Deer, TEST, VS. We want VS
-
-loc3 &lt;- loc2[loc2$Loc_Type == &quot;VS&quot;, ] # Subset data to only include &quot;VS&quot; location types
-loc3b &lt;- subset(loc2, Loc_Type == &quot;VS&quot;) # Another base R approach</code></pre>
-<p>Note the use of == to subset. In R, when you’re trying to match against something (like species == ‘white_oak’, or invasive_pres == TRUE), you use double == signs. When assigning something to an object (like mutate(newcolum = x + y)), you use a single = sign.</p>
-<p>If you want to pull out all records that are NOT equal to a value, you use !=. That is, in R, ! means NOT. For example invasive_pres != TRUE means to pull in records where invasive_pres is NOT TRUE.</p>
-<p>Now the tidyverse way to do steps to get from loc to loc3 in the previous code chunk using the select and filter command and pipes (%&gt;%). The select function is used for columns and the filter command is used for rows. Notice the lack of quotes for the column names. One of the benefits of the tidyverse packages is that you don’t have to quote column names, whereas you do in base R. It saves typing time and was a conscious decision of the tidyverse developers.</p>
-<pre class="r"><code>loc3_tidy &lt;- loc %&gt;% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Loc_Type, Plot_Number) %&gt;% 
-                     filter(Loc_Type == &quot;VS&quot;)</code></pre>
-<p>Now let’s check our work to see if the three approaches to subsetting returned the same results.</p>
-<pre class="r"><code>nrow(loc3) #417
-nrow(loc3b) #416
-nrow(loc3_tidy) #416
-
-table(complete.cases(loc3$Loc_Type)) # 1 FALSE means there&#39;s an NA in there
-table(complete.cases(loc3b$Loc_Type)) # All TRUE
-table(complete.cases(loc3_tidy$Loc_Type)) # All TRUE</code></pre>
-<p>Notice that the first subset we did for loc3 has 1 more row than the other 2. That’s because there’s an NA in the Loc_Type column, and it’s not automatically removed in the base R subset with brackets. We often have to tell base R what to do with NAs. A lot of functions have the option na.rm = TRUE to remove NAs as part of the function call. In the case of subsetting with brackets, you want to say take everything that is not NA. To do this run the code below.</p>
-<pre class="r"><code>loc3 &lt;- loc2[loc2$Loc_Type == &quot;VS&quot; &amp; !is.na(loc2$Loc_Type), ]
-table(complete.cases(loc3$Loc_Type)) # Now all TRUE
-nrow(loc3) # Now the same number of rows as the other 2.</code></pre>
-This example also shows why it’s important to always check that any subsetting or summarizing of your data worked correctly. For the park summaries, we’ll want to always check that the data we’re summarizing are based on the correct number of plots. The nrow() and length(unique(data$Plot_Number)) will help you do that. View(data), head(data), table(complete.cases(data$column_name)) are also helpful.
+<p><summary class="drop">Check and fix numeric fields that R reads as a character</summary> Both the summary and str functions show an issue with the Avg_Cov column: R classified this as a character, but we want it to be numeric. If R classified this as a character, it means that at least one record within this column contains something that isn’t a number. If your data frame isn’t huge, you can just run View(wetdat) to see the data and scroll/sort until you find the culprit. Strings will typically sort to the top or bottom of an otherwise numeric column.</p>
+<pre class="r"><code>View(wetdat)</code></pre>
+<p>Just by sorting Ave_Cov in the view above, you can see that there are 2 records with &lt;0.1 instead of 0.1. Also, note the row numbers to far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code, the row numbers are updated.</p>
+<p>Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I’m going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn’t the slickest approach because I’m pretending that I don’t know which record and which symbols are causing the problems. First, I’m going to create a temporary field called Ave_Cov_num that’s a numeric version of Ave_Cov.</p>
+<pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create a new field that converts Ave_Cov to numeric</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<p>Note the “NAs introduced by coercion” warning message in your console. This means that when you converted the Ave_Cov to numeric, there was at least 1 record that R didn’t read as a number, and it was set to NA in the Ave_Cov_num column. We’re going to use that to find and then fix the record(s) that are causing the issue.</p>
+<pre class="r"><code>which(is.na(wetdat$Ave_Cov_num)) </code></pre>
+<pre><code>## [1]  83 106</code></pre>
+<p>The line above is asking which rows in the Ave_Cov_num field are NA, and returns 83 and 106. Now let’s use brackets to return the data from those 2 rows.</p>
+<pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), ] #all fields</code></pre>
+<pre><code>##     Site_Name Site_Type            Latin_Name             Common Year PctFreq
+## 83     SEN-03  Sentinel     Cornus canadensis bunchberry dogwood 2011     100
+## 106    SEN-03  Sentinel Vaccinium macrocarpon    large cranberry 2011     100
+##     Ave_Cov Invasive Protected Ave_Cov_num
+## 83     &lt;0.1    FALSE     FALSE          NA
+## 106    &lt;0.1    FALSE     FALSE          NA</code></pre>
+<pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), c(&quot;Ave_Cov&quot;)] # Ave_Cov only</code></pre>
+<pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
+<pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only </code></pre>
+<pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
+<p>In the code above, we’re using brackets to subset the wetdat data frame to only return the rows that have NA in Ave_Cov_num. The first line returns all columns in those rows. The second and third lines only show us the Ave_Cov field, which is what we want to fix. Remember that brackets specify the [row, column] of a dataset. If you specify the dataset$column then you only have the row left, and don’t need a comma in the brackets. For example:</p>
+<pre class="r"><code>wetdat$Ave_Cov[2] #returns 2nd row in that column
+wetdat$Ave_Cov[2, ] #incorrect number of dimensions, because you already specified the Ave_Cov column.</code></pre>
+<p>Admittedly, subsetting with brackets can get complicated, and I’m not always sure if I need a comma in the bracket or not. If I get the “incorrect number of dimensions” error, I know I did it wrong and need to either add or delete the comma.</p>
+<p>Back to cleaning the data. We found that the records with non-numeric symbols were both “&lt;0.1”. We’re going to use that information to replace “&lt;0.1” with 0.1, instead of replace all NAs with 0.1 (just in case there are blanks in the data for other reasons). Of course the first thing you should do, when you see &lt;0.1 is to check your raw data, datasheets, etc. to make sure 0.1 is the correct replacement for the &lt;0.1 records. If you don’t know what the correct replacement should be, you should probably change the value to NA instead of “0.1”. That example is commented out in the code chunk below.</p>
+<pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
+#wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA
+str(wetdat)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    508 obs. of  10 variables:
+##  $ Site_Name  : chr  &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; ...
+##  $ Site_Type  : chr  &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; ...
+##  $ Latin_Name : chr  &quot;Acer rubrum&quot; &quot;Amelanchier&quot; &quot;Andromeda polifolia&quot; &quot;Arethusa bulbosa&quot; ...
+##  $ Common     : chr  &quot;red maple&quot; &quot;serviceberry&quot; &quot;bog rosemary&quot; &quot;dragon&#39;s mouth&quot; ...
+##  $ Year       : int  2011 2011 2011 2011 2011 2011 2011 2011 2011 2011 ...
+##  $ PctFreq    : int  NA 20 80 40 100 60 100 60 100 100 ...
+##  $ Ave_Cov    : chr  &quot;0.02&quot; &quot;0.02&quot; &quot;2.22&quot; &quot;0.04&quot; ...
+##  $ Invasive   : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ Protected  : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
+##  $ Ave_Cov_num: num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...</code></pre>
+<p>You can now View(wetdat) to see if &lt;0.1 is still in the dataset (it shouldn’t be). However, notice that Ave_Cov is still considered a chr (text field). You have to manually change it to numeric, but this time, we shouldn’t get any NAs introduced by coercion. I’m going to overwrite the Ave_Cov_num field because it’s just a temporary field for the purpose of data checking.</p>
+<pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
+str(wetdat) </code></pre>
+<pre><code>## &#39;data.frame&#39;:    508 obs. of  10 variables:
+##  $ Site_Name  : chr  &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; ...
+##  $ Site_Type  : chr  &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; ...
+##  $ Latin_Name : chr  &quot;Acer rubrum&quot; &quot;Amelanchier&quot; &quot;Andromeda polifolia&quot; &quot;Arethusa bulbosa&quot; ...
+##  $ Common     : chr  &quot;red maple&quot; &quot;serviceberry&quot; &quot;bog rosemary&quot; &quot;dragon&#39;s mouth&quot; ...
+##  $ Year       : int  2011 2011 2011 2011 2011 2011 2011 2011 2011 2011 ...
+##  $ PctFreq    : int  NA 20 80 40 100 60 100 60 100 100 ...
+##  $ Ave_Cov    : chr  &quot;0.02&quot; &quot;0.02&quot; &quot;2.22&quot; &quot;0.04&quot; ...
+##  $ Invasive   : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ Protected  : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
+##  $ Ave_Cov_num: num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...</code></pre>
+<p>Ave_Cov_num is numeric and no NAs were introduced by coercion, so it’s safe to overwrite the original Ave_Cov field. The entire workflow from start to finish is below:</p>
+<pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] #&quot;&lt;0.1&quot;</code></pre>
+<pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
+<pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
+wetdat$Ave_Cov &lt;- as.numeric(wetdat$Ave_Cov)
+wetdat &lt;- subset(wetdat, select = -c(Ave_Cov_num)) #now drop the temp column Ave_Cov_num
+str(wetdat) #Ave_Cov is now numeric</code></pre>
+<pre><code>## &#39;data.frame&#39;:    508 obs. of  9 variables:
+##  $ Site_Name : chr  &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; ...
+##  $ Site_Type : chr  &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; ...
+##  $ Latin_Name: chr  &quot;Acer rubrum&quot; &quot;Amelanchier&quot; &quot;Andromeda polifolia&quot; &quot;Arethusa bulbosa&quot; ...
+##  $ Common    : chr  &quot;red maple&quot; &quot;serviceberry&quot; &quot;bog rosemary&quot; &quot;dragon&#39;s mouth&quot; ...
+##  $ Year      : int  2011 2011 2011 2011 2011 2011 2011 2011 2011 2011 ...
+##  $ PctFreq   : int  NA 20 80 40 100 60 100 60 100 100 ...
+##  $ Ave_Cov   : num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...
+##  $ Invasive  : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ Protected : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...</code></pre>
+<pre class="r"><code>table(complete.cases(wetdat$Ave_Cov)) #checks that there aren&#39;t any more NAs. </code></pre>
+<pre><code>## 
+## TRUE 
+##  508</code></pre>
+<pre class="r"><code># If there were NAs, you&#39;d have a column named FALSE with the number of NAs below it.</code></pre>
 </details>
-</br>
+<p><br></p>
 <details open>
-<p><summary class="drop">Filtering with multiple values</summary> This section shows you how to filter rows based on multiple possible values. For the loc table, say we want to pull out Deer and BN (bonus) plots. The easiest way to do this is with <b>%in% c(“value1”, “value2”)</b>, which basically says, match all records that have one of the values in the list.</p>
-<pre class="r"><code>table(loc2$Loc_Type) # using this to see the levels again
-# Base R
-loc_deer_BN &lt;- loc2[loc2$Loc_Type %in% c(&quot;Deer&quot;, &quot;BN&quot;), ]
-
-# Tidyverse
-loc_deer_BN_tidy &lt;- loc2 %&gt;% filter(Loc_Type %in% c(&#39;Deer&#39;, &#39;BN&#39;))
-
-nrow(loc_deer_BN) #16
-nrow(loc_deer_BN_tidy) #16</code></pre>
-<p>The nice thing about using %in% is that it only pulls records that match exactly one of the values you give it, and you don’t have to worry about it also including NAs.</p>
-<p class="ques">
-Question 4: How would you select only the plots in VAFO and HOFU from the loc table?
-</p>
-<p class="ques">
-Question 5: How many plots are in VAFO and HOFU combined (based on loc table)?
-</p>
+<p><summary class="drop">Check and fix range of numeric data</summary> Another check I often do is to make sure there aren’t any impossible values. For example, both the Ave_Cov and PctFreq columns should range from 0 to 100. Negative values or values over 100 are errors. Let’s see if we find any in the data. Note that we couldn’t use the range() function with the original dataset until we fixed the &lt;0.1 issue and converted to numeric.</p>
+<pre class="r"><code>range(wetdat$PctFreq, na.rm = TRUE) # 20 to 100- that looks fine.</code></pre>
+<pre><code>## [1]  20 100</code></pre>
+<pre class="r"><code>range(wetdat$Ave_Cov, na.rm = TRUE) # 0.02 to 110.0- no bueno</code></pre>
+<pre><code>## [1]   0.02 110.00</code></pre>
+<p>The Ave_Cov column has at least 1 record &gt;100. We’re going to find out how many records are &gt;100, then replace them with the correct value. Note also the <b>na.rm = TRUE</b>. That tells R that if there are any blanks in the data, remove them for the range calculation, and only return numbers. If you didn’t include na.rm = TRUE, range would return NA NA if there’s a blank in the column (more on this in the next section).</p>
+<pre class="r"><code>wetdat[wetdat$Ave_Cov &gt; 100, ]</code></pre>
+<pre><code>##    Site_Name Site_Type       Latin_Name         Common Year PctFreq Ave_Cov
+## 36    SEN-01  Sentinel Arethusa bulbosa dragon&#39;s mouth 2011      20     110
+##    Invasive Protected
+## 36    FALSE      TRUE</code></pre>
+<p>There’s only 1 row, row 36, which has an Ave_Cov &gt; 100. In this case, pretend that we went back to the datasheet, and found that there was a data transcription error, and the correct value should be 11. The next line of code fixes the data for that specific record.</p>
+<pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov &gt; 100] &lt;- 11
+range(wetdat$Ave_Cov) </code></pre>
+<pre><code>## [1]  0.02 74.00</code></pre>
+Now Ave_Cov values are within the acceptable range of 0 to 100.
 </details>
-</br>
+<p><br></p>
 <details open>
-<p><summary class="drop">Sorting Data</summary> Next topic is sorting data in R, which you can do alphabetically or numerically. Typically when you read in a dataset in R, the order is exactly the order of that in the original file. There are multiple ways to sort data in R. Let’s start by sorting the loc table by Unit_ID and Plot_Number.</p>
-<pre class="r"><code>head(loc2) # check original before sorting
-
-# Base R- I always forget the exact code and have to look it up.
-loc2_sort &lt;- loc2[order(loc2$Unit_ID, loc2$Plot_Number), ]
-head(loc2_sort)
-
-# Sort in reverse
-loc2_sort_desc &lt;- loc2[order(desc(loc2$Unit_ID), -loc2$Plot_Number), ]
-head(loc2_sort_desc)
-# desc is for text, - is for numbers
-
-# Tidyverse version
-loc2_sort_tidy &lt;- loc2 %&gt;% arrange(Unit_ID, Plot_Number)
-head(loc2_sort_tidy)
-
-#Tidyverse reverse sort
-loc2_sort_tidy_rev &lt;- loc2 %&gt;% arrange(desc(Unit_ID), desc(Plot_Number))
-head(loc2_sort_tidy_rev)</code></pre>
+<p><summary class="drop">Finding and fixing blanks (NA)</summary> As I’ve mentioned before, R calls blanks in your data NA. R by default is very conservative about how it handles NAs. If you have an NA in an otherwise numeric column and are trying to do a mathematical operation (eg calculate sum, or mean, or run an ANOVA or linear regression), R will most likely return NA as the result. The philosophy behind that is the user must decide how to deal with NAs- either replace them with a logical value, like 0, or remove NAs from the calculation. Every situation is different. You, the user, need to decide the correct way to deal with NAs in your data.</p>
+<p>First, let’s look to see if there are NAs in the PctFreq and Ave_Cov columns (the main data of interest in the wetdat dataset).</p>
+<pre class="r"><code>table(complete.cases(wetdat$Ave_Cov)) #all TRUE</code></pre>
+<pre><code>## 
+## TRUE 
+##  508</code></pre>
+<pre class="r"><code>table(complete.cases(wetdat$PctFreq)) #some FALSE</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+##     5   503</code></pre>
+<p>While the Ave_Cov colum is all TRUE, the PctFreq has 5 NAs (FALSE in output). Now we need to decide whether the NAs should be changed to 0 or dropped from the dataset. Again, that’s up to the user and what you’re trying to do. For the purposes here, I’ll show you that the results change based on the decision you make.</p>
+<p>First, let’s do nothing.</p>
+<pre class="r"><code>mean(wetdat$PctFreq)</code></pre>
+<pre><code>## [1] NA</code></pre>
+<p>NA is returned. R’s basically awaiting further instruction. Let’s drop NAs from the calculation.</p>
+<pre class="r"><code>mean(wetdat$PctFreq, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 70.36779</code></pre>
+<p>Returns 70.36779. Note that na.rm = TRUE is pretty universal argument in R functions. Functions are typically set to na.rm = FALSE, which returns NA if there are blanks in your data. Now let’s assume that blanks should actually be 0.</p>
+<pre class="r"><code>wetdat$PctFreq[is.na(wetdat$PctFreq)] &lt;- 0
+table(complete.cases(wetdat$PctFreq))</code></pre>
+<pre><code>## 
+## TRUE 
+##  508</code></pre>
+<pre class="r"><code>mean(wetdat$PctFreq)</code></pre>
+<pre><code>## [1] 69.6752</code></pre>
+<p>Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller because the 0s are included.</p>
 </details>
-</br>
+<p><br></p>
 <details open>
-<p><summary class="drop">Summarizing Data</summary> The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park.</p>
-<p>To demonstrate how this works, let’s load in a test dataset.</p>
-<pre class="r"><code>regdf &lt;- read.csv(&#39;./data/misc_files/Regen_test_data.csv&#39;)
-head(regdf)</code></pre>
-<p>The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let’s say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code).</p>
-<pre class="r"><code>reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
-                         summarize(avg_seed_dens = mean(seed_den_m2),
-                                   avg_sap_dens = mean(sap_den_m2),
-                                   avg_stock = mean(stock),
-                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
-                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
-                                   se_stock = sd(stock)/sqrt(n()),
-                                   numplots = n()
-                                   )</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre class="r"><code>print(reg_by_park)</code></pre>
-<pre><code>## # A tibble: 3 x 8
-##   Unit_Code avg_seed_dens avg_sap_dens avg_stock se_seed_dens se_sap_dens
-##   &lt;chr&gt;             &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
-## 1 HOFU              1.32        0.0155      4.76        0.563     0.00596
-## 2 RICH              0.438       0.0733      4.60        0.125     0.0151 
-## 3 VAFO              0.473       0.0316      2.65        0.126     0.00934
-## # ... with 2 more variables: se_stock &lt;dbl&gt;, numplots &lt;int&gt;</code></pre>
-<p>In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.</p>
-<p class="ques">
-Question 6: How would you calculate the min and max for seed_den_m2?
-</p>
+<p><summary class="drop">Check and fix character columns</summary> A common issue with text/character fields is inconsistent naming conventions, for example with plot names. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let’s check to see if all of the Site_Name records follow that. Since we don’t have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.</p>
+<pre class="r"><code>table(wetdat$Site_Name)</code></pre>
+<pre><code>## 
+## RAM-05 RAM-41 RAM-44 RAM-53 RAM-62  RAM44 SEN-01 SEN-03  SEN-3 
+##     98     73     34     98     52     45     75     32      1</code></pre>
+<p>A couple of issues show up here. First, we see that there’s a site named RAM44 that’s missing a dash. We also see that there’s one SEN-3, which should be SEN-03. We’ll fix both of these below:</p>
+<pre class="r"><code>wetdat$Site_Name[wetdat$Site_Name == &quot;RAM44&quot;] &lt;- &quot;RAM-44&quot;
+wetdat$Site_Name[wetdat$Site_Name == &quot;SEN-3&quot;] &lt;- &quot;SEN-03&quot;
+table(wetdat$Site_Name)</code></pre>
+<pre><code>## 
+## RAM-05 RAM-41 RAM-44 RAM-53 RAM-62 SEN-01 SEN-03 
+##     98     73     79     98     52     75     33</code></pre>
+<pre class="r"><code>sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column</code></pre>
+<pre><code>## [1] &quot;RAM-05&quot; &quot;RAM-41&quot; &quot;RAM-44&quot; &quot;RAM-53&quot; &quot;RAM-62&quot; &quot;SEN-01&quot; &quot;SEN-03&quot;</code></pre>
+Problems solved.
 </details>
-<p></br></p>
-</div>
-<div id="saving-data-to-file" class="section level4">
-<h4>Saving data to file</h4>
-The last thing today is how to write the data you’re working on to a file in your computer.
-<p class="code">
-The following code saves reg_by_park to file:
-</p>
-<pre class="r"><code>write.csv(reg_by_park, &quot;./data/Regen_test_summary.csv&quot;)</code></pre>
-<p>You should now see a new file in your data folder. Note that csv stands for comma separated values, and is a generic version of a spreadsheet that most programs can read. They’re lightweight, can open in most spreadsheet-like and text editing software. They don’t save any kind of formatting though (eg cell borders, bolded text, merged cells, etc). We’ll use the csv format to save all of our data to file, until we want to format it for publication, which we’ll use .xlsx for.</p>
-<p>We’re not actually going to use that file for anything, so you can delete it now (either manually, or running the following code.)</p>
-<pre class="r"><code>file.remove(&quot;./data/Regen_test_summary.csv&quot;)</code></pre>
+<p><br></p>
+<details open>
+<p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc., to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked.</p>
+<p>In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below.</p>
+<pre class="r"><code>dim(wetdat) # reports # rows then # cols</code></pre>
+<pre><code>## [1] 508   9</code></pre>
+<pre class="r"><code>nrow(wetdat) # reports # rows only</code></pre>
+<pre><code>## [1] 508</code></pre>
+<pre class="r"><code>length(unique(wetdat$Site_Name)) # number of unique values in Site_Name</code></pre>
+<pre><code>## [1] 7</code></pre>
+<pre class="r"><code>length(unique(wetdat$Year)) # number of unique years</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years</code></pre>
+<pre><code>##         
+##          2011 2012 2017
+##   RAM-05    0   44   54
+##   RAM-41    0   33   40
+##   RAM-44    0   34   45
+##   RAM-53    0   48   50
+##   RAM-62    0   26   26
+##   SEN-01   75    0    0
+##   SEN-03   33    0    0</code></pre>
+</details>
+<p><br></p>
+<hr>
 </div>
 <div id="joining-dataframes" class="section level4">
 <h4>Joining dataframes</h4>
@@ -1192,6 +1368,17 @@ Question 7: How would you take only QA/QC events and join the loc table to QA/QC
 <hr />
 <p>I should mention that this is pretty advanced stuff. I coded for years before attempting this in R. If you don’t quite understand the concepts, don’t worry. The forestNETN package does most of the heavy lifting with joining tables for you! I’m just giving you a hint of what’s under the hood, so you understand what you’re doing when you use the functions. The key is to understand which function in that package you need to use for your summary, and how to ask it to give you the data you want. Tomorrow, we take a tour of the forestNETN package.</p>
 <p>That’s it for Day 2! Please save your script and complete the tasks in the assignments tab.</p>
+</div>
+<div id="saving-data-to-file" class="section level4">
+<h4>Saving data to file</h4>
+The last thing today is how to write the data you’re working on to a file in your computer.
+<p class="code">
+The following code saves reg_by_park to file:
+</p>
+<pre class="r"><code>write.csv(reg_by_park, &quot;./data/Regen_test_summary.csv&quot;)</code></pre>
+<p>You should now see a new file in your data folder. Note that csv stands for comma separated values, and is a generic version of a spreadsheet that most programs can read. They’re lightweight, can open in most spreadsheet-like and text editing software. They don’t save any kind of formatting though (eg cell borders, bolded text, merged cells, etc). We’ll use the csv format to save all of our data to file, until we want to format it for publication, which we’ll use .xlsx for.</p>
+<p>We’re not actually going to use that file for anything, so you can delete it now (either manually, or running the following code.)</p>
+<pre class="r"><code>file.remove(&quot;./data/Regen_test_summary.csv&quot;)</code></pre>
 </div>
 <div id="assignments-1" class="section level4">
 <h4>Assignments</h4>
@@ -1772,6 +1959,7 @@ Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars.
 
 
 
+
 install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;))
 devtools::install_github(&quot;katemmiller/forestNETN&quot;)
 devtools::install_github(&quot;NCRN/NCRNWater&quot;)
@@ -1800,7 +1988,7 @@ invisible(lapply(subfolders, function(x){
   if(!dir.exists(x)){dir.create(paste(getwd(), x, sep = &#39;/&#39;))}
   }))
 
-if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creating a data folder to store NETN data tables if it doesn&#39;t already exist. 
+if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creates a data folder to store training data, if it doesn&#39;t already exist. 
 zips &lt;- c(&quot;./data/misc_files&quot;, &quot;./data/NETN_forest_csvs&quot;, &quot;./data/NETN_water_data&quot;, &quot;./data/NETN_bird_data&quot;)
 unlink(zips, recursive=T)
 list.files(&quot;./data&quot;)
@@ -1864,82 +2052,68 @@ str(df)
 min(df$numtrees)
 max(df$numtrees)
 mean(df$numtrees)
+range(df$numtrees) #gives min and max
 summary(df)
 df$numdead &lt;- df$numtrees - df$numLive # base R version
 df &lt;- df %&gt;% mutate(numdead = numtrees - numLive) # tidyverse version. 
-library(tidyverse)
-library(forestNETN)
-plants &lt;- read.csv(&quot;./data/NETN_forest_csvs/tlu_Plants.csv&quot;)
-head(plants) # shows the first 6 lines of the dataframe, including the names of the columns
-tail(plants[1:15]) # shows last 6 records in the dataframe (truncated for first 15 columns)
-names(plants) # shows the column names of the dataframe
-str(plants[1:15]) # shows the type of data in each column (truncated to the first 15 columns)
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
+# Filter to remove protected species
+wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, ]
+nrow(wetdat) #508 rows in original dataset
+nrow(wetdat_pub) #499 rows in filtered dataset
+table(wetdat_pub$Protected) # Only Protected = FALSE
 
-plants[1,] # returns the first row and all of the columns of the plants table
-plants[1:4,c(9,10)] # returns the first four rows and the 9th and 10th column of the plants table
-plants[1:4, c(&quot;Latin_Name&quot;, &quot;Accepted_Latin_Name&quot;)] # does the same as the line above
-View(plants) # opens a new tab of the data, where you can sort and filter to explore the data
+# Select only fields you want
+wetdat_pub &lt;- wetdat_pub[ , c(&quot;Site_Name&quot;, &quot;Site_Type&quot;, &quot;Latin_Name&quot;, &quot;Year&quot;, &quot;Ave_Cov&quot;, &quot;Invasive&quot;, &quot;Protected&quot;)]
+names(wetdat_pub)
 
-sort(unique(plants$Latin_Name))[1:10] # makes list of all of the unique species in Latin_Name, sorts alphabetically, and gives first 10.
+# Previous steps can all happen in 1 line of code:
+wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, 
+                     c(&quot;Site_Name&quot;, &quot;Site_Type&quot;, &quot;Latin_Name&quot;, &quot;Year&quot;, &quot;Ave_Cov&quot;, &quot;Invasive&quot;, &quot;Protected&quot;)]
 
-length(unique(plants$Latin_Name)) # number of unique rows in specified column
-# Loading the location table, which stores all of the plot-related information
-loc &lt;- read.csv(&quot;./data/NETN_forest_csvs/tbl_Locations.csv&quot;)
+nrow(wetdat_pub) #499 rows
+names(wetdat_pub) # Only includes fields we want
+table(wetdat_pub$Protected) #All FALSE
+wetdat_tidy &lt;- wetdat %&gt;% filter(Protected == FALSE) %&gt;% 
+                          select(Site_Name, Site_Type, Latin_Name, Year, Ave_Cov, Invasive, Protected)
+                          # Any column name not mentioned in the select is dropped
 
-# Reduce number of columns by selecting
-  # First see what the column names are
-names(loc)
-  # Now type in the columns you want in quotes and separated by a comma
-loc2 &lt;- loc[ , c(&quot;Location_ID&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;, &quot;Unit_ID&quot;, &quot;Loc_Type&quot;, &quot;Plot_Number&quot;)] 
-loc2b &lt;- loc[ , c(1:3, 11, 12, 14)] # The same as above, but fragile to column order changing
+nrow(wetdat_tidy)
+names(wetdat_tidy)
+table(wetdat_tidy$Protected)
 
-# Reduce number of rows by filtering
-  # First see what the different types are
-sort(unique(loc2$Loc_Type)) # BN, Deer, TEST, VS. We want VS
-
-loc3 &lt;- loc2[loc2$Loc_Type == &quot;VS&quot;, ] # Subset data to only include &quot;VS&quot; location types
-loc3b &lt;- subset(loc2, Loc_Type == &quot;VS&quot;) # Another base R approach
-loc3_tidy &lt;- loc %&gt;% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Loc_Type, Plot_Number) %&gt;% 
-                     filter(Loc_Type == &quot;VS&quot;)
-nrow(loc3) #417
-nrow(loc3b) #416
-nrow(loc3_tidy) #416
-
-table(complete.cases(loc3$Loc_Type)) # 1 FALSE means there&#39;s an NA in there
-table(complete.cases(loc3b$Loc_Type)) # All TRUE
-table(complete.cases(loc3_tidy$Loc_Type)) # All TRUE
-loc3 &lt;- loc2[loc2$Loc_Type == &quot;VS&quot; &amp; !is.na(loc2$Loc_Type), ]
-table(complete.cases(loc3$Loc_Type)) # Now all TRUE
-nrow(loc3) # Now the same number of rows as the other 2.
-
-table(loc2$Loc_Type) # using this to see the levels again
+# Even more efficient way to code this:
+wetdat_tidy &lt;- wetdat %&gt;% filter(Protected == FALSE) %&gt;% select(-Common, -PctFreq)
 # Base R
-loc_deer_BN &lt;- loc2[loc2$Loc_Type %in% c(&quot;Deer&quot;, &quot;BN&quot;), ]
+wetdat_2sites &lt;- wetdat[wetdat$Site_Name %in% c(&quot;SEN-01&quot;, &quot;SEN-03&quot;), ] 
+nrow(wetdat_2sites)
+table(wetdat_2sites$Site_Name)
 
 # Tidyverse
-loc_deer_BN_tidy &lt;- loc2 %&gt;% filter(Loc_Type %in% c(&#39;Deer&#39;, &#39;BN&#39;))
+wetdat_2tidy &lt;- wetdat %&gt;% filter(Site_Name %in% c(&quot;SEN-01&quot;, &quot;SEN-03&quot;))
+nrow(wetdat_2tidy)
+table(wetdat_2tidy$Site_Name)
 
-nrow(loc_deer_BN) #16
-nrow(loc_deer_BN_tidy) #16
-head(loc2) # check original before sorting
 
-# Base R- I always forget the exact code and have to look it up.
-loc2_sort &lt;- loc2[order(loc2$Unit_ID, loc2$Plot_Number), ]
-head(loc2_sort)
+# head(loc2) # check original before sorting
 
-# Sort in reverse
-loc2_sort_desc &lt;- loc2[order(desc(loc2$Unit_ID), -loc2$Plot_Number), ]
-head(loc2_sort_desc)
-# desc is for text, - is for numbers
-
-# Tidyverse version
-loc2_sort_tidy &lt;- loc2 %&gt;% arrange(Unit_ID, Plot_Number)
-head(loc2_sort_tidy)
-
-#Tidyverse reverse sort
-loc2_sort_tidy_rev &lt;- loc2 %&gt;% arrange(desc(Unit_ID), desc(Plot_Number))
-head(loc2_sort_tidy_rev)
-regdf &lt;- read.csv(&#39;./data/misc_files/Regen_test_data.csv&#39;)
+# # Base R- I always forget the exact code and have to look it up.
+# loc2_sort &lt;- loc2[order(loc2$Unit_ID, loc2$Plot_Number), ]
+# head(loc2_sort)
+# 
+# # Sort in reverse
+# loc2_sort_desc &lt;- loc2[order(desc(loc2$Unit_ID), -loc2$Plot_Number), ]
+# head(loc2_sort_desc)
+# # desc is for text, - is for numbers
+# 
+# # Tidyverse version
+# loc2_sort_tidy &lt;- loc2 %&gt;% arrange(Unit_ID, Plot_Number)
+# head(loc2_sort_tidy)
+# 
+# #Tidyverse reverse sort
+# loc2_sort_tidy_rev &lt;- loc2 %&gt;% arrange(desc(Unit_ID), desc(Plot_Number))
+# head(loc2_sort_tidy_rev)
+regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
 head(regdf)
 
 reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
@@ -1952,8 +2126,60 @@ reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;%
                                    numplots = n()
                                    )
 print(reg_by_park)
-write.csv(reg_by_park, &quot;./data/Regen_test_summary.csv&quot;)
-file.remove(&quot;./data/Regen_test_summary.csv&quot;)
+library(tidyverse)
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
+head(wetdat) # shows the first 6 lines of the dataframe, including the names of the columns
+tail(wetdat[1:3]) # shows last 6 records of first 3 columns in the dataframe
+names(wetdat) # shows the column names of the dataframe
+table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
+str(wetdat) # shows the type of data in each column
+summary(wetdat) # summarize each field based on data type
+View(wetdat)
+wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create a new field that converts Ave_Cov to numeric
+which(is.na(wetdat$Ave_Cov_num)) 
+wetdat[which(is.na(wetdat$Ave_Cov_num)), ] #all fields
+wetdat[which(is.na(wetdat$Ave_Cov_num)), c(&quot;Ave_Cov&quot;)] # Ave_Cov only
+wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only 
+wetdat$Ave_Cov[2] #returns 2nd row in that column
+wetdat$Ave_Cov[2, ] #incorrect number of dimensions, because you already specified the Ave_Cov column.
+wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
+#wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA
+str(wetdat)
+wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
+str(wetdat) 
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
+wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
+wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] #&quot;&lt;0.1&quot;
+wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
+wetdat$Ave_Cov &lt;- as.numeric(wetdat$Ave_Cov)
+wetdat &lt;- subset(wetdat, select = -c(Ave_Cov_num)) #now drop the temp column Ave_Cov_num
+str(wetdat) #Ave_Cov is now numeric
+table(complete.cases(wetdat$Ave_Cov)) #checks that there aren&#39;t any more NAs. 
+# If there were NAs, you&#39;d have a column named FALSE with the number of NAs below it.
+range(wetdat$PctFreq, na.rm = TRUE) # 20 to 100- that looks fine.
+range(wetdat$Ave_Cov, na.rm = TRUE) # 0.02 to 110.0- no bueno
+wetdat[wetdat$Ave_Cov &gt; 100, ]
+wetdat$Ave_Cov[wetdat$Ave_Cov &gt; 100] &lt;- 11
+range(wetdat$Ave_Cov) 
+table(complete.cases(wetdat$Ave_Cov)) #all TRUE
+table(complete.cases(wetdat$PctFreq)) #some FALSE
+mean(wetdat$PctFreq)
+mean(wetdat$PctFreq, na.rm = TRUE)
+wetdat$PctFreq[is.na(wetdat$PctFreq)] &lt;- 0
+table(complete.cases(wetdat$PctFreq))
+mean(wetdat$PctFreq)
+table(wetdat$Site_Name)
+wetdat$Site_Name[wetdat$Site_Name == &quot;RAM44&quot;] &lt;- &quot;RAM-44&quot;
+wetdat$Site_Name[wetdat$Site_Name == &quot;SEN-3&quot;] &lt;- &quot;SEN-03&quot;
+table(wetdat$Site_Name)
+sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column
+dim(wetdat) # reports # rows then # cols
+nrow(wetdat) # reports # rows only
+
+length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
+length(unique(wetdat$Year)) # number of unique years
+
+table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
 loc&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Locations.csv&quot;)
 event&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Events.csv&quot;)
 View(loc) #Location_ID
@@ -2021,6 +2247,8 @@ nrow(locevent_full) #1200
 nrow(locevent_left) #1150
 View(locevent_full)
 View(locevent_left)
+write.csv(reg_by_park, &quot;./data/Regen_test_summary.csv&quot;)
+file.remove(&quot;./data/Regen_test_summary.csv&quot;)
 library(tidyverse)
 library(forestNETN)
 library(rgdal)

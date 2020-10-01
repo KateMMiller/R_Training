@@ -7,6 +7,7 @@ Using the df we created in the previous section, let's perform some basic summar
 min(df$numtrees)
 max(df$numtrees)
 mean(df$numtrees)
+range(df$numtrees) #gives min and max
 ```
 
 The summary() function in R is another really useful function in R that can take just about any named object in your R session and provide you a meaningful summary. For data frames, the summary() function gives different/meaningful summary of each type of data column. The summary() function also works well for summarizing model output, like from ANOVA, linear regression, etc. 
