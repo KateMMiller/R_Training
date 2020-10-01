@@ -9,3 +9,4 @@ Please complete the assignments below  (they're ordered from highest to lowest p
   <li>R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a></li>
 </ul>
 
+<hr>

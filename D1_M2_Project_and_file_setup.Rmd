@@ -16,13 +16,15 @@ invisible(lapply(subfolders, function(x){
 if(!dir.exists("./data")){dir.create('./data')} # creating a data folder to store NETN data tables if it doesn't already exist. 
 ```
 
-Now we want to download the NETN data we're going to explore later in the week. Unfortunately there's a firewall between Sharepoint/Teams and R, so we can't download the data directly in R. To download the NETN data, go to The ACAD_R_Training_Info team and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the data folder you created in the previous step. Then run the code below. 
+Now we want to download the NETN data we're going to explore later in the week. Unfortunately there's a firewall between Sharepoint/Teams and R, so we can't download the data directly in R. To download the NETN data, go to the <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">ACAD_R_Training_Info Team</a> and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the <b>data</b> folder you created in the previous step. Then run the code below. 
 
 ```{r, c3data, echo=TRUE}
 list.files("./data") # check that you have data.zip in your data folder
 unzip("./data/data.zip", exdir = "./data")
-list.files("./data") # check that the unzip worked. There should be multiple folders with datasets within each.
+list.files("./data") # check that the unzip worked. There should be multiple folders with datasets in each.
 ```
 
-<ul><li>This approach makes sharing code easier, because the parent directly can vary across machines, as long as the project has the same subdirectory. </li>
-<li>The last thing to mention here is the # in the code chunk above. The # comments out anything after it on the same line, so R knows not to try to run it. Commenting your code allows you to document what you're doing, so it's easier for someone else (or you 3 months later) to follow your code. </li></ul>
+<ul><li>This approach makes sharing code easier, because the parent directly can vary across machines, as long as the project has the same sub-directory. </li>
+<li>The last thing to mention here is the # in the code chunk above. The # comments out anything after it on the same line, so R knows not to run it. Commenting your code allows you to document what you're doing, so it's easier for someone else (or you 3 months later) to follow your code. </li></ul>
+
+<hr>

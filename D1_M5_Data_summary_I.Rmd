@@ -1,7 +1,7 @@
 #### Data Summary I{.tabset}
 
 <h2>Data Summary I</h2>
-Using the df we created, let's perform some basic summary statistics. Base R has a number of summary statistics built into it that are really useful, including mean, min, and max. These will come in handy when we start summarizing the data for our parks. 
+Using the df we created in the previous section, let's perform some basic summary statistics. Base R has a number of summary statistics built into it that are really useful, including mean, min, and max. These will come in handy when we start summarizing the data for our parks. 
 
 ```{r, c15, echo=T, results='show'}
 min(df$numtrees)
@@ -9,7 +9,7 @@ max(df$numtrees)
 mean(df$numtrees)
 ```
 
-The summary() function in R is another way to summarize your data. It knows the type of variable for each column, and gives you a meaningful summary of each type. 
+The summary() function in R is another really useful function in R that can take just about any named object in your R session and provide you a meaningful summary. For data frames, the summary() function gives different/meaningful summary of each type of data column. The summary() function also works well for summarizing model output, like from ANOVA, linear regression, etc. 
 ```{r, c16, echo=T, results='show'}
 summary(df)
 ```
@@ -19,12 +19,14 @@ df$numdead <- df$numtrees - df$numLive # base R version
 df <- df %>% mutate(numdead = numtrees - numLive) # tidyverse version. 
 ```
 
-The <b>mutate</b> function is in the dplyr package of the tidyverse. It creates a new column in your dataframe, named numdead, and tells it to equal numtrees - numLive in the same way the base R version does. Mutate just spares you having to write df$ over and over. 
+The <b>mutate</b> function is in the <i>dplyr</i> package of the tidyverse. The mutate function is used to create a new column in an existing data frame, and always returns the same number of records as the existing data frame. In this example, mutate creates a new column called numdead, and tells it to equal numtrees - numLive. The results are identical to the base R version in the line above. Mutate just spares you having to write df$ over and over. 
 
-<p class='ques'>Question 3: How would you calculate the percent of trees that are dead? </p>
+<p class='ques'>Question 4: How would you calculate the percent of trees that are dead in the df data frame? </p>
 
-----
-That's the end of Day 1! Be sure to save your Day 1 R script and complete the assigned tasks in the Assignments tab as you have time. Note that I provide one or a few ways to get the answer to the questions, but it's likely you'll come up with your own. That's how coding in R works!
+<p class='ques'>Question 5: What is the smallest number of dead trees observed in the df dataset? </p>
 
-Lastly, don't worry if you don't understand everything. The key here was to expose you to the many different ways to work with and view data in R. I don't expect you to understand/remember everything the first time (I was lost on how to use brackets [ , ] for a long time). Learning R requires repetition and patience, so stick with it!
+That's the end of Day 1! Be sure to save your Day 1 R script, try to answer the 5 questions from today, and complete the tasks in the Assignments tab as you have time. Answers to the questions are in the Answers tab. Note that I provide one or a few ways to get the answer to the questions, but it's likely you'll come up with your own. That's how coding in R works!
 
+Lastly, don't worry if you don't understand everything. The key here was to expose you to the many different ways to work with and view data in R. Learning R requires repetition, determination, and patience. Just stick with it!
+
+<hr>
