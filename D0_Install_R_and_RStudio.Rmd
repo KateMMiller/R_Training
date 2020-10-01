@@ -4,9 +4,8 @@ author: "Kate Miller"
 date: "9/25/2020"
 output: html_document
 ---
-The only thing you really need to do to prepare for R training is to install the latest version of R and RStudio. We'll talk about the difference between R and RStudio on the first day, but for now, just make sure they're installed. You may need administrative privileges to install these programs, so please plan ahead. 
-
-Directions for installing R/RStudio are below. If you run into any problems, check the instructions at R for Data Science <a href="https://r4ds.had.co.nz/introduction.html#prerequisites">Section 1.4.1 and 1.4.2</a>. 
+<h2>Installing required software</h2>
+The only thing you really need to do to prepare for R training is to install the latest version of R and RStudio. We'll talk about the difference between R and RStudio on the first day, but for now, just make sure they're installed. You may need administrative privileges to install these programs, so please plan ahead. Directions for installing R/RStudio are below. If you run into any problems, check the instructions at R for Data Science <a href="https://r4ds.had.co.nz/introduction.html#prerequisites">Section 1.4.1 and 1.4.2</a>. 
 
 Even if you already have R or RStudio installed, please install the latest versions of both programs. R recently went through a major version change from 3.x to 4.x with some potential code-breaking changes. The latest versions are needed to ensure everyone's code behaves the same way. 
 
