@@ -80,16 +80,31 @@ head(wetdat_sort_tidy)
 </details>
 <br>
 <h2>Day 2</h2>
-<details><summary class='ques2'>Question 3: How would you calculate the min and max for seed_den_m2?</summary>
-```{r, c110,echo=T, results='show'}
-reg_by_park2 <- regdf %>% group_by(Unit_Code) %>% 
-                          summarize(min_seed_dens = min(seed_den_m2),
-                          max_seed_dens = max(seed_den_m2))
+<details><summary class='ques2'>Question 1: There's a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</summary>
 
-reg_by_park2
+```{r, c110, echo=T, results='show'}
+sort(unique(wetdat$Latin_Name)) # use your eyes to spot the "Alnus incana++"
+
+# The regular expression way to find non-alphabetical symbols (now you know why I didn't cover this).
+wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record
+# This took longer than I'd like to admit to make work, by the way.
+
 ```
 </details>
 <br>
+
+<details><summary class='ques2'>Question 2: Now that you've found it, fix it, and check that you fixed it.</summary>
+```{r, c110b, echo=T, results='show'}
+wetdat$Latin_Name[wetdat$Latin_Name == "Alnus incana++"] <- "Alnus incana"
+wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # regex approach 
+sort(unique(wetdat$Latin_Name)) # using your eyes approach
+
+```
+
+</details>
+<br>
+
+
 <details><summary class='ques2'>Question 4: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary>
 ```{r, c111,echo=T, results='hide'}
 eventQAQC <- event %>% filter(Event_QAQC == TRUE)

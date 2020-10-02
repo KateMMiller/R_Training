@@ -39,7 +39,7 @@ Just by sorting Ave_Cov in the view above, you can see that there are 2 records 
 Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I'm going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn't the slickest approach because I'm pretending that I don't know which record and which symbols are causing the problems. First, I'm going to create a temporary field called Ave_Cov_num that's a numeric version of Ave_Cov.
 
 ```{r c20c, echo=T, results='show'}
-wetdat$Ave_Cov_num <- as.numeric(wetdat$Ave_Cov) #create a new field that converts Ave_Cov to numeric
+wetdat$Ave_Cov_num <- as.numeric(wetdat$Ave_Cov) #create new field that converts Ave_Cov to numeric
 ```
 Note the "NAs introduced by coercion" warning message in your console. This means that when you converted the Ave_Cov to numeric, there was at least 1 record that R didn't read as a number, and it was set to NA (blank) in the Ave_Cov_num column. We're going to use that to find and then fix the record(s) that are causing the issue. 
 
@@ -160,13 +160,12 @@ wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)] #
 
 ```
 
-You can also check if any Site_Name records are missing a dash.
+You can also check if any Site_Name records are missing a dash using the grepl function. The grepl function is a string matching 
 ```{r, c21k, echo=T, results='show'}
 wetdat$Site_Name[which(!grepl("-", wetdat$Site_Name))]
 ```
 
-We'll fix both of the issues we found below:
-
+Now to fix and then check both of the issues:
 ```{r, c21i, echo= T, results='hide', eval=T}
 wetdat$Site_Name[wetdat$Site_Name == "RAM44"] <- "RAM-44"
 wetdat$Site_Name[wetdat$Site_Name == "SEN-3"] <- "SEN-03"
@@ -175,15 +174,15 @@ wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)]
 table(wetdat$Site_Name)
 sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column
 ```
-Problems solved. 
+Problems solved (character(0) means no records returned). Note that there are other more powerful solutions using functions like gsub, but they require more upfront coding and understand of regular expressions in Perl to work. I only use them when the solution above doesn't work. If you ever need to know more about that, a decent intro is <a href="https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html">here</a>. I provide examples on how to use regular expressions for pattern matching in the answers section, but I'm not going to go down that rabbit hole during training (I barely understand them myself).
 
 </details>
 <br>
 
 <details open><summary class='drop'>Checking your work</summary>
-If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc., to your data, you always want to check your work and make sure you've still got the correct number of sites, individuals, visits, etc. before moving to the next step. Just because you didn't get an error or warning, doesn't mean the code you ran worked! 
+If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you've still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn't get an error or warning, doesn't mean the code you ran worked! 
 
-In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird.
+In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird (hence the sort(unique()) line).
 ```{r, c21l, echo=T, results='hide'}
 dim(wetdat) # reports # rows then # cols
 nrow(wetdat) # reports # rows only
@@ -193,8 +192,13 @@ length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
 
-sort(unique(wetdat$Latin_Name)) # see all the species in the dataset
+sort(unique(wetdat$Common)) # see all the common names in the dataset
 ```
+
+<p class='ques'>Question 1: There's a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</p>
+
+<p class='ques'>Question 2: Now that you've found it, fix it, and check that you fixed it.</p>
+
 </details>
 <br>
 

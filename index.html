@@ -1118,7 +1118,7 @@ summary(wetdat) # summarize each field based on data type</code></pre>
 <pre class="r"><code>View(wetdat)</code></pre>
 <p>Just by sorting Ave_Cov in the view above, you can see that there are 2 records with &lt;0.1 instead of 0.1. Also, note the row numbers to far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code, the row numbers are updated.</p>
 <p>Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I’m going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn’t the slickest approach because I’m pretending that I don’t know which record and which symbols are causing the problems. First, I’m going to create a temporary field called Ave_Cov_num that’s a numeric version of Ave_Cov.</p>
-<pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create a new field that converts Ave_Cov to numeric</code></pre>
+<pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create new field that converts Ave_Cov to numeric</code></pre>
 <pre><code>## Warning: NAs introduced by coercion</code></pre>
 <p>Note the “NAs introduced by coercion” warning message in your console. This means that when you converted the Ave_Cov to numeric, there was at least 1 record that R didn’t read as a number, and it was set to NA (blank) in the Ave_Cov_num column. We’re going to use that to find and then fix the record(s) that are causing the issue.</p>
 <pre class="r"><code>which(is.na(wetdat$Ave_Cov_num)) </code></pre>
@@ -1257,26 +1257,26 @@ Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller b
 ## [28] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
 ## [37] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
 ## [46] &quot;RAM44&quot;</code></pre>
-<p>You can also check if any Site_Name records are missing a dash.</p>
+<p>You can also check if any Site_Name records are missing a dash using the grepl function. The grepl function is a string matching</p>
 <pre class="r"><code>wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]</code></pre>
 <pre><code>##  [1] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
 ## [10] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
 ## [19] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
 ## [28] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
 ## [37] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;</code></pre>
-<p>We’ll fix both of the issues we found below:</p>
+<p>Now to fix and then check both of the issues:</p>
 <pre class="r"><code>wetdat$Site_Name[wetdat$Site_Name == &quot;RAM44&quot;] &lt;- &quot;RAM-44&quot;
 wetdat$Site_Name[wetdat$Site_Name == &quot;SEN-3&quot;] &lt;- &quot;SEN-03&quot;
 wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]
 wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)]
 table(wetdat$Site_Name)
 sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column</code></pre>
-<p>Problems solved.</p>
+<p>Problems solved (character(0) means no records returned). Note that there are other more powerful solutions using functions like gsub, but they require more upfront coding and understand of regular expressions in Perl to work. I only use them when the solution above doesn’t work. If you ever need to know more about that, a decent intro is <a href="https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html">here</a>. I provide examples on how to use regular expressions for pattern matching in the answers section, but I’m not going to go down that rabbit hole during training (I barely understand them myself).</p>
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc., to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked!</p>
-<p>In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird.</p>
+<p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked!</p>
+<p>In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird (hence the sort(unique()) line).</p>
 <pre class="r"><code>dim(wetdat) # reports # rows then # cols
 nrow(wetdat) # reports # rows only
 
@@ -1285,7 +1285,13 @@ length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
 
-sort(unique(wetdat$Latin_Name)) # see all the species in the dataset</code></pre>
+sort(unique(wetdat$Common)) # see all the common names in the dataset</code></pre>
+<p class="ques">
+Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?
+</p>
+<p class="ques">
+Question 2: Now that you’ve found it, fix it, and check that you fixed it.
+</p>
 </details>
 <p><br></p>
 <hr>
@@ -1883,20 +1889,153 @@ head(wetdat_sort_tidy)</code></pre>
 Day 2
 </h2>
 <details>
-<p><summary class="ques2">Question 3: How would you calculate the min and max for seed_den_m2?</summary></p>
-<pre class="r"><code>reg_by_park2 &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
-                          summarize(min_seed_dens = min(seed_den_m2),
-                          max_seed_dens = max(seed_den_m2))</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre class="r"><code>reg_by_park2</code></pre>
-<pre><code>## # A tibble: 3 x 3
-##   Unit_Code min_seed_dens max_seed_dens
-##   &lt;chr&gt;             &lt;dbl&gt;         &lt;dbl&gt;
-## 1 HOFU                  0          9.33
-## 2 RICH                  0          3.42
-## 3 VAFO                  0          2.92</code></pre>
+<p><summary class="ques2">Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</summary></p>
+<pre class="r"><code>sort(unique(wetdat$Latin_Name)) # use your eyes to spot the &quot;Alnus incana++&quot;</code></pre>
+<pre><code>##   [1] &quot;Acer rubrum&quot;                     &quot;Alnus incana&quot;                   
+##   [3] &quot;Alnus incana++&quot;                  &quot;Amelanchier&quot;                    
+##   [5] &quot;Andromeda polifolia&quot;             &quot;Apocynum androsaemifolium&quot;      
+##   [7] &quot;Arethusa bulbosa&quot;                &quot;Aronia melanocarpa&quot;             
+##   [9] &quot;Betula populifolia&quot;              &quot;Calamagrostis canadensis&quot;       
+##  [11] &quot;Calopogon tuberosus&quot;             &quot;Carex&quot;                          
+##  [13] &quot;Carex atlantica&quot;                 &quot;Carex exilis&quot;                   
+##  [15] &quot;Carex folliculata&quot;               &quot;Carex lacustris&quot;                
+##  [17] &quot;Carex lasiocarpa&quot;                &quot;Carex limosa&quot;                   
+##  [19] &quot;Carex magellanica&quot;               &quot;Carex Ovalis group&quot;             
+##  [21] &quot;Carex pauciflora&quot;                &quot;Carex stricta&quot;                  
+##  [23] &quot;Carex trisperma&quot;                 &quot;Carex utriculata&quot;               
+##  [25] &quot;Chamaedaphne calyculata&quot;         &quot;Comptonia peregrina&quot;            
+##  [27] &quot;Cornus canadensis&quot;               &quot;Danthonia spicata&quot;              
+##  [29] &quot;Dichanthelium acuminatum&quot;        &quot;Doellingeria umbellata&quot;         
+##  [31] &quot;Drosera intermedia&quot;              &quot;Drosera rotundifolia&quot;           
+##  [33] &quot;Dryopteris cristata&quot;             &quot;Dulichium arundinaceum&quot;         
+##  [35] &quot;Empetrum nigrum&quot;                 &quot;Epilobium leptophyllum&quot;         
+##  [37] &quot;Equisetum arvense&quot;               &quot;Eriophorum angustifolium&quot;       
+##  [39] &quot;Eriophorum tenellum&quot;             &quot;Eriophorum vaginatum&quot;           
+##  [41] &quot;Eriophorum virginicum&quot;           &quot;Eurybia macrophylla&quot;            
+##  [43] &quot;Eurybia radula&quot;                  &quot;Festuca filiformis&quot;             
+##  [45] &quot;Gaultheria hispidula&quot;            &quot;Gaylussacia baccata&quot;            
+##  [47] &quot;Gaylussacia dumosa&quot;              &quot;Glyceria&quot;                       
+##  [49] &quot;Glyceria striata&quot;                &quot;Ilex mucronata&quot;                 
+##  [51] &quot;Ilex verticillata&quot;               &quot;Iris versicolor&quot;                
+##  [53] &quot;Juncus acuminatus&quot;               &quot;Juncus canadensis&quot;              
+##  [55] &quot;Juncus effusus&quot;                  &quot;Juniperus communis&quot;             
+##  [57] &quot;Kalmia angustifolia&quot;             &quot;Kalmia polifolia&quot;               
+##  [59] &quot;Larix laricina&quot;                  &quot;Lupinus polyphyllus&quot;            
+##  [61] &quot;Lycopodiella inundata&quot;           &quot;Lysimachia terrestris&quot;          
+##  [63] &quot;Maianthemum canadense&quot;           &quot;Maianthemum trifolium&quot;          
+##  [65] &quot;Malus&quot;                           &quot;Melampyrum lineare&quot;             
+##  [67] &quot;Monotropa uniflora&quot;              &quot;Morella pensylvanica&quot;           
+##  [69] &quot;Muhlenbergia uniflora&quot;           &quot;Myrica gale&quot;                    
+##  [71] &quot;Nuphar variegata&quot;                &quot;Oclemena nemoralis&quot;             
+##  [73] &quot;Oclemena X blakei&quot;               &quot;Onoclea sensibilis&quot;             
+##  [75] &quot;Osmunda regalis&quot;                 &quot;Osmundastrum cinnamomea&quot;        
+##  [77] &quot;Phleum pratense&quot;                 &quot;Picea glauca&quot;                   
+##  [79] &quot;Picea mariana&quot;                   &quot;Picea rubens&quot;                   
+##  [81] &quot;Pinus banksiana&quot;                 &quot;Pinus strobus&quot;                  
+##  [83] &quot;Pogonia ophioglossoides&quot;         &quot;Populus grandidentata&quot;          
+##  [85] &quot;Populus tremuloides&quot;             &quot;Prenanthes&quot;                     
+##  [87] &quot;Quercus rubra&quot;                   &quot;Ranunculus acris&quot;               
+##  [89] &quot;Rhamnus frangula&quot;                &quot;Rhododendron canadense&quot;         
+##  [91] &quot;Rhododendron groenlandicum&quot;      &quot;Rhynchospora alba&quot;              
+##  [93] &quot;Rosa nitida&quot;                     &quot;Rosa palustris&quot;                 
+##  [95] &quot;Rosa virginiana&quot;                 &quot;Rubus&quot;                          
+##  [97] &quot;Rubus flagellaris&quot;               &quot;Rubus hispidus&quot;                 
+##  [99] &quot;Salix&quot;                           &quot;Salix petiolaris&quot;               
+## [101] &quot;Sarracenia purpurea&quot;             &quot;Scirpus cyperinus&quot;              
+## [103] &quot;Scutellaria&quot;                     &quot;Scutellaria lateriflora&quot;        
+## [105] &quot;Solidago rugosa&quot;                 &quot;Solidago uliginosa&quot;             
+## [107] &quot;Sorbus americana&quot;                &quot;Spiraea alba&quot;                   
+## [109] &quot;Spiraea tomentosa&quot;               &quot;Symphyotrichum novi-belgii&quot;     
+## [111] &quot;Symplocarpus foetidus&quot;           &quot;Thelypteris palustris&quot;          
+## [113] &quot;Thuja occidentalis&quot;              &quot;Triadenum&quot;                      
+## [115] &quot;Triadenum virginicum&quot;            &quot;Trichophorum cespitosum&quot;        
+## [117] &quot;Trientalis borealis&quot;             &quot;Typha latifolia&quot;                
+## [119] &quot;Utricularia cornuta&quot;             &quot;Vaccinium angustifolium&quot;        
+## [121] &quot;Vaccinium corymbosum&quot;            &quot;Vaccinium macrocarpon&quot;          
+## [123] &quot;Vaccinium myrtilloides&quot;          &quot;Vaccinium oxycoccos&quot;            
+## [125] &quot;Vaccinium vitis-idaea&quot;           &quot;Veronica officinalis&quot;           
+## [127] &quot;Viburnum nudum&quot;                  &quot;Viburnum nudum var. cassinoides&quot;
+## [129] &quot;Vicia cracca&quot;                    &quot;Viola&quot;                          
+## [131] &quot;Xyris montana&quot;</code></pre>
+<pre class="r"><code># The regular expression way to find non-alphabetical symbols (now you know why I didn&#39;t cover this).
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record</code></pre>
+<pre><code>## [1] &quot;Alnus incana++&quot;</code></pre>
+<pre class="r"><code># This took longer than I&#39;d like to admit to make work, by the way.</code></pre>
 </details>
-<br>
+<p><br></p>
+<details>
+<p><summary class="ques2">Question 2: Now that you’ve found it, fix it, and check that you fixed it.</summary></p>
+<pre class="r"><code>wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot;
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex approach </code></pre>
+<pre><code>## character(0)</code></pre>
+<pre class="r"><code>sort(unique(wetdat$Latin_Name)) # using your eyes approach</code></pre>
+<pre><code>##   [1] &quot;Acer rubrum&quot;                     &quot;Alnus incana&quot;                   
+##   [3] &quot;Amelanchier&quot;                     &quot;Andromeda polifolia&quot;            
+##   [5] &quot;Apocynum androsaemifolium&quot;       &quot;Arethusa bulbosa&quot;               
+##   [7] &quot;Aronia melanocarpa&quot;              &quot;Betula populifolia&quot;             
+##   [9] &quot;Calamagrostis canadensis&quot;        &quot;Calopogon tuberosus&quot;            
+##  [11] &quot;Carex&quot;                           &quot;Carex atlantica&quot;                
+##  [13] &quot;Carex exilis&quot;                    &quot;Carex folliculata&quot;              
+##  [15] &quot;Carex lacustris&quot;                 &quot;Carex lasiocarpa&quot;               
+##  [17] &quot;Carex limosa&quot;                    &quot;Carex magellanica&quot;              
+##  [19] &quot;Carex Ovalis group&quot;              &quot;Carex pauciflora&quot;               
+##  [21] &quot;Carex stricta&quot;                   &quot;Carex trisperma&quot;                
+##  [23] &quot;Carex utriculata&quot;                &quot;Chamaedaphne calyculata&quot;        
+##  [25] &quot;Comptonia peregrina&quot;             &quot;Cornus canadensis&quot;              
+##  [27] &quot;Danthonia spicata&quot;               &quot;Dichanthelium acuminatum&quot;       
+##  [29] &quot;Doellingeria umbellata&quot;          &quot;Drosera intermedia&quot;             
+##  [31] &quot;Drosera rotundifolia&quot;            &quot;Dryopteris cristata&quot;            
+##  [33] &quot;Dulichium arundinaceum&quot;          &quot;Empetrum nigrum&quot;                
+##  [35] &quot;Epilobium leptophyllum&quot;          &quot;Equisetum arvense&quot;              
+##  [37] &quot;Eriophorum angustifolium&quot;        &quot;Eriophorum tenellum&quot;            
+##  [39] &quot;Eriophorum vaginatum&quot;            &quot;Eriophorum virginicum&quot;          
+##  [41] &quot;Eurybia macrophylla&quot;             &quot;Eurybia radula&quot;                 
+##  [43] &quot;Festuca filiformis&quot;              &quot;Gaultheria hispidula&quot;           
+##  [45] &quot;Gaylussacia baccata&quot;             &quot;Gaylussacia dumosa&quot;             
+##  [47] &quot;Glyceria&quot;                        &quot;Glyceria striata&quot;               
+##  [49] &quot;Ilex mucronata&quot;                  &quot;Ilex verticillata&quot;              
+##  [51] &quot;Iris versicolor&quot;                 &quot;Juncus acuminatus&quot;              
+##  [53] &quot;Juncus canadensis&quot;               &quot;Juncus effusus&quot;                 
+##  [55] &quot;Juniperus communis&quot;              &quot;Kalmia angustifolia&quot;            
+##  [57] &quot;Kalmia polifolia&quot;                &quot;Larix laricina&quot;                 
+##  [59] &quot;Lupinus polyphyllus&quot;             &quot;Lycopodiella inundata&quot;          
+##  [61] &quot;Lysimachia terrestris&quot;           &quot;Maianthemum canadense&quot;          
+##  [63] &quot;Maianthemum trifolium&quot;           &quot;Malus&quot;                          
+##  [65] &quot;Melampyrum lineare&quot;              &quot;Monotropa uniflora&quot;             
+##  [67] &quot;Morella pensylvanica&quot;            &quot;Muhlenbergia uniflora&quot;          
+##  [69] &quot;Myrica gale&quot;                     &quot;Nuphar variegata&quot;               
+##  [71] &quot;Oclemena nemoralis&quot;              &quot;Oclemena X blakei&quot;              
+##  [73] &quot;Onoclea sensibilis&quot;              &quot;Osmunda regalis&quot;                
+##  [75] &quot;Osmundastrum cinnamomea&quot;         &quot;Phleum pratense&quot;                
+##  [77] &quot;Picea glauca&quot;                    &quot;Picea mariana&quot;                  
+##  [79] &quot;Picea rubens&quot;                    &quot;Pinus banksiana&quot;                
+##  [81] &quot;Pinus strobus&quot;                   &quot;Pogonia ophioglossoides&quot;        
+##  [83] &quot;Populus grandidentata&quot;           &quot;Populus tremuloides&quot;            
+##  [85] &quot;Prenanthes&quot;                      &quot;Quercus rubra&quot;                  
+##  [87] &quot;Ranunculus acris&quot;                &quot;Rhamnus frangula&quot;               
+##  [89] &quot;Rhododendron canadense&quot;          &quot;Rhododendron groenlandicum&quot;     
+##  [91] &quot;Rhynchospora alba&quot;               &quot;Rosa nitida&quot;                    
+##  [93] &quot;Rosa palustris&quot;                  &quot;Rosa virginiana&quot;                
+##  [95] &quot;Rubus&quot;                           &quot;Rubus flagellaris&quot;              
+##  [97] &quot;Rubus hispidus&quot;                  &quot;Salix&quot;                          
+##  [99] &quot;Salix petiolaris&quot;                &quot;Sarracenia purpurea&quot;            
+## [101] &quot;Scirpus cyperinus&quot;               &quot;Scutellaria&quot;                    
+## [103] &quot;Scutellaria lateriflora&quot;         &quot;Solidago rugosa&quot;                
+## [105] &quot;Solidago uliginosa&quot;              &quot;Sorbus americana&quot;               
+## [107] &quot;Spiraea alba&quot;                    &quot;Spiraea tomentosa&quot;              
+## [109] &quot;Symphyotrichum novi-belgii&quot;      &quot;Symplocarpus foetidus&quot;          
+## [111] &quot;Thelypteris palustris&quot;           &quot;Thuja occidentalis&quot;             
+## [113] &quot;Triadenum&quot;                       &quot;Triadenum virginicum&quot;           
+## [115] &quot;Trichophorum cespitosum&quot;         &quot;Trientalis borealis&quot;            
+## [117] &quot;Typha latifolia&quot;                 &quot;Utricularia cornuta&quot;            
+## [119] &quot;Vaccinium angustifolium&quot;         &quot;Vaccinium corymbosum&quot;           
+## [121] &quot;Vaccinium macrocarpon&quot;           &quot;Vaccinium myrtilloides&quot;         
+## [123] &quot;Vaccinium oxycoccos&quot;             &quot;Vaccinium vitis-idaea&quot;          
+## [125] &quot;Veronica officinalis&quot;            &quot;Viburnum nudum&quot;                 
+## [127] &quot;Viburnum nudum var. cassinoides&quot; &quot;Vicia cracca&quot;                   
+## [129] &quot;Viola&quot;                           &quot;Xyris montana&quot;</code></pre>
+</details>
+<p><br></p>
 <details>
 <p><summary class="ques2">Question 4: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary></p>
 <pre class="r"><code>eventQAQC &lt;- event %&gt;% filter(Event_QAQC == TRUE)
@@ -2265,7 +2404,7 @@ str(wetdat) # shows the type of data in each column
 summary(wetdat) # summarize each field based on data type
 
 View(wetdat)
-wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create a new field that converts Ave_Cov to numeric
+wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create new field that converts Ave_Cov to numeric
 which(is.na(wetdat$Ave_Cov_num)) 
 wetdat[which(is.na(wetdat$Ave_Cov_num)), ] # all columns with NA in Ave_Cov_num
 wetdat[which(is.na(wetdat$Ave_Cov_num)), &quot;Ave_Cov&quot;] # Ave_Cov only
@@ -2314,7 +2453,7 @@ length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
 
-sort(unique(wetdat$Latin_Name)) # see all the species in the dataset
+sort(unique(wetdat$Common)) # see all the common names in the dataset
 loc&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Locations.csv&quot;)
 event&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Events.csv&quot;)
 View(loc) #Location_ID
@@ -2559,11 +2698,16 @@ wetdat_sort &lt;- wetdat[order(-wetdat$Ave_Cov, wetdat$Latin_Name), ] # base R
 head(wetdat_sort)
 wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(-Ave_Cov, Latin_Name) #tidyverse
 head(wetdat_sort_tidy)
-reg_by_park2 &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
-                          summarize(min_seed_dens = min(seed_den_m2),
-                          max_seed_dens = max(seed_den_m2))
+sort(unique(wetdat$Latin_Name)) # use your eyes to spot the &quot;Alnus incana++&quot;
 
-reg_by_park2
+# The regular expression way to find non-alphabetical symbols (now you know why I didn&#39;t cover this).
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record
+# This took longer than I&#39;d like to admit to make work, by the way.
+
+wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot;
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex approach 
+sort(unique(wetdat$Latin_Name)) # using your eyes approach
+
 eventQAQC &lt;- event %&gt;% filter(Event_QAQC == TRUE)
 locevent_QAQC &lt;- merge(loc, eventQAQC, by=&quot;Location_ID&quot;, all.x = F, all.y = T)
 acad &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2018, to = 2018)
