@@ -1094,18 +1094,21 @@ R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transforma
 <h3>Day 2</h3>
 <div id="data-wrangling-part-i" class="section level4 tabset">
 <h4>Data Wrangling Part I</h4>
-<p>We already did a bit of data wrangling in the df data frame yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Based on the survey you all filled out, this was the most checked topic to learn, so I’ll cover this in (painful?) detail.</p>
-<p>Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script. Then, load the tidyverse package and the wetland dataset we used at the end of yesterday.</p>
+<p>We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. Based on the survey you all filled out, this was the most checked topic to learn, so I’ll cover this in (painful?) detail.</p>
+<p>For this training module, we’re going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
+<p>Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script. Then, load the tidyverse package and the wetland dataset we used yesterday.</p>
 <pre class="r"><code>library(tidyverse)
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)</code></pre>
 <details open>
-<p><summary class="drop">Read in and View Data</summary> For this training module, we’re going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
-<p>You can view the structure of the <b>wetdat</b> by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet. Both of these are acceptable ways to explore data, but I prefer to explore datasets through code, rather than my mouse.</p>
+<p><summary class="drop">Explore data structure</summary> Once you’ve loaded the wetdat dataset, remember that you can view the structure of the <b>wetdat</b> by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet. Both of these are acceptable ways to explore data, but I prefer to explore datasets through code, rather than by mouse.</p>
 <p>The code below is usually where I start (though I rarely use tail).</p>
-<pre class="r"><code>head(wetdat) # shows the first 6 lines of the dataframe, including the names of the columns
-tail(wetdat[1:3]) # shows last 6 records of first 3 columns in the dataframe
-names(wetdat) # shows the column names of the dataframe
+<pre class="r"><code>head(wetdat) # shows the first 6 lines of the data frame, including the names of the columns
+tail(wetdat[1:3]) # shows last 6 records of first 3 columns in the data frame
+names(wetdat) # shows the column names of the data frame
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
+table(complete.cases(wetdat)) # FALSE counts the number of rows that have an NA in at least 1 column
+dim(wetdat) # number of rows (first) and columns (second)
+nrow(wetdat) # number of rows (ncol is # columns)
 str(wetdat) # shows the type of data in each column
 summary(wetdat) # summarize each field based on data type</code></pre>
 </details>
@@ -1117,26 +1120,24 @@ summary(wetdat) # summarize each field based on data type</code></pre>
 <p>Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I’m going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn’t the slickest approach because I’m pretending that I don’t know which record and which symbols are causing the problems. First, I’m going to create a temporary field called Ave_Cov_num that’s a numeric version of Ave_Cov.</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create a new field that converts Ave_Cov to numeric</code></pre>
 <pre><code>## Warning: NAs introduced by coercion</code></pre>
-<p>Note the “NAs introduced by coercion” warning message in your console. This means that when you converted the Ave_Cov to numeric, there was at least 1 record that R didn’t read as a number, and it was set to NA in the Ave_Cov_num column. We’re going to use that to find and then fix the record(s) that are causing the issue.</p>
+<p>Note the “NAs introduced by coercion” warning message in your console. This means that when you converted the Ave_Cov to numeric, there was at least 1 record that R didn’t read as a number, and it was set to NA (blank) in the Ave_Cov_num column. We’re going to use that to find and then fix the record(s) that are causing the issue.</p>
 <pre class="r"><code>which(is.na(wetdat$Ave_Cov_num)) </code></pre>
 <pre><code>## [1]  83 106</code></pre>
 <p>The line above is asking which rows in the Ave_Cov_num field are NA, and returns 83 and 106. Now let’s use brackets to return the data from those 2 rows.</p>
-<pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), ] #all fields</code></pre>
+<pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), ] # all columns with NA in Ave_Cov_num</code></pre>
 <pre><code>##     Site_Name Site_Type            Latin_Name             Common Year PctFreq
 ## 83     SEN-03  Sentinel     Cornus canadensis bunchberry dogwood 2011     100
 ## 106    SEN-03  Sentinel Vaccinium macrocarpon    large cranberry 2011     100
 ##     Ave_Cov Invasive Protected Ave_Cov_num
 ## 83     &lt;0.1    FALSE     FALSE          NA
 ## 106    &lt;0.1    FALSE     FALSE          NA</code></pre>
-<pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), c(&quot;Ave_Cov&quot;)] # Ave_Cov only</code></pre>
+<pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), &quot;Ave_Cov&quot;] # Ave_Cov only</code></pre>
 <pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
 <pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only </code></pre>
 <pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
-<p>In the code above, we’re using brackets to subset the wetdat data frame to only return the rows that have NA in Ave_Cov_num. The first line returns all columns in those rows. The second and third lines only show us the Ave_Cov field, which is what we want to fix. Remember that brackets specify the [row, column] of a dataset. If you specify the dataset$column then you only have the row left, and don’t need a comma in the brackets. For example:</p>
-<pre class="r"><code>wetdat$Ave_Cov[2] #returns 2nd row in that column
-wetdat$Ave_Cov[2, ] #incorrect number of dimensions, because you already specified the Ave_Cov column.</code></pre>
-<p>Admittedly, subsetting with brackets can get complicated, and I’m not always sure if I need a comma in the bracket or not. If I get the “incorrect number of dimensions” error, I know I did it wrong and need to either add or delete the comma.</p>
-<p>Back to cleaning the data. We found that the records with non-numeric symbols were both “&lt;0.1”. We’re going to use that information to replace “&lt;0.1” with 0.1, instead of replace all NAs with 0.1 (just in case there are blanks in the data for other reasons). Of course the first thing you should do, when you see &lt;0.1 is to check your raw data, datasheets, etc. to make sure 0.1 is the correct replacement for the &lt;0.1 records. If you don’t know what the correct replacement should be, you should probably change the value to NA instead of “0.1”. That example is commented out in the code chunk below.</p>
+<p>In the code above, we’re using brackets to subset the wetdat data frame to only return the rows that have NA in Ave_Cov_num. The first line returns all columns in those rows. The second and third lines only show us the Ave_Cov field, which is what we want to fix. Remember that brackets specify the [row, column] of a data frame. If you specify the dataframe$column then you only have the row left, and don’t need a comma in the brackets. Admittedly, subsetting with brackets can get complicated, and I’m not always sure if I need a comma in the bracket or not. If I get the “incorrect number of dimensions” error, I know I did it wrong and need to either add or delete the comma.</p>
+<p>Back to cleaning the data. We found that the records with non-numeric symbols were both “&lt;0.1”. We’re going to use that information to replace “&lt;0.1” with 0.1, instead of replace all NAs with 0.1 (just in case there are blanks in the data for other reasons).</p>
+<p>Of course the first thing you should do, when you see &lt;0.1 is to check your raw data, datasheets, etc. to make sure 0.1 is the correct replacement for the &lt;0.1 records. If you don’t know what the correct replacement should be, you should probably change the value to NA instead of “0.1”. That example is commented out in the code chunk below.</p>
 <pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
 #wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA
 str(wetdat)</code></pre>
@@ -1151,7 +1152,7 @@ str(wetdat)</code></pre>
 ##  $ Invasive   : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ Protected  : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
 ##  $ Ave_Cov_num: num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...</code></pre>
-<p>You can now View(wetdat) to see if &lt;0.1 is still in the dataset (it shouldn’t be). However, notice that Ave_Cov is still considered a chr (text field). You have to manually change it to numeric, but this time, we shouldn’t get any NAs introduced by coercion. I’m going to overwrite the Ave_Cov_num field because it’s just a temporary field for the purpose of data checking.</p>
+<p>You can now View(wetdat) to see if &lt;0.1 is still in the data frame (it shouldn’t be). However, notice that Ave_Cov is still considered a chr (text field). Once R assigns a data type to a column, you have to manually change it to something different. Now that we fixed &lt;0.1, we shouldn’t get any NAs introduced by coercion when we convert to numeric. I’m going to overwrite the Ave_Cov_num field because it’s just a temporary field for the purpose of data checking.</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
 str(wetdat) </code></pre>
 <pre><code>## &#39;data.frame&#39;:    508 obs. of  10 variables:
@@ -1165,10 +1166,10 @@ str(wetdat) </code></pre>
 ##  $ Invasive   : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ Protected  : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
 ##  $ Ave_Cov_num: num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...</code></pre>
-<p>Ave_Cov_num is numeric and no NAs were introduced by coercion, so it’s safe to overwrite the original Ave_Cov field. The entire workflow from start to finish is below:</p>
+<p>Ave_Cov_num is now numeric and no NAs were introduced by coercion. It’s now safe to overwrite the original Ave_Cov field. The entire workflow from start to finish is below:</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)</code></pre>
 <pre><code>## Warning: NAs introduced by coercion</code></pre>
-<pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] #&quot;&lt;0.1&quot;</code></pre>
+<pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # which values in Ave_Cov are forcing Ave_Cov_num to be NA</code></pre>
 <pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
 <pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
 wetdat$Ave_Cov &lt;- as.numeric(wetdat$Ave_Cov)
@@ -1192,18 +1193,19 @@ str(wetdat) #Ave_Cov is now numeric</code></pre>
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Check and fix range of numeric data</summary> Another check I often do is to make sure there aren’t any impossible values. For example, both the Ave_Cov and PctFreq columns should range from 0 to 100. Negative values or values over 100 are errors. Let’s see if we find any in the data. Note that we couldn’t use the range() function with the original dataset until we fixed the &lt;0.1 issue and converted to numeric.</p>
+<p><summary class="drop">Check and fix range of numeric data</summary> Another check I often do is to make sure there aren’t any impossible values. For example, both the Ave_Cov and PctFreq columns are percents that should range from 0 to 100. Negative values or values over 100 are errors. Let’s see if we find any in the data.Note that we couldn’t use the range() function on Ave_Cov with the original data frame until we fixed the &lt;0.1 issue and converted to numeric.</p>
 <pre class="r"><code>range(wetdat$PctFreq, na.rm = TRUE) # 20 to 100- that looks fine.</code></pre>
 <pre><code>## [1]  20 100</code></pre>
 <pre class="r"><code>range(wetdat$Ave_Cov, na.rm = TRUE) # 0.02 to 110.0- no bueno</code></pre>
 <pre><code>## [1]   0.02 110.00</code></pre>
-<p>The Ave_Cov column has at least 1 record &gt;100. We’re going to find out how many records are &gt;100, then replace them with the correct value. Note also the <b>na.rm = TRUE</b>. That tells R that if there are any blanks in the data, remove them for the range calculation, and only return numbers. If you didn’t include na.rm = TRUE, range would return NA NA if there’s a blank in the column (more on this in the next section).</p>
-<pre class="r"><code>wetdat[wetdat$Ave_Cov &gt; 100, ]</code></pre>
+<p>The Ave_Cov column has at least 1 record &gt;100. Now we’re going to find out how many records are &gt;100, then replace them with the correct value.</p>
+<p>Note also the <b>na.rm = TRUE</b>. That tells R that if there are any blanks in the data, remove them for the range calculation, and only return numbers. If you didn’t include na.rm = TRUE, range would return NA NA if there’s a blank in the column (more on this in the next section).</p>
+<pre class="r"><code>wetdat[wetdat$Ave_Cov &gt; 100, ] # If Ave_Cov is still a chr, this filter won&#39;t work</code></pre>
 <pre><code>##    Site_Name Site_Type       Latin_Name         Common Year PctFreq Ave_Cov
 ## 36    SEN-01  Sentinel Arethusa bulbosa dragon&#39;s mouth 2011      20     110
 ##    Invasive Protected
 ## 36    FALSE      TRUE</code></pre>
-<p>There’s only 1 row, row 36, which has an Ave_Cov &gt; 100. In this case, pretend that we went back to the datasheet, and found that there was a data transcription error, and the correct value should be 11. The next line of code fixes the data for that specific record.</p>
+<p>There’s only 1 row, row 36, which has an Ave_Cov &gt; 100 for Arethusa bulbosa in SEN-01. For our purposes, pretend that we went back to the datasheet, and found that there was a data transcription error, and the correct value should be 11, not 110. The next line of code fixes the data for that specific record.</p>
 <pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov &gt; 100] &lt;- 11
 range(wetdat$Ave_Cov) </code></pre>
 <pre><code>## [1]  0.02 74.00</code></pre>
@@ -1211,7 +1213,7 @@ Now Ave_Cov values are within the acceptable range of 0 to 100.
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Finding and fixing blanks (NA)</summary> As I’ve mentioned before, R calls blanks in your data NA. R by default is very conservative about how it handles NAs. If you have an NA in an otherwise numeric column and are trying to do a mathematical operation (eg calculate sum, or mean, or run an ANOVA or linear regression), R will most likely return NA as the result. The philosophy behind that is the user must decide how to deal with NAs- either replace them with a logical value, like 0, or remove NAs from the calculation. Every situation is different. You, the user, need to decide the correct way to deal with NAs in your data.</p>
+<p><summary class="drop">Finding and fixing blanks (NA)</summary> As I’ve mentioned before, R calls blanks in your data NA. R by default is very conservative about how it handles NAs. If you have an NA in an otherwise numeric column and are trying to do a mathematical operation (eg calculate sum or mean), R will most likely return NA as the result. The philosophy behind that is the user must decide how to deal with NAs- either replace them with a logical value, like 0, or remove them from the calculation. Every situation is different. You, the user, will need to decide the correct way to deal with NAs in your data.</p>
 <p>First, let’s look to see if there are NAs in the PctFreq and Ave_Cov columns (the main data of interest in the wetdat dataset).</p>
 <pre class="r"><code>table(complete.cases(wetdat$Ave_Cov)) #all TRUE</code></pre>
 <pre><code>## 
@@ -1221,14 +1223,15 @@ Now Ave_Cov values are within the acceptable range of 0 to 100.
 <pre><code>## 
 ## FALSE  TRUE 
 ##     5   503</code></pre>
-<p>While the Ave_Cov colum is all TRUE, the PctFreq has 5 NAs (FALSE in output). Now we need to decide whether the NAs should be changed to 0 or dropped from the dataset. Again, that’s up to the user and what you’re trying to do. For the purposes here, I’ll show you that the results change based on the decision you make.</p>
+<p>While the Ave_Cov colum is all TRUE, the PctFreq has 5 NAs (FALSE in output). Now we need to decide whether the NAs should be changed to 0 or dropped from the dataset. Again, that’s up to the user and what you’re trying to do. For the purposes here, I’ll show you how the results change based on the decision you make.</p>
 <p>First, let’s do nothing.</p>
 <pre class="r"><code>mean(wetdat$PctFreq)</code></pre>
 <pre><code>## [1] NA</code></pre>
-<p>NA is returned. R’s basically awaiting further instruction. Let’s drop NAs from the calculation.</p>
+<p>NA is returned. R’s basically awaiting further instruction before it’s willing to return a value. Let’s drop NAs from the calculation.</p>
 <pre class="r"><code>mean(wetdat$PctFreq, na.rm = TRUE)</code></pre>
 <pre><code>## [1] 70.36779</code></pre>
-<p>Returns 70.36779. Note that na.rm = TRUE is pretty universal argument in R functions. Functions are typically set to na.rm = FALSE, which returns NA if there are blanks in your data. Now let’s assume that blanks should actually be 0.</p>
+<p>Returns 70.36779. Note that na.rm = TRUE is pretty universal argument in R functions. Functions are typically set to na.rm = FALSE, which returns NA if there are blanks in your data. Changing the argument to na.rm = TRUE will drop NAs from the function.</p>
+<p>Now let’s assume that blanks should actually be 0.</p>
 <pre class="r"><code>wetdat$PctFreq[is.na(wetdat$PctFreq)] &lt;- 0
 table(complete.cases(wetdat$PctFreq))</code></pre>
 <pre><code>## 
@@ -1236,48 +1239,53 @@ table(complete.cases(wetdat$PctFreq))</code></pre>
 ##  508</code></pre>
 <pre class="r"><code>mean(wetdat$PctFreq)</code></pre>
 <pre><code>## [1] 69.6752</code></pre>
-<p>Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller because the 0s are included.</p>
+Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller because the 0s are included.
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Check and fix character columns</summary> A common issue with text/character fields is inconsistent naming conventions, for example with plot names. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let’s check to see if all of the Site_Name records follow that. Since we don’t have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.</p>
+<p><summary class="drop">Check and fix character columns</summary> A common issue with text/character fields is inconsistent naming conventions, especially if data are being stored in a spreadsheet instead of a database with standardized look up fields. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let’s check to see if all of the Site_Name records follow that. Since we don’t have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.</p>
 <pre class="r"><code>table(wetdat$Site_Name)</code></pre>
 <pre><code>## 
 ## RAM-05 RAM-41 RAM-44 RAM-53 RAM-62  RAM44 SEN-01 SEN-03  SEN-3 
 ##     98     73     34     98     52     45     75     32      1</code></pre>
-<p>A couple of issues show up here. First, we see that there’s a site named RAM44 that’s missing a dash. We also see that there’s one SEN-3, which should be SEN-03. We’ll fix both of these below:</p>
+<p>A couple of issues show up here. First, we see that there’s a site named RAM44 that’s missing a dash. We also see that there’s one SEN-3, which should be SEN-03.</p>
+<p>Another way to do this, if you had a large dataset, would be to check if there are any Site_Name records that are not length 6 (eg RAM-01 is 6 digits) using the nchar() function, which counts the number of characters in a record.</p>
+<pre class="r"><code>wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)] #</code></pre>
+<pre><code>##  [1] &quot;SEN-3&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [10] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [19] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [28] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [37] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [46] &quot;RAM44&quot;</code></pre>
+<p>You can also check if any Site_Name records are missing a dash.</p>
+<pre class="r"><code>wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]</code></pre>
+<pre><code>##  [1] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [10] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [19] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [28] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
+## [37] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;</code></pre>
+<p>We’ll fix both of the issues we found below:</p>
 <pre class="r"><code>wetdat$Site_Name[wetdat$Site_Name == &quot;RAM44&quot;] &lt;- &quot;RAM-44&quot;
 wetdat$Site_Name[wetdat$Site_Name == &quot;SEN-3&quot;] &lt;- &quot;SEN-03&quot;
-table(wetdat$Site_Name)</code></pre>
-<pre><code>## 
-## RAM-05 RAM-41 RAM-44 RAM-53 RAM-62 SEN-01 SEN-03 
-##     98     73     79     98     52     75     33</code></pre>
-<pre class="r"><code>sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column</code></pre>
-<pre><code>## [1] &quot;RAM-05&quot; &quot;RAM-41&quot; &quot;RAM-44&quot; &quot;RAM-53&quot; &quot;RAM-62&quot; &quot;SEN-01&quot; &quot;SEN-03&quot;</code></pre>
-Problems solved.
+wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]
+wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)]
+table(wetdat$Site_Name)
+sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column</code></pre>
+<p>Problems solved.</p>
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc., to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked.</p>
-<p>In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below.</p>
-<pre class="r"><code>dim(wetdat) # reports # rows then # cols</code></pre>
-<pre><code>## [1] 508   9</code></pre>
-<pre class="r"><code>nrow(wetdat) # reports # rows only</code></pre>
-<pre><code>## [1] 508</code></pre>
-<pre class="r"><code>length(unique(wetdat$Site_Name)) # number of unique values in Site_Name</code></pre>
-<pre><code>## [1] 7</code></pre>
-<pre class="r"><code>length(unique(wetdat$Year)) # number of unique years</code></pre>
-<pre><code>## [1] 3</code></pre>
-<pre class="r"><code>table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years</code></pre>
-<pre><code>##         
-##          2011 2012 2017
-##   RAM-05    0   44   54
-##   RAM-41    0   33   40
-##   RAM-44    0   34   45
-##   RAM-53    0   48   50
-##   RAM-62    0   26   26
-##   SEN-01   75    0    0
-##   SEN-03   33    0    0</code></pre>
+<p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc., to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked!</p>
+<p>In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird.</p>
+<pre class="r"><code>dim(wetdat) # reports # rows then # cols
+nrow(wetdat) # reports # rows only
+
+length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
+length(unique(wetdat$Year)) # number of unique years
+
+table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
+
+sort(unique(wetdat$Latin_Name)) # see all the species in the dataset</code></pre>
 </details>
 <p><br></p>
 <hr>
@@ -2246,20 +2254,22 @@ wetdat_rev_tidy &lt;- wetdat %&gt;% arrange(desc(Latin_Name), desc(Site_Name))
 head(wetdat_rev_tidy)
 library(tidyverse)
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
-head(wetdat) # shows the first 6 lines of the dataframe, including the names of the columns
-tail(wetdat[1:3]) # shows last 6 records of first 3 columns in the dataframe
-names(wetdat) # shows the column names of the dataframe
+head(wetdat) # shows the first 6 lines of the data frame, including the names of the columns
+tail(wetdat[1:3]) # shows last 6 records of first 3 columns in the data frame
+names(wetdat) # shows the column names of the data frame
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
+table(complete.cases(wetdat)) # FALSE counts the number of rows that have an NA in at least 1 column
+dim(wetdat) # number of rows (first) and columns (second)
+nrow(wetdat) # number of rows (ncol is # columns)
 str(wetdat) # shows the type of data in each column
 summary(wetdat) # summarize each field based on data type
+
 View(wetdat)
 wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create a new field that converts Ave_Cov to numeric
 which(is.na(wetdat$Ave_Cov_num)) 
-wetdat[which(is.na(wetdat$Ave_Cov_num)), ] #all fields
-wetdat[which(is.na(wetdat$Ave_Cov_num)), c(&quot;Ave_Cov&quot;)] # Ave_Cov only
+wetdat[which(is.na(wetdat$Ave_Cov_num)), ] # all columns with NA in Ave_Cov_num
+wetdat[which(is.na(wetdat$Ave_Cov_num)), &quot;Ave_Cov&quot;] # Ave_Cov only
 wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only 
-wetdat$Ave_Cov[2] #returns 2nd row in that column
-wetdat$Ave_Cov[2, ] #incorrect number of dimensions, because you already specified the Ave_Cov column.
 wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
 #wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA
 str(wetdat)
@@ -2267,7 +2277,7 @@ wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
 str(wetdat) 
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
 wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
-wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] #&quot;&lt;0.1&quot;
+wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # which values in Ave_Cov are forcing Ave_Cov_num to be NA
 wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
 wetdat$Ave_Cov &lt;- as.numeric(wetdat$Ave_Cov)
 wetdat &lt;- subset(wetdat, select = -c(Ave_Cov_num)) #now drop the temp column Ave_Cov_num
@@ -2276,7 +2286,7 @@ table(complete.cases(wetdat$Ave_Cov)) #checks that there aren&#39;t any more NAs
 # If there were NAs, you&#39;d have a column named FALSE with the number of NAs below it.
 range(wetdat$PctFreq, na.rm = TRUE) # 20 to 100- that looks fine.
 range(wetdat$Ave_Cov, na.rm = TRUE) # 0.02 to 110.0- no bueno
-wetdat[wetdat$Ave_Cov &gt; 100, ]
+wetdat[wetdat$Ave_Cov &gt; 100, ] # If Ave_Cov is still a chr, this filter won&#39;t work
 wetdat$Ave_Cov[wetdat$Ave_Cov &gt; 100] &lt;- 11
 range(wetdat$Ave_Cov) 
 table(complete.cases(wetdat$Ave_Cov)) #all TRUE
@@ -2287,8 +2297,13 @@ wetdat$PctFreq[is.na(wetdat$PctFreq)] &lt;- 0
 table(complete.cases(wetdat$PctFreq))
 mean(wetdat$PctFreq)
 table(wetdat$Site_Name)
+wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)] #
+
+wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]
 wetdat$Site_Name[wetdat$Site_Name == &quot;RAM44&quot;] &lt;- &quot;RAM-44&quot;
 wetdat$Site_Name[wetdat$Site_Name == &quot;SEN-3&quot;] &lt;- &quot;SEN-03&quot;
+wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]
+wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)]
 table(wetdat$Site_Name)
 sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column
 dim(wetdat) # reports # rows then # cols
@@ -2298,6 +2313,8 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
+
+sort(unique(wetdat$Latin_Name)) # see all the species in the dataset
 loc&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Locations.csv&quot;)
 event&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Events.csv&quot;)
 View(loc) #Location_ID
