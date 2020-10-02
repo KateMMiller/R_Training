@@ -49,7 +49,9 @@ I know you're all busy and have to prioritize how you spend your time. If you ha
 
 <details open><summary class='drop'>Structure of training</summary>
 The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day's training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview"> Feedback form </a> at the end of each day. 
-</details>
 
+Three days is barely enough to scratch the surface on what you can do in R. My goal with this training is to help you get past the initial learning curve that can be really challenging to climb on your own, and to give you the skills you need to start to learning on your own. Hopefully this also helps build a community of R users in ACAD who can help and share code with each other. 
+
+</details>
 <hr>
 

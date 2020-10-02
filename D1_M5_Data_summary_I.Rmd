@@ -26,8 +26,4 @@ The <b>mutate</b> function is in the <i>dplyr</i> package of the tidyverse. The 
 
 <p class='ques'>Question 5: What is the smallest number of dead trees observed in the df dataset? </p>
 
-That's the end of Day 1! Be sure to save your Day 1 R script, try to answer the 5 questions from today, and complete the tasks in the Assignments tab as you have time. Answers to the questions are in the Answers tab. Note that I provide one or a few ways to get the answer to the questions, but it's likely you'll come up with your own. That's how coding in R works!
-
-Lastly, don't worry if you don't understand everything. The key here was to expose you to the many different ways to work with and view data in R. Learning R requires repetition, determination, and patience. Just stick with it!
-
 <hr>

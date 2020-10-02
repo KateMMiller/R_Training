@@ -2,16 +2,31 @@
 <details open><summary class='drop'>Getting Started</summary>
 Now we're going to start coding. The best way to work through these lessons will be to take the code from this website and transfer it to an R Script in your R_training.Rprj. To start that, go to <b>File > New File > R Script</b> (the <img src="./images/new_script.jpg" alt="new script" width="30px"> icon will do the same), and name the script Day_1.R, and save it to your rscripts subfolder. As you get more comfortable coding in R, try pushing yourself to type the commands, rather than copying and pasting. You'll learn to code faster by typing, even if you're just mimicking what you see in the training document. 
 
-Before we go too far, let's make sure you have the tidyverse package loaded by running the code chunk below. This is the only dependency we'll have for today's code.
+Before we go too far, let's make sure you have the tidyverse package loaded by running the code chunk below. This is the only dependency we'll need for today's code.
 ```{r, c5b, echo=T, eval=F}
 library(tidyverse)
 ```
 </details>
 </br>
 <details open><summary class='drop'>Types of Data</summary>
-<p>There are multiple types of data in R, including vectors, lists, arrays, matrices, data frames and tibbles. We will spend most of our time with data frames, and won't worry too much about the other data types. Tibbles are the tidyverse version of a data frame, but they're essentially the same thing as a data frame with a few added bells and whistles. 
+<p>There are multiple types of data in R, including vectors, lists, arrays, matrices, data frames and tibbles. Vectors are the simplest data type. You can think of vectors as one column of data in an Excel spreadsheet. An example vector is below:
+```{r, c6b, echo=T}
+# Vector of numbers
+vec_num <- c(1, 2, 3, 4, 5)
+vec_num
+
+# Vector of strings
+vec_str <- c("Schoodic", "MDI-East", "MDI-West", "IAH")
+vec_str
+vec_str[1]
+```
+Note the use of <b>c()</b>. The c() function stands for combine, and it combines the elements in a list that are separated by commas. The c() function is a fairly universal way to combine multiple elements in R, and you're going to see it over and over.  
+
+Data frames are essentially a collection of vectors of the same length. We will spend most of our time with data frames, and won't worry too much about the other data types. Tibbles are the tidyverse version of a data frame, but they're essentially the same thing as a data frame with a few added bells and whistles. 
 
 Data frames are typically organized with rows being records or observations, and columns being variables (also called tidy data). Data frames are rectangular, meaning that every column has the same number of rows. The column variables can be numbers, text, or logical (TRUE/FALSE). Before we go any further, let's create a simple data frame to look at and perform some basic functions. </p>
+
+Note that I have a tendency to use field (MS Access calls columns fields) and column interchangeably. Hopefully that doesn't cause confusion. Just remember that field and column are equivalent. 
 
 <p class="code">Copy the code below into the console and run it.</p>
 ```{r, c7, echo=T}
@@ -45,7 +60,7 @@ Similar to Excel, R treats numbers and text differently. Some functions will onl
 <details open><summary class='drop'>Selecting rows and columns in R</summary>
 There are 2 main approaches in base R for selecting/working with rows and columns: $ and [ , ]. 
 <ul>
-  <li> The \$ is used to specify a data frame name and one of its fields. For example df$plot is referring to the plot column in the df data frame.</li>
+  <li> The \$ is used to specify a data frame name and one of its columns. For example df$plot is referring to the plot column in the df data frame.</li>
   <li> The brackets [ , ] allow you to select columns and rows. The left side of the comma in brackets handles rows, and the right side of the bracket
   deals with columns, like: df[row numbers, column numbers]. </li>
 </ul> 
@@ -53,9 +68,9 @@ There are 2 main approaches in base R for selecting/working with rows and column
 <p class='code'>To better understand this, run the code below:</p>
 ```{r, c8, echo=T, eval=F}
 df$plot # List the values within the column plot for the df data frame
-df[ , c('plot')] # Bracket version of the same thing
+df[ , 'plot'] # Bracket version of the same thing
 df[ , 1] # Bracket version of showing the first column, which is plot
-df[2, 1] # Selecting 2nd row of first column
+df[2, 1] # Selecting 2nd row of 1st column
 
 ```
 

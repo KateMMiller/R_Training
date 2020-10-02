@@ -1,0 +1,31 @@
+<details open><summary class='drop'>Summarizing Data</summary>
+The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park. 
+
+To demonstrate how this works, let's load in a test dataset.
+```{r, c27, echo=T, results='hide'}
+regdf <- read.csv('./data/example_data/Regen_test_data.csv')
+head(regdf)
+```
+The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let's say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code). 
+
+```{r, c28, echo=T, results='hide'}
+
+reg_by_park <- regdf %>% group_by(Unit_Code) %>% 
+                         summarize(avg_seed_dens = mean(seed_den_m2),
+                                   avg_sap_dens = mean(sap_den_m2),
+                                   avg_stock = mean(stock),
+                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
+                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
+                                   se_stock = sd(stock)/sqrt(n()),
+                                   numplots = n()
+                                   )
+```
+```{r, c29, echo=T}
+print(reg_by_park)
+```
+
+In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.
+
+<p class='ques'>Question 6: How would you calculate the min and max for seed_den_m2?</p>
+</details>
+</br>

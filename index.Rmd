@@ -37,7 +37,7 @@ ACAD R Training {.tabset .tabset-pills}
 
 ```
 
-```{r Data_subsetting_and_summarizing, child = "D1_M6_Subsetting_and_summarizing_dataframes.Rmd"}
+```{r Data_importing_and_subsetting, child = "D1_M6_Importing_and_Subsetting.Rmd"}
 
 ```
 
@@ -55,7 +55,11 @@ ACAD R Training {.tabset .tabset-pills}
 
 ```
 
-```{r Saving_data, child = "D2_M4_Saving_data_to_file.Rmd"}
+```{r Data_Summary_II, child = "D2_M4_Data_Summary_II.Rmd"}
+
+```
+
+```{r Saving_data, child = "D2_M5_Saving_data_to_file.Rmd"}
 
 ```
 
@@ -64,7 +68,6 @@ ACAD R Training {.tabset .tabset-pills}
 ```
 
 ### Day 3{.tabset}
-
 
 ```{r Data_wrangling_II, child = "D3_M1_Data_wrangling_II.Rmd"}
 

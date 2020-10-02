@@ -404,7 +404,8 @@ If you run into any problems, we can troubleshoot the first day. We’ll also di
 </details>
 <p><br></p>
 <details open>
-<summary class="drop">Structure of training</summary> The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day’s training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&amp;Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&amp;TopView=Preview"> Feedback form </a> at the end of each day.
+<p><summary class="drop">Structure of training</summary> The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day’s training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&amp;Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&amp;TopView=Preview"> Feedback form </a> at the end of each day.</p>
+<p>Three days is barely enough to scratch the surface on what you can do in R. My goal with this training is to help you get past the initial learning curve that can be really challenging to climb on your own, and to give you the skills you need to start to learning on your own. Hopefully this also helps build a community of R users in ACAD who can help and share code with each other.</p>
 </details>
 <hr>
 </div>
@@ -634,21 +635,17 @@ File &gt; New Project &gt; New Directory &gt; New Project
 <p class="code">
 Now run the code chunk below to set up the same file structure.
 </p>
-<pre class="r"><code># Step 1m 
-subfolders&lt;-c(&quot;figures&quot;, &quot;tables&quot;, &quot;rscripts&quot;, &quot;shapefiles&quot;)
+<pre class="r"><code>subfolders&lt;-c(&quot;data&quot;, &quot;figures&quot;, &quot;tables&quot;, &quot;rscripts&quot;, &quot;shapefiles&quot;)
 
 invisible(lapply(subfolders, function(x){
   if(!dir.exists(x)){dir.create(paste(getwd(), x, sep = &#39;/&#39;))}
-  }))
-
-if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creates a data folder to store training data, if it doesn&#39;t already exist. </code></pre>
-<p>Now we want to download the NETN data we’re going to explore later in the week. Unfortunately there’s a firewall between Sharepoint/Teams and R, so we can’t download the data directly in R. To download the NETN data, go to the <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">ACAD_R_Training_Info Team</a> and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the <b>data</b> folder you created in the previous step. Then run the code below.</p>
+  }))</code></pre>
+<p>Now we want to download the data to work with throughout the training. Unfortunately there’s a firewall between Sharepoint/Teams and R, so we can’t download the data directly in R. To download the NETN data, go to the <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">ACAD_R_Training_Info Team</a> and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the <b>data</b> folder you created in the previous step. Then run the code below.</p>
 <pre class="r"><code>list.files(&quot;./data&quot;) # check that you have data.zip in your data folder</code></pre>
-<pre><code>## [1] &quot;data.zip&quot;     &quot;example_data&quot;</code></pre>
+<pre><code>## [1] &quot;data.zip&quot;</code></pre>
 <pre class="r"><code>unzip(&quot;./data/data.zip&quot;, exdir = &quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that the unzip worked. There should be multiple folders with datasets in each.</code></pre>
-<pre><code>## [1] &quot;data.zip&quot;         &quot;example_data&quot;     &quot;misc_files&quot;       &quot;NETN_forest_csvs&quot;
-## [5] &quot;NETN_water_data&quot;</code></pre>
+<pre><code>## [1] &quot;data.zip&quot;         &quot;example_data&quot;     &quot;NETN_forest_csvs&quot; &quot;NETN_water_data&quot;</code></pre>
 <ul>
 <li>
 This approach makes sharing code easier, because the parent directly can vary across machines, as long as the project has the same sub-directory.
@@ -676,16 +673,29 @@ Getting Help
 <h4>Types of Data</h4>
 <details open>
 <p><summary class="drop">Getting Started</summary> Now we’re going to start coding. The best way to work through these lessons will be to take the code from this website and transfer it to an R Script in your R_training.Rprj. To start that, go to <b>File &gt; New File &gt; R Script</b> (the <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAXwBfAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAeADQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDxqOJpWwoya1bzwfrenapDpt3pd3aahNjy7W4haKRskgEKwB5II/Cu3+C+jfD3Vpr7/hPNd1DRRGYzZmxQt5rEncGxFJ0wvp1r6F/ay0n4fTa3eahrOvajY+OIdKB07T7dGMEpDSGLcREwGW3A/OOg6da3nXkpO2yPgK2YYm1atCUFGm7WbV3unfXRu3urr5nzF/wpDx9/0KGrf+ArVzviLwprHhG8S11rTbnTLmRPMWK5jKMV9QD2r9OPhffXepfDzw/c3xY3b2cZkLdSdo5NfIX7dX/JTtI/7Bo/9CNbU6rm7WPr+VOmqi6nzfRVvStLudb1K2sLKMTXdw4jijLBdzHoMkgZNbviz4Y+J/AtpDc69pEumQzP5cZmdMuwGTgBiTjue2R6iui62M7Pc8W+IXj4+FdahtA2N9usv5sw/wDZaK8u/aSYjxzY4P8AzDo//RstFcc6klJo64U04pn0vBcNbuGXsc19lfDH4O3nxxh0X4g+ONcfWZZYtsdv5KRAIjthW2gA8knp3r4wru/D/wAcvHfhTR7fS9J8SXVjp9uCIoI1TauTk9V9TWtSkp6rc8V4DCVKrq1ad27X3s2tm1ezt0umfptbW8dnbxwRKEijUKqjoAK+Hv26v+SnaR/2DR/6Ea87/wCGlPib/wBDfe/98x//ABNch4w8da94+1CK+8QalLql3FH5SSzBQQuc44ApU6bg7s9adVSjZGGrNGyspKspyGU4IPrW14o8ba742uLabXNTn1KS2hWCJpm+4gHQY7+p6k8kmsSiug5z54/aI0m6v/GtlJBC0iDT0UlR38yX/Giver3R7XUJRJNEruF2gkdv8miueVHmd7nTGtyq1j//2Q==" alt="new script" width="30px"> icon will do the same), and name the script Day_1.R, and save it to your rscripts subfolder. As you get more comfortable coding in R, try pushing yourself to type the commands, rather than copying and pasting. You’ll learn to code faster by typing, even if you’re just mimicking what you see in the training document.</p>
-<p>Before we go too far, let’s make sure you have the tidyverse package loaded by running the code chunk below. This is the only dependency we’ll have for today’s code.</p>
+<p>Before we go too far, let’s make sure you have the tidyverse package loaded by running the code chunk below. This is the only dependency we’ll need for today’s code.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 </details>
 </br>
 <details open>
 <summary class="drop">Types of Data</summary>
 <p>
-<p>There are multiple types of data in R, including vectors, lists, arrays, matrices, data frames and tibbles. We will spend most of our time with data frames, and won’t worry too much about the other data types. Tibbles are the tidyverse version of a data frame, but they’re essentially the same thing as a data frame with a few added bells and whistles.</p>
+<p>There are multiple types of data in R, including vectors, lists, arrays, matrices, data frames and tibbles. Vectors are the simplest data type. You can think of vectors as one column of data in an Excel spreadsheet. An example vector is below:</p>
+<pre class="r"><code># Vector of numbers
+vec_num &lt;- c(1, 2, 3, 4, 5)
+vec_num</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code># Vector of strings
+vec_str &lt;- c(&quot;Schoodic&quot;, &quot;MDI-East&quot;, &quot;MDI-West&quot;, &quot;IAH&quot;)
+vec_str</code></pre>
+<pre><code>## [1] &quot;Schoodic&quot; &quot;MDI-East&quot; &quot;MDI-West&quot; &quot;IAH&quot;</code></pre>
+<pre class="r"><code>vec_str[1]</code></pre>
+<pre><code>## [1] &quot;Schoodic&quot;</code></pre>
+<p>Note the use of <b>c()</b>. The c() function stands for combine, and it combines the elements in a list that are separated by commas. The c() function is a fairly universal way to combine multiple elements in R, and you’re going to see it over and over.</p>
+<p>Data frames are essentially a collection of vectors of the same length. We will spend most of our time with data frames, and won’t worry too much about the other data types. Tibbles are the tidyverse version of a data frame, but they’re essentially the same thing as a data frame with a few added bells and whistles.</p>
 Data frames are typically organized with rows being records or observations, and columns being variables (also called tidy data). Data frames are rectangular, meaning that every column has the same number of rows. The column variables can be numbers, text, or logical (TRUE/FALSE). Before we go any further, let’s create a simple data frame to look at and perform some basic functions.
 </p>
+<p>Note that I have a tendency to use field (MS Access calls columns fields) and column interchangeably. Hopefully that doesn’t cause confusion. Just remember that field and column are equivalent.</p>
 <p class="code">
 Copy the code below into the console and run it.
 </p>
@@ -743,7 +753,7 @@ Finally NA is a blank or missing value in your data. Note that the last row in d
 <summary class="drop">Selecting rows and columns in R</summary> There are 2 main approaches in base R for selecting/working with rows and columns: $ and [ , ].
 <ul>
 <li>
-The $ is used to specify a data frame name and one of its fields. For example df$plot is referring to the plot column in the df data frame.
+The $ is used to specify a data frame name and one of its columns. For example df$plot is referring to the plot column in the df data frame.
 </li>
 <li>
 The brackets [ , ] allow you to select columns and rows. The left side of the comma in brackets handles rows, and the right side of the bracket deals with columns, like: df[row numbers, column numbers].
@@ -753,9 +763,9 @@ The brackets [ , ] allow you to select columns and rows. The left side of the co
 To better understand this, run the code below:
 </p>
 <pre class="r"><code>df$plot # List the values within the column plot for the df data frame
-df[ , c(&#39;plot&#39;)] # Bracket version of the same thing
+df[ , &#39;plot&#39;] # Bracket version of the same thing
 df[ , 1] # Bracket version of showing the first column, which is plot
-df[2, 1] # Selecting 2nd row of first column</code></pre>
+df[2, 1] # Selecting 2nd row of 1st column</code></pre>
 <p class="ques">
 Question 1: How do you find the value of the 3rd row of domSpp? Answer is in the Answers tab.
 </p>
@@ -893,55 +903,102 @@ Question 4: How would you calculate the percent of trees that are dead in the df
 <p class="ques">
 Question 5: What is the smallest number of dead trees observed in the df dataset?
 </p>
-<p>That’s the end of Day 1! Be sure to save your Day 1 R script, try to answer the 5 questions from today, and complete the tasks in the Assignments tab as you have time. Answers to the questions are in the Answers tab. Note that I provide one or a few ways to get the answer to the questions, but it’s likely you’ll come up with your own. That’s how coding in R works!</p>
-<p>Lastly, don’t worry if you don’t understand everything. The key here was to expose you to the many different ways to work with and view data in R. Learning R requires repetition, determination, and patience. Just stick with it!</p>
 <hr>
 </div>
 <div id="importing-data-into-r" class="section level4 tabset">
 <h4>Importing Data into R</h4>
-<p>For the training modules that follow, we’re going to work with a larger dataset that contains some wetland plant data. First, import the data by running the code chunk below.</p>
+<details open>
+<p><summary class="drop">Loading csv files</summary> For the training modules that follow, we’re going to work with a larger dataset that contains some wetland plant data. First we need to load the wetland dataset, using the code below.</p>
 <pre class="r"><code>wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)</code></pre>
 <p>After running the code above, you should see a new object in your global environment named <b>wetdat</b> You can view the structure and the data by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet.</p>
-<h1>
-Add how to load excel here
-</h1>
-</div>
-<div id="subsetting-data" class="section level4 tabset">
-<h4>Subsetting Data</h4>
+The read.csv() is a function in base R that reads csv (comma separated values) files, which are lightweight machine-readable files that most text readers or spreadsheet programs can read. Unlike Excel spreadsheets, they only contain values and commons and cannot save any kind of formatting, like merged cells, cell borders, formulas, etc. You also can only have one worksheet within a csv. If most of your data live in Excel spreadsheets, you can either save individual worksheets as csvs directly in Excel, or you can load individual worksheets into R using the <i>readxl</i> package that was designed to read Excel files.
+</details>
+<br>
 <details open>
-<p><summary class="drop">Subsetting Data</summary> Technically, we already did some subsetting when we were trying to identify and fix problems in the df data frame. Now we’re going to do it more intentionally. Subsetting is a generic term for reducing the size of a dataset, either by reducing the number of rows or colums in the dataset. Filtering typically means reducing rows. Selecting usually means reducing columns.</p>
-<p>Using the wetdat data frame from above, let’s remove all species from the dataset that are considered protected from public (eg sensitive species we don’t want to publish the location to). There’s a logical column called Protected in the dataset that we’re going to use to filter out rows when Protected is TRUE. Let’s also simplify the data frame to only include the columns we care about.</p>
+<p><summary class="drop">Loading Excel files</summary> The first step for working with Excel files (i.e., files with .xls or .xlsx extensions), is to install the readxl package. Then, load the package, as shown below. The readxl package has a couple of options for loading Excel spreadsheets, depending on whether the extension is .xls, .xlsx, or unknown. The code below shows you how to load files with .xlsx extension. The other options for loading Excel files can be viewed on the <a href="https://readxl.tidyverse.org/reference/read_excel.html">readxl help page</a>.</p>
+<pre class="r"><code>install.packages(&quot;readxl&quot;) #only need to run once. </code></pre>
+<pre class="r"><code>library(readxl)
+bat_capture &lt;- read_xlsx(path = &quot;./data/example_data/ANP_BAT_MasterCaptureDB_1996-2019 20200811.xlsx&quot;, 
+                         sheet = &quot;All Records&quot;)</code></pre>
+<pre class="r"><code>head(bat_capture)</code></pre>
+<pre><code>## # A tibble: 6 x 65
+##   Date                Month State County Town  `Site ID` `Site Name: Ori~
+##   &lt;dttm&gt;              &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;           
+## 1 1996-06-05 00:00:00 June  ME    Hanco~ Goul~ COREA     MICK02          
+## 2 1996-06-07 00:00:00 June  ME    Hanco~ Wint~ ANP       FRZR (approx.)  
+## 3 1996-06-07 00:00:00 June  ME    Hanco~ Wint~ ANP       FRZR (approx.)  
+## 4 1996-06-07 00:00:00 June  ME    Hanco~ Wint~ ANP       FRZR (approx.)  
+## 5 1996-06-07 00:00:00 June  ME    Hanco~ Wint~ ANP       FRZR (approx.)  
+## 6 1996-06-07 00:00:00 June  ME    Hanco~ Wint~ ANP       FRZR (approx.)  
+## # ... with 58 more variables: `Site Name: Standardized` &lt;chr&gt;,
+## #   `Recorder/Staff` &lt;chr&gt;, Affiliation &lt;chr&gt;, Lat &lt;dbl&gt;, Long &lt;dbl&gt;,
+## #   Datum &lt;chr&gt;, Easting &lt;chr&gt;, Northing &lt;chr&gt;, `Start Temp (°F)` &lt;chr&gt;, `End
+## #   Temp (°F)` &lt;chr&gt;, `Start Temp (°C)` &lt;chr&gt;, `End Temp (°C)` &lt;chr&gt;, `%
+## #   clouds` &lt;dbl&gt;, Wind &lt;chr&gt;, Precip. &lt;chr&gt;, `Moon Phase` &lt;chr&gt;,
+## #   Sunset &lt;dttm&gt;, `Elevation (m)` &lt;dbl&gt;, Habitat &lt;chr&gt;, `Start Time` &lt;dttm&gt;,
+## #   `End Time` &lt;chr&gt;, `Total minutes` &lt;dbl&gt;, `Total hours` &lt;dbl&gt;, `Capture
+## #   Technique` &lt;chr&gt;, `Capture Technique: Standardized` &lt;chr&gt;, `Effort (sq. m.
+## #   of net)` &lt;dbl&gt;, `Units of Effort (UOE=Effort*Total hours)` &lt;dbl&gt;, `Set near
+## #   water?` &lt;chr&gt;, `Capture Time` &lt;chr&gt;, `Time After Sunset (h:mm)` &lt;chr&gt;,
+## #   `Time after Sunset: Converted to hours` &lt;chr&gt;, Net &lt;chr&gt;, `Net
+## #   Height` &lt;chr&gt;, Species &lt;chr&gt;, Latin &lt;chr&gt;, Sex &lt;chr&gt;, Age &lt;chr&gt;, `Repro.
+## #   Status` &lt;chr&gt;, `RS (0-5)` &lt;chr&gt;, `Forearm (mm)` &lt;chr&gt;, `Ear (mm)` &lt;chr&gt;,
+## #   `Weight (g)` &lt;chr&gt;, `Band #` &lt;chr&gt;, Recap &lt;chr&gt;, `Sample ID` &lt;chr&gt;,
+## #   Skin &lt;chr&gt;, `Genetic Test` &lt;chr&gt;, `Genetic ID` &lt;chr&gt;, `ID Match` &lt;chr&gt;,
+## #   Fur &lt;chr&gt;, Blood &lt;chr&gt;, Swab &lt;chr&gt;, Fecal &lt;chr&gt;, Parasite &lt;chr&gt;, `Radio
+## #   Frequency` &lt;lgl&gt;, Photos &lt;lgl&gt;, `Non-target species` &lt;lgl&gt;, Comments &lt;chr&gt;</code></pre>
+</details>
+<br>
+<details open>
+<p><summary class="drop">The file.choose() function</summary> If you don’t remember the exact path where your file lives, the file.choose() function is a handy trick. Nesting that within a read function will open a separate window where you can select the file by hand. While this can be handy, it can also encourage lazy file organization. I prefer to organize my code and data into projects where everything lives for a given project, and so rarely use this function (I had to look it up for this section). If you want to use it, here’s an example:</p>
+<pre class="r"><code>dat &lt;- read.csv(file.choose())</code></pre>
+</details>
+<p><br></p>
+</div>
+<div id="subsetting-and-sorting" class="section level4 tabset">
+<h4>Subsetting and Sorting</h4>
+<details open>
+<p><summary class="drop">Subsetting Data</summary> Technically, we already did some subsetting when we were trying to identify and fix problems in the df data frame. Now we’re going to do it more intentionally and with a bigger dataset. Subsetting is a generic term for reducing the size of a dataset, either by reducing the number of rows, the number columns, or both, in the dataset. Filtering typically means reducing rows. Selecting usually means reducing columns.</p>
+<p>Using the wetdat data frame from earlier, let’s subset the data to filter out all species that are considered protected from public (eg sensitive species we don’t want to publish the location to). There’s a logical column called Protected in the dataset that we’re going to use to filter out rows when Protected is TRUE. Let’s also simplify the data frame to only select the columns we care about.</p>
 <pre class="r"><code># Filter to remove protected species
 wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, ]
-nrow(wetdat) #508 rows in original dataset</code></pre>
-<pre><code>## [1] 508</code></pre>
-<pre class="r"><code>nrow(wetdat_pub) #499 rows in filtered dataset</code></pre>
-<pre><code>## [1] 499</code></pre>
-<pre class="r"><code>table(wetdat_pub$Protected) # Only Protected = FALSE</code></pre>
-<pre><code>## 
-## FALSE 
-##   499</code></pre>
-<pre class="r"><code># Select only fields you want
+nrow(wetdat) #508 rows in original dataset
+nrow(wetdat_pub) #499 rows in filtered dataset
+table(wetdat_pub$Protected) # Only Protected = FALSE
+
+# Select only fields you want
 wetdat_pub &lt;- wetdat_pub[ , c(&quot;Site_Name&quot;, &quot;Site_Type&quot;, &quot;Latin_Name&quot;, &quot;Year&quot;, &quot;Ave_Cov&quot;, &quot;Invasive&quot;, &quot;Protected&quot;)]
-names(wetdat_pub)</code></pre>
-<pre><code>## [1] &quot;Site_Name&quot;  &quot;Site_Type&quot;  &quot;Latin_Name&quot; &quot;Year&quot;       &quot;Ave_Cov&quot;   
-## [6] &quot;Invasive&quot;   &quot;Protected&quot;</code></pre>
-<pre class="r"><code># Previous steps can all happen in 1 line of code:
+names(wetdat_pub)
+
+# Previous steps can all happen in 1 line of code:
 wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, 
                      c(&quot;Site_Name&quot;, &quot;Site_Type&quot;, &quot;Latin_Name&quot;, &quot;Year&quot;, &quot;Ave_Cov&quot;, &quot;Invasive&quot;, &quot;Protected&quot;)]
 
-nrow(wetdat_pub) #499 rows</code></pre>
-<pre><code>## [1] 499</code></pre>
-<pre class="r"><code>names(wetdat_pub) # Only includes fields we want</code></pre>
-<pre><code>## [1] &quot;Site_Name&quot;  &quot;Site_Type&quot;  &quot;Latin_Name&quot; &quot;Year&quot;       &quot;Ave_Cov&quot;   
-## [6] &quot;Invasive&quot;   &quot;Protected&quot;</code></pre>
-<pre class="r"><code>table(wetdat_pub$Protected) #All FALSE</code></pre>
-<pre><code>## 
-## FALSE 
-##   499</code></pre>
-<p>Note the use of == to subset. In R, when you’re trying to match against something (like Protected == FALSE, or Site_Name == “RAM44”), you use double == signs. When assigning something to an object (like mutate(newcolum = x + y)), you use a single = sign.</p>
-<p>If you want to pull out all records that are NOT equal to a value, you use !=. That is, in R, ! means NOT. For example Protected != TRUE means to pull in records where Protected is NOT TRUE (ie FALSE).</p>
-<p>Now the tidyverse way do in the previous code chunk using the select and filter command and pipes (%&gt;%). The select function is used for columns and the filter command is used for rows. Notice the lack of quotes for the column names. One of the benefits of the tidyverse packages is that you don’t have to quote column names, whereas you do in base R. It saves typing time and was a conscious decision of the tidyverse developers.</p>
+nrow(wetdat_pub) # 499 rows
+names(wetdat_pub) # Only includes fields we want
+table(wetdat_pub$Protected) #All FALSE
+
+# Another base R solution that&#39;s a bit easier to work with:
+wetdat_pub2 &lt;- subset(wetdat, Protected == FALSE, 
+                              select = c(Site_Name, Site_Type, Latin_Name, Year,
+                                         Ave_Cov, Invasive, Protected))
+
+nrow(wetdat_pub2) # 499 rows
+names(wetdat_pub2) # Only includes fields we want
+table(wetdat_pub2$Protected) #All FALSE</code></pre>
+A couple of comments about the above code:
+<ul>
+<li>
+Note the use of == to filter out Protected species. In R, when you’re trying to match against something (like Protected == FALSE, or Site_Name == “RAM-44”), you use double == signs. When assigning something to an object (like mutate(newcolum = x + y)), you use a single = sign.
+</li>
+<li>
+If you want to pull out all records that are NOT equal to a value, you use !=. That is, in R, ! means NOT. For example Protected != TRUE means to only include records where Protected is NOT TRUE (ie FALSE).
+</li>
+<li>
+The subset() function is a base R function that is a bit easier to work with than brackets. You can filter rows, select columns, or both (as seen above). The first argument with subset is always the dataset you’re subsetting.
+</li>
+</ul>
+<p>Now the tidyverse way do in the previous code chunk using select() and filter() functions chained together via pipes (%&gt;%). The select function is used for columns and the filter command is used for rows.</p>
 <pre class="r"><code>wetdat_tidy &lt;- wetdat %&gt;% filter(Protected == FALSE) %&gt;% 
                           select(Site_Name, Site_Type, Latin_Name, Year, Ave_Cov, Invasive, Protected)
                           # Any column name not mentioned in the select is dropped
@@ -952,7 +1009,7 @@ table(wetdat_tidy$Protected)
 
 # Even more efficient way to code this:
 wetdat_tidy &lt;- wetdat %&gt;% filter(Protected == FALSE) %&gt;% select(-Common, -PctFreq)</code></pre>
-Note the %&gt;%, called a “pipe”. The way to read what the pipe is doing is it takes the wetdat data frame, pipes it into the filter function, which drops protected species, then that newly filtered dataset is piped into the select function, and the Common and PctFreq columns are dropped. Also notice that column names aren’t quoted in tidy approach. That’s one of the big benefits of tidyverse functions. Not having to quote column names saves you time coding. It’s called non-standard evaluation. It actually causes problems when you write your own functions, but we won’t get into that during this training.
+Note the %&gt;%, called a “pipe”. The way to read what the pipe is doing is it takes the wetdat data frame, pipes it into the filter function, which drops protected species, then that newly filtered dataset is piped into the select function, and the Common and PctFreq columns are dropped. Also notice that column names aren’t quoted in tidy approach. One of the benefits of the tidyverse packages is that you don’t have to quote column names, whereas you typically do in base R (subset() being an obvious exception). This saves time typing and was a conscious decision of the tidyverse developers. This approach is called non-standard evaluation (NSE). NSE is great most of the time, but can cause headaches when you start write your own functions. Personally I use tidyverse for most scripting purposes because it’s intuitive to me and I like being able to chain steps together. I use base R when I’m writing functions/ developing packages to avoid NSE issues, and because base R functions tend to be faster. Until you get to the level that you’re building functions/packages, you’re free to work mostly within the tidyverse.
 </details>
 <p><br></p>
 <details open>
@@ -968,65 +1025,44 @@ nrow(wetdat_2tidy)
 table(wetdat_2tidy$Site_Name)</code></pre>
 <p>The nice thing about using %in% is that it only pulls records that match exactly one of the values you give it, and you don’t have to worry about it also including NAs.</p>
 <p class="ques">
-Question 1: How would you select only the plots in VAFO and HOFU from the loc table?
+Question 6: How would you select only Invasive species records?
 </p>
 <p class="ques">
-Question 2: How many plots are in VAFO and HOFU combined (based on loc table)?
+Question 7: Which sites have both Arethusa bulbosa and Carex exilis present?
 </p>
 </details>
 </br>
 <details open>
-<p><summary class="drop">Sorting Data</summary> Next topic is sorting data in R, which you can do alphabetically or numerically. Typically when you read in a dataset in R, the order is exactly the order of that in the original file. There are multiple ways to sort data in R. Let’s start by sorting the loc table by Unit_ID and Plot_Number.</p>
-<pre class="r"><code># head(loc2) # check original before sorting
+<p><summary class="drop">Sorting Data</summary> Next topic is sorting data in R, which you can do alphabetically or numerically. Typically when you read in a dataset in R, the order is exactly the order of that in the original file, and the row numbers are assigned based on that order. There are multiple ways to sort data in R, as demonstrated below.</p>
+<pre class="r"><code> head(wetdat) # check original order before sorting
 
-# # Base R- I always forget the exact code and have to look it up.
-# loc2_sort &lt;- loc2[order(loc2$Unit_ID, loc2$Plot_Number), ]
-# head(loc2_sort)
-# 
-# # Sort in reverse
-# loc2_sort_desc &lt;- loc2[order(desc(loc2$Unit_ID), -loc2$Plot_Number), ]
-# head(loc2_sort_desc)
-# # desc is for text, - is for numbers
-# 
-# # Tidyverse version
-# loc2_sort_tidy &lt;- loc2 %&gt;% arrange(Unit_ID, Plot_Number)
-# head(loc2_sort_tidy)
-# 
-# #Tidyverse reverse sort
-# loc2_sort_tidy_rev &lt;- loc2 %&gt;% arrange(desc(Unit_ID), desc(Plot_Number))
-# head(loc2_sort_tidy_rev)</code></pre>
-</details>
-</br>
-<details open>
-<p><summary class="drop">Summarizing Data</summary> The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park.</p>
-<p>To demonstrate how this works, let’s load in a test dataset.</p>
-<pre class="r"><code>regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
-head(regdf)</code></pre>
-<p>The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let’s say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code).</p>
-<pre class="r"><code>reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
-                         summarize(avg_seed_dens = mean(seed_den_m2),
-                                   avg_sap_dens = mean(sap_den_m2),
-                                   avg_stock = mean(stock),
-                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
-                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
-                                   se_stock = sd(stock)/sqrt(n()),
-                                   numplots = n()
-                                   )</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre class="r"><code>print(reg_by_park)</code></pre>
-<pre><code>## # A tibble: 3 x 8
-##   Unit_Code avg_seed_dens avg_sap_dens avg_stock se_seed_dens se_sap_dens
-##   &lt;chr&gt;             &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
-## 1 HOFU              1.32        0.0155      4.76        0.563     0.00596
-## 2 RICH              0.438       0.0733      4.60        0.125     0.0151 
-## 3 VAFO              0.473       0.0316      2.65        0.126     0.00934
-## # ... with 2 more variables: se_stock &lt;dbl&gt;, numplots &lt;int&gt;</code></pre>
-<p>In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.</p>
+# Base R- I always forget the exact code and have to look it up.
+wetdat_sort &lt;- wetdat[order(wetdat$Latin_Name, wetdat$Site_Name), ]
+head(wetdat_sort)
+
+# Sort in reverse
+wetdat_rev &lt;- wetdat[order(desc(wetdat$Latin_Name), desc(wetdat$Site_Name)), ]
+head(wetdat_rev)
+
+# Another example with numbers
+wetdat_rev2 &lt;- wetdat[order(-wetdat$PctFreq), ]
+# Note: desc() is for text, - is for numbers
+
+# Tidyverse version
+wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(Latin_Name, Site_Name)
+head(wetdat_sort_tidy)
+
+# Tidyverse reverse sort
+wetdat_rev_tidy &lt;- wetdat %&gt;% arrange(desc(Latin_Name), desc(Site_Name))
+head(wetdat_rev_tidy)</code></pre>
 <p class="ques">
-Question 6: How would you calculate the min and max for seed_den_m2?
+Question 8: How would you sort the wetdat by Ave_Cov (high to low) and Latin_Name?
 </p>
 </details>
 <p></br></p>
+<p>That’s the end of Day 1! Be sure to save your Day 1 R script, try to answer the questions from today, and complete the tasks in the Assignments tab as you have time. Answers to the questions are in the Answers tab. Note that I provide one or a few solutions to get the answer to the questions, and it’s fine if you come up with your own. That’s how coding in R works!</p>
+<p>Lastly, don’t worry if you don’t understand everything. The key here was to expose you to the many different ways to work with and view data in R. Learning R requires repetition, determination, and patience. Just stick with it!</p>
+<hr>
 </div>
 <div id="assignments" class="section level4">
 <h4>Assignments</h4>
@@ -1368,6 +1404,36 @@ Question 7: How would you take only QA/QC events and join the loc table to QA/QC
 <hr />
 <p>I should mention that this is pretty advanced stuff. I coded for years before attempting this in R. If you don’t quite understand the concepts, don’t worry. The forestNETN package does most of the heavy lifting with joining tables for you! I’m just giving you a hint of what’s under the hood, so you understand what you’re doing when you use the functions. The key is to understand which function in that package you need to use for your summary, and how to ask it to give you the data you want. Tomorrow, we take a tour of the forestNETN package.</p>
 <p>That’s it for Day 2! Please save your script and complete the tasks in the assignments tab.</p>
+<details open>
+<p><summary class="drop">Summarizing Data</summary> The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park.</p>
+<p>To demonstrate how this works, let’s load in a test dataset.</p>
+<pre class="r"><code>regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
+head(regdf)</code></pre>
+<p>The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let’s say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code).</p>
+<pre class="r"><code>reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
+                         summarize(avg_seed_dens = mean(seed_den_m2),
+                                   avg_sap_dens = mean(sap_den_m2),
+                                   avg_stock = mean(stock),
+                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
+                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
+                                   se_stock = sd(stock)/sqrt(n()),
+                                   numplots = n()
+                                   )</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>print(reg_by_park)</code></pre>
+<pre><code>## # A tibble: 3 x 8
+##   Unit_Code avg_seed_dens avg_sap_dens avg_stock se_seed_dens se_sap_dens
+##   &lt;chr&gt;             &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+## 1 HOFU              1.32        0.0155      4.76        0.563     0.00596
+## 2 RICH              0.438       0.0733      4.60        0.125     0.0151 
+## 3 VAFO              0.473       0.0316      2.65        0.126     0.00934
+## # ... with 2 more variables: se_stock &lt;dbl&gt;, numplots &lt;int&gt;</code></pre>
+<p>In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.</p>
+<p class="ques">
+Question 6: How would you calculate the min and max for seed_den_m2?
+</p>
+</details>
+<p></br></p>
 </div>
 <div id="saving-data-to-file" class="section level4">
 <h4>Saving data to file</h4>
@@ -1694,7 +1760,9 @@ Day 1
 </h2>
 <details>
 <p><summary class="ques2">Question 1: How do you find the value of the 3rd row of domSpp?</summary></p>
-<pre class="r"><code>df[3, c(&quot;domSpp&quot;)]</code></pre>
+<pre class="r"><code>df[3, c(&quot;domSpp&quot;)] # option 1</code></pre>
+<pre><code>## [1] &quot;red_spruce&quot;</code></pre>
+<pre class="r"><code>df[3, 4] # option 2</code></pre>
 <pre><code>## [1] &quot;red_spruce&quot;</code></pre>
 </details>
 <br>
@@ -1748,28 +1816,66 @@ df &lt;- df %&gt;% mutate(pctdead = (numtrees - numLive)/numtrees*100)</code></p
 ##    0</code></pre>
 </details>
 <p><br></p>
+<details>
+<p><summary class="ques2">Question 6: How would you select only Invasive species records?</summary></p>
+<pre class="r"><code>wetinv &lt;- wetdat[wetdat$Invasive == TRUE, ] # base R bracket-based solution
+wetinv2 &lt;- subset(wetdat, Invasive == TRUE) # another base R solution
+wetinv_tidy &lt;- wetdat %&gt;% filter(Invasive == TRUE) # tidyverse solution</code></pre>
+</details>
+<p><br></p>
+<details>
+<p><summary class="ques2">Question 7: Which sites have both Arethusa bulbosa and Carex exilis present?</summary></p>
+<pre class="r"><code># Base R solution
+wetspp &lt;- wetdat[wetdat$Latin_Name %in% c(&quot;Arethusa bulbosa&quot;, &quot;Carex exilis&quot;),]
+sort(unique(wetspp$Site_Name))</code></pre>
+<pre><code>## [1] &quot;RAM-05&quot; &quot;SEN-01&quot;</code></pre>
+<pre class="r"><code># Tidyverse solution
+wetspp_tidy &lt;- wetdat %&gt;% filter(Latin_Name %in% c(&quot;Arethusa bulbosa&quot;, &quot;Carex exilis&quot;)) 
+sort(unique(wetspp_tidy$Site_Name)) # RAM-05 and SEN-01 have both species present</code></pre>
+<pre><code>## [1] &quot;RAM-05&quot; &quot;SEN-01&quot;</code></pre>
+</details>
+<p><br></p>
+<details>
+<p><summary class="ques2">Question 8: How would you sort the wetdat by Ave_Cov (high to low) and Latin_Name?</summary></p>
+<pre class="r"><code>wetdat_sort &lt;- wetdat[order(-wetdat$Ave_Cov, wetdat$Latin_Name), ] # base R
+head(wetdat_sort)</code></pre>
+<pre><code>##     Site_Name Site_Type                      Latin_Name
+## 286    RAM-62       RAM                 Carex trisperma
+## 328    RAM-62       RAM           Vaccinium vitis-idaea
+## 425    RAM-05       RAM               Carex folliculata
+## 220    RAM-53       RAM                  Eurybia radula
+## 506    RAM-05       RAM Viburnum nudum var. cassinoides
+## 305    RAM-62       RAM           Maianthemum trifolium
+##                                 Common Year PctFreq Ave_Cov Invasive Protected
+## 286                  threeseeded sedge 2017     100      74    FALSE     FALSE
+## 328                        lingonberry 2012     100      66    FALSE     FALSE
+## 425                         long sedge 2017      50      63    FALSE     FALSE
+## 220                    low rough aster 2012      50      63    FALSE     FALSE
+## 506               northern wild raisin 2012     100      63    FALSE     FALSE
+## 305 threeleaf false lily of the valley 2012     100      51    FALSE     FALSE</code></pre>
+<pre class="r"><code>wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(-Ave_Cov, Latin_Name) #tidyverse
+head(wetdat_sort_tidy)</code></pre>
+<pre><code>##   Site_Name Site_Type                      Latin_Name
+## 1    RAM-62       RAM                 Carex trisperma
+## 2    RAM-62       RAM           Vaccinium vitis-idaea
+## 3    RAM-05       RAM               Carex folliculata
+## 4    RAM-53       RAM                  Eurybia radula
+## 5    RAM-05       RAM Viburnum nudum var. cassinoides
+## 6    RAM-62       RAM           Maianthemum trifolium
+##                               Common Year PctFreq Ave_Cov Invasive Protected
+## 1                  threeseeded sedge 2017     100      74    FALSE     FALSE
+## 2                        lingonberry 2012     100      66    FALSE     FALSE
+## 3                         long sedge 2017      50      63    FALSE     FALSE
+## 4                    low rough aster 2012      50      63    FALSE     FALSE
+## 5               northern wild raisin 2012     100      63    FALSE     FALSE
+## 6 threeleaf false lily of the valley 2012     100      51    FALSE     FALSE</code></pre>
+</details>
+<br>
 <h2>
 Day 2
 </h2>
 <details>
-<p><summary class="ques2">Question 4: How would you select only the plots in ACAD and MIMA from the loc table?</summary></p>
-<pre class="r"><code>loc_ACAD &lt;- loc[loc$Unit_ID %in% c(&quot;ACAD&quot;, &quot;MIMA&quot;) &amp; !is.na(loc$Unit_ID),]
-
-loc_VAFO_HOFU_tidy &lt;- loc %&gt;% filter(Unit_ID %in% c(&quot;ACAD&quot;, &quot;MIMA&quot;))</code></pre>
-</details>
-<br>
-<details>
-<p><summary class="ques2">Question 5: How many plots are in MABI and SARA (based on loc table)?</summary></p>
-<pre class="r"><code>loc_MABI_SARA_tidy &lt;- loc %&gt;% filter(Unit_ID %in% c(&quot;MABI&quot;, &quot;SARA&quot;)) %&gt;% select(Unit_ID, Plot_Number) %&gt;% unique()
-nrow(loc_MABI_SARA_tidy)</code></pre>
-<pre><code>## [1] 58</code></pre>
-<pre class="r"><code>loc_MABI_SARA_tidy_no_nas &lt;- loc %&gt;% filter(Unit_ID %in% c(&quot;MABI&quot;, &quot;SARA&quot;) &amp; !is.na(Plot_Number)) %&gt;% select(Unit_ID, Plot_Number) %&gt;% unique()
-nrow(loc_MABI_SARA_tidy_no_nas)</code></pre>
-<pre><code>## [1] 57</code></pre>
-</details>
-<br>
-<details>
-<p><summary class="ques2">Question 6: How would you calculate the min and max for seed_den_m2?</summary></p>
+<p><summary class="ques2">Question 3: How would you calculate the min and max for seed_den_m2?</summary></p>
 <pre class="r"><code>reg_by_park2 &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
                           summarize(min_seed_dens = min(seed_den_m2),
                           max_seed_dens = max(seed_den_m2))</code></pre>
@@ -1784,7 +1890,7 @@ nrow(loc_MABI_SARA_tidy_no_nas)</code></pre>
 </details>
 <br>
 <details>
-<p><summary class="ques2">Question 7: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary></p>
+<p><summary class="ques2">Question 4: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary></p>
 <pre class="r"><code>eventQAQC &lt;- event %&gt;% filter(Event_QAQC == TRUE)
 locevent_QAQC &lt;- merge(loc, eventQAQC, by=&quot;Location_ID&quot;, all.x = F, all.y = T)</code></pre>
 This is technically a right join, because I’m telling R to take all of the records from the right table (eventQAQC) and only join records in left (loc) table that match. This is just a style preference. I prefer to keep higher level tables to the left of lower level tables (eg tables with 1 to many relationships). The loc (tbl_Locations) table is higher level than the event (tbl_Events) table, because the loc table has the 1 plot record and the event table has the many visits for the plot records. If this is confusing, don’t worry about it. You’ll just notice that it’s the order I generally organize data in my code.
@@ -1794,14 +1900,14 @@ This is technically a right join, because I’m telling R to take all of the rec
 Day 3
 </h2>
 <details>
-<p><summary class="ques2">Question 8: How many plots were sampled in ACAD in 2018?</summary></p>
+<p><summary class="ques2">Question 1: How many plots were sampled in ACAD in 2018?</summary></p>
 <pre class="r"><code>acad &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2018, to = 2018)
 length(unique(acad$Plot_Number))</code></pre>
 <pre><code>## [1] 44</code></pre>
 </details>
 <p><br></p>
 <details>
-<p><summary class="ques2">Question 9: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary></p>
+<p><summary class="ques2">Question 2: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary></p>
 <pre class="r"><code>acad_tree_dist &lt;- sumTreeDBHDist(park = &quot;ACAD&quot;, status = &#39;live&#39;)
 
 acad_tree_max70 &lt;- acad_tree_dist %&gt;% arrange(desc(d70_79.9))
@@ -1849,7 +1955,7 @@ head(acad_top_70)</code></pre>
 </details>
 <br>
 <details>
-<p><summary class="ques2">Question 10: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary></p>
+<p><summary class="ques2">Question 3: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary></p>
 <pre class="r"><code>acad_exo &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, speciesType = &quot;exotic&quot;) 
 acad_exo &lt;- acad_exo %&gt;% mutate(present = ifelse(Exotic == TRUE &amp; !is.na(Exotic), 1, 0))
 head(acad_exo)</code></pre>
@@ -1919,12 +2025,9 @@ head(acad_wide_pivot)</code></pre>
 ## 6 ACAD-039                 0                0                0               0
 ## # ... with 2 more variables: `Rhamnus frangula` &lt;dbl&gt;, `NA` &lt;dbl&gt;</code></pre>
 </details>
-<br>
-<h2>
-Day 4
-</h2>
+<p><br></p>
 <details>
-<p><summary class="ques2">Question 11: Take the gett_final graph and make 2 more changes to it.</summary></p>
+<p><summary class="ques2">Question 4: Take the acad_final graph and make 2 more changes to it.</summary></p>
 <p>You may have chosen other things to do than I did. Here are a couple of changes to the ggplot bar chart</p>
 <pre class="r"><code> ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_dens))+
               geom_bar(stat = &#39;identity&#39;, fill = &quot;steelblue4&quot;)+
@@ -1942,6 +2045,7 @@ Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars.
 <h3>Code printout</h3>
 <p>This tab prints all of the code chunks in this file in one long file.</p>
 <pre class="r"><code>knitr::opts_chunk$set(echo = FALSE)
+
 
 
 
@@ -1981,15 +2085,13 @@ library(NCRNWater)
 library(NCRNbirds)
 library(tidyverse)
 library(rgdal)
-# Step 1m 
-subfolders&lt;-c(&quot;figures&quot;, &quot;tables&quot;, &quot;rscripts&quot;, &quot;shapefiles&quot;)
+subfolders&lt;-c(&quot;data&quot;, &quot;figures&quot;, &quot;tables&quot;, &quot;rscripts&quot;, &quot;shapefiles&quot;)
 
 invisible(lapply(subfolders, function(x){
   if(!dir.exists(x)){dir.create(paste(getwd(), x, sep = &#39;/&#39;))}
   }))
 
-if(!dir.exists(&quot;./data&quot;)){dir.create(&#39;./data&#39;)} # creates a data folder to store training data, if it doesn&#39;t already exist. 
-zips &lt;- c(&quot;./data/misc_files&quot;, &quot;./data/NETN_forest_csvs&quot;, &quot;./data/NETN_water_data&quot;, &quot;./data/NETN_bird_data&quot;)
+zips &lt;- c(&quot;./data/example_data&quot;, &quot;./data/NETN_forest_csvs&quot;, &quot;./data/NETN_water_data&quot;, &quot;./data/NETN_bird_data&quot;)
 unlink(zips, recursive=T)
 list.files(&quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that you have data.zip in your data folder
@@ -1999,6 +2101,14 @@ list.files(&quot;./data&quot;) # check that the unzip worked. There should be mu
 ?dplyr::filter
 help(package=dplyr)
 library(tidyverse)
+# Vector of numbers
+vec_num &lt;- c(1, 2, 3, 4, 5)
+vec_num
+
+# Vector of strings
+vec_str &lt;- c(&quot;Schoodic&quot;, &quot;MDI-East&quot;, &quot;MDI-West&quot;, &quot;IAH&quot;)
+vec_str
+vec_str[1]
 
 df &lt;- data.frame(plot = c(1, 2, 3, 4, 5, 6, &#39;plot7&#39;), #column for plot number
                  numtrees = c(24, 18, 17, 14, 31, 27, 15), 
@@ -2010,9 +2120,9 @@ df &lt;- data.frame(plot = c(1, 2, 3, 4, 5, 6, &#39;plot7&#39;), #column for plo
 
 print(df)
 df$plot # List the values within the column plot for the df data frame
-df[ , c(&#39;plot&#39;)] # Bracket version of the same thing
+df[ , &#39;plot&#39;] # Bracket version of the same thing
 df[ , 1] # Bracket version of showing the first column, which is plot
-df[2, 1] # Selecting 2nd row of first column
+df[2, 1] # Selecting 2nd row of 1st column
 
 str(df) # to view how R is defining each column type
 head(df) # to view the first 6 rows of df
@@ -2057,6 +2167,15 @@ summary(df)
 df$numdead &lt;- df$numtrees - df$numLive # base R version
 df &lt;- df %&gt;% mutate(numdead = numtrees - numLive) # tidyverse version. 
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
+install.packages(&quot;readxl&quot;) #only need to run once. 
+library(readxl)
+bat_capture &lt;- suppressWarnings(read_xlsx(path = &quot;./data/example_data/ANP_BAT_MasterCaptureDB_1996-2019 20200811.xlsx&quot;, 
+                         sheet = &quot;All Records&quot;))
+library(readxl)
+bat_capture &lt;- read_xlsx(path = &quot;./data/example_data/ANP_BAT_MasterCaptureDB_1996-2019 20200811.xlsx&quot;, 
+                         sheet = &quot;All Records&quot;)
+head(bat_capture)
+dat &lt;- read.csv(file.choose())
 # Filter to remove protected species
 wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, ]
 nrow(wetdat) #508 rows in original dataset
@@ -2071,9 +2190,18 @@ names(wetdat_pub)
 wetdat_pub &lt;- wetdat[wetdat$Protected == FALSE, 
                      c(&quot;Site_Name&quot;, &quot;Site_Type&quot;, &quot;Latin_Name&quot;, &quot;Year&quot;, &quot;Ave_Cov&quot;, &quot;Invasive&quot;, &quot;Protected&quot;)]
 
-nrow(wetdat_pub) #499 rows
+nrow(wetdat_pub) # 499 rows
 names(wetdat_pub) # Only includes fields we want
 table(wetdat_pub$Protected) #All FALSE
+
+# Another base R solution that&#39;s a bit easier to work with:
+wetdat_pub2 &lt;- subset(wetdat, Protected == FALSE, 
+                              select = c(Site_Name, Site_Type, Latin_Name, Year,
+                                         Ave_Cov, Invasive, Protected))
+
+nrow(wetdat_pub2) # 499 rows
+names(wetdat_pub2) # Only includes fields we want
+table(wetdat_pub2$Protected) #All FALSE
 wetdat_tidy &lt;- wetdat %&gt;% filter(Protected == FALSE) %&gt;% 
                           select(Site_Name, Site_Type, Latin_Name, Year, Ave_Cov, Invasive, Protected)
                           # Any column name not mentioned in the select is dropped
@@ -2095,37 +2223,27 @@ nrow(wetdat_2tidy)
 table(wetdat_2tidy$Site_Name)
 
 
-# head(loc2) # check original before sorting
+ head(wetdat) # check original order before sorting
 
-# # Base R- I always forget the exact code and have to look it up.
-# loc2_sort &lt;- loc2[order(loc2$Unit_ID, loc2$Plot_Number), ]
-# head(loc2_sort)
-# 
-# # Sort in reverse
-# loc2_sort_desc &lt;- loc2[order(desc(loc2$Unit_ID), -loc2$Plot_Number), ]
-# head(loc2_sort_desc)
-# # desc is for text, - is for numbers
-# 
-# # Tidyverse version
-# loc2_sort_tidy &lt;- loc2 %&gt;% arrange(Unit_ID, Plot_Number)
-# head(loc2_sort_tidy)
-# 
-# #Tidyverse reverse sort
-# loc2_sort_tidy_rev &lt;- loc2 %&gt;% arrange(desc(Unit_ID), desc(Plot_Number))
-# head(loc2_sort_tidy_rev)
-regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
-head(regdf)
+# Base R- I always forget the exact code and have to look it up.
+wetdat_sort &lt;- wetdat[order(wetdat$Latin_Name, wetdat$Site_Name), ]
+head(wetdat_sort)
 
-reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
-                         summarize(avg_seed_dens = mean(seed_den_m2),
-                                   avg_sap_dens = mean(sap_den_m2),
-                                   avg_stock = mean(stock),
-                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
-                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
-                                   se_stock = sd(stock)/sqrt(n()),
-                                   numplots = n()
-                                   )
-print(reg_by_park)
+# Sort in reverse
+wetdat_rev &lt;- wetdat[order(desc(wetdat$Latin_Name), desc(wetdat$Site_Name)), ]
+head(wetdat_rev)
+
+# Another example with numbers
+wetdat_rev2 &lt;- wetdat[order(-wetdat$PctFreq), ]
+# Note: desc() is for text, - is for numbers
+
+# Tidyverse version
+wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(Latin_Name, Site_Name)
+head(wetdat_sort_tidy)
+
+# Tidyverse reverse sort
+wetdat_rev_tidy &lt;- wetdat %&gt;% arrange(desc(Latin_Name), desc(Site_Name))
+head(wetdat_rev_tidy)
 library(tidyverse)
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
 head(wetdat) # shows the first 6 lines of the dataframe, including the names of the columns
@@ -2247,6 +2365,19 @@ nrow(locevent_full) #1200
 nrow(locevent_left) #1150
 View(locevent_full)
 View(locevent_left)
+regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
+head(regdf)
+
+reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
+                         summarize(avg_seed_dens = mean(seed_den_m2),
+                                   avg_sap_dens = mean(sap_den_m2),
+                                   avg_stock = mean(stock),
+                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
+                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
+                                   se_stock = sd(stock)/sqrt(n()),
+                                   numplots = n()
+                                   )
+print(reg_by_park)
 write.csv(reg_by_park, &quot;./data/Regen_test_summary.csv&quot;)
 file.remove(&quot;./data/Regen_test_summary.csv&quot;)
 library(tidyverse)
@@ -2378,7 +2509,8 @@ acad_final &lt;- ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_den
               theme_FHM()
 
 acad_final
-df[3, c(&quot;domSpp&quot;)]
+df[3, c(&quot;domSpp&quot;)] # option 1
+df[3, 4] # option 2
 df$numtrees &lt;- as.integer(df$numtrees)
 str(df)
 df$invasive_pres[2] &lt;- TRUE
@@ -2396,16 +2528,20 @@ df &lt;- df %&gt;% mutate(numdead = numtrees - numLive,
 df &lt;- df %&gt;% mutate(pctdead = (numtrees - numLive)/numtrees*100)
 min(df$numdead) # uses numdead column calculated for previous question. 
 summary(df$numdead)[1] #Min. is the record summary reports for numeric columns
-loc_ACAD &lt;- loc[loc$Unit_ID %in% c(&quot;ACAD&quot;, &quot;MIMA&quot;) &amp; !is.na(loc$Unit_ID),]
+wetinv &lt;- wetdat[wetdat$Invasive == TRUE, ] # base R bracket-based solution
+wetinv2 &lt;- subset(wetdat, Invasive == TRUE) # another base R solution
+wetinv_tidy &lt;- wetdat %&gt;% filter(Invasive == TRUE) # tidyverse solution
+# Base R solution
+wetspp &lt;- wetdat[wetdat$Latin_Name %in% c(&quot;Arethusa bulbosa&quot;, &quot;Carex exilis&quot;),]
+sort(unique(wetspp$Site_Name))
 
-loc_VAFO_HOFU_tidy &lt;- loc %&gt;% filter(Unit_ID %in% c(&quot;ACAD&quot;, &quot;MIMA&quot;))
-
-loc_MABI_SARA_tidy &lt;- loc %&gt;% filter(Unit_ID %in% c(&quot;MABI&quot;, &quot;SARA&quot;)) %&gt;% select(Unit_ID, Plot_Number) %&gt;% unique()
-nrow(loc_MABI_SARA_tidy)
-
-loc_MABI_SARA_tidy_no_nas &lt;- loc %&gt;% filter(Unit_ID %in% c(&quot;MABI&quot;, &quot;SARA&quot;) &amp; !is.na(Plot_Number)) %&gt;% select(Unit_ID, Plot_Number) %&gt;% unique()
-nrow(loc_MABI_SARA_tidy_no_nas)
-
+# Tidyverse solution
+wetspp_tidy &lt;- wetdat %&gt;% filter(Latin_Name %in% c(&quot;Arethusa bulbosa&quot;, &quot;Carex exilis&quot;)) 
+sort(unique(wetspp_tidy$Site_Name)) # RAM-05 and SEN-01 have both species present
+wetdat_sort &lt;- wetdat[order(-wetdat$Ave_Cov, wetdat$Latin_Name), ] # base R
+head(wetdat_sort)
+wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(-Ave_Cov, Latin_Name) #tidyverse
+head(wetdat_sort_tidy)
 reg_by_park2 &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
                           summarize(min_seed_dens = min(seed_den_m2),
                           max_seed_dens = max(seed_den_m2))

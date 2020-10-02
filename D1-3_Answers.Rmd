@@ -1,7 +1,8 @@
 <h2>Day 1</h2>
 <details><summary class='ques2'>Question 1: How do you find the value of the 3rd row of domSpp?</summary>
 ```{r, c105,echo=T, results='show'}
-df[3, c("domSpp")]
+df[3, c("domSpp")] # option 1
+df[3, 4] # option 2
 ```
 </details>
 <br>
@@ -47,30 +48,39 @@ summary(df$numdead)[1] #Min. is the record summary reports for numeric columns
 </details>
 <br>
 
-
-<h2>Day 2</h2>
-<details><summary class='ques2'>Question 4: How would you select only the plots in ACAD and MIMA from the loc table?</summary>
+<details><summary class='ques2'>Question 6: How would you select only Invasive species records?</summary>
 ```{r, c108, echo=T, results='hide'}
-loc_ACAD <- loc[loc$Unit_ID %in% c("ACAD", "MIMA") & !is.na(loc$Unit_ID),]
-
-loc_VAFO_HOFU_tidy <- loc %>% filter(Unit_ID %in% c("ACAD", "MIMA"))
-
+wetinv <- wetdat[wetdat$Invasive == TRUE, ] # base R bracket-based solution
+wetinv2 <- subset(wetdat, Invasive == TRUE) # another base R solution
+wetinv_tidy <- wetdat %>% filter(Invasive == TRUE) # tidyverse solution
 ```
 </details>
 <br>
-<details><summary class='ques2'>Question 5: How many plots are in MABI and SARA (based on loc table)?</summary>
+
+<details><summary class='ques2'>Question 7: Which sites have both Arethusa bulbosa and Carex exilis present?</summary>
 ```{r, c109,echo=T, results='show'}
-loc_MABI_SARA_tidy <- loc %>% filter(Unit_ID %in% c("MABI", "SARA")) %>% select(Unit_ID, Plot_Number) %>% unique()
-nrow(loc_MABI_SARA_tidy)
+# Base R solution
+wetspp <- wetdat[wetdat$Latin_Name %in% c("Arethusa bulbosa", "Carex exilis"),]
+sort(unique(wetspp$Site_Name))
 
-loc_MABI_SARA_tidy_no_nas <- loc %>% filter(Unit_ID %in% c("MABI", "SARA") & !is.na(Plot_Number)) %>% select(Unit_ID, Plot_Number) %>% unique()
-nrow(loc_MABI_SARA_tidy_no_nas)
-
+# Tidyverse solution
+wetspp_tidy <- wetdat %>% filter(Latin_Name %in% c("Arethusa bulbosa", "Carex exilis")) 
+sort(unique(wetspp_tidy$Site_Name)) # RAM-05 and SEN-01 have both species present
 ```
-
 </details>
 <br>
-<details><summary class='ques2'>Question 6: How would you calculate the min and max for seed_den_m2?</summary>
+
+<details><summary class='ques2'>Question 8: How would you sort the wetdat by Ave_Cov (high to low) and Latin_Name?</summary>
+```{r, c109b, echo=T, results='show'}
+wetdat_sort <- wetdat[order(-wetdat$Ave_Cov, wetdat$Latin_Name), ] # base R
+head(wetdat_sort)
+wetdat_sort_tidy <- wetdat %>% arrange(-Ave_Cov, Latin_Name) #tidyverse
+head(wetdat_sort_tidy)
+```
+</details>
+<br>
+<h2>Day 2</h2>
+<details><summary class='ques2'>Question 3: How would you calculate the min and max for seed_den_m2?</summary>
 ```{r, c110,echo=T, results='show'}
 reg_by_park2 <- regdf %>% group_by(Unit_Code) %>% 
                           summarize(min_seed_dens = min(seed_den_m2),
@@ -80,7 +90,7 @@ reg_by_park2
 ```
 </details>
 <br>
-<details><summary class='ques2'>Question 7: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary>
+<details><summary class='ques2'>Question 4: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary>
 ```{r, c111,echo=T, results='hide'}
 eventQAQC <- event %>% filter(Event_QAQC == TRUE)
 locevent_QAQC <- merge(loc, eventQAQC, by="Location_ID", all.x = F, all.y = T)
@@ -89,7 +99,7 @@ This is technically a right join, because I'm telling R to take all of the recor
 </details>
 <br>
 <h2>Day 3</h2>
-<details><summary class='ques2'>Question 8: How many plots were sampled in ACAD in 2018?</summary>
+<details><summary class='ques2'>Question 1: How many plots were sampled in ACAD in 2018?</summary>
 ```{r, c112,echo=T}
 acad <- joinLocEvent(park = "ACAD", from = 2018, to = 2018)
 length(unique(acad$Plot_Number))
@@ -97,7 +107,7 @@ length(unique(acad$Plot_Number))
 </details>
 <br>
 
-<details><summary class='ques2'>Question 9: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary>
+<details><summary class='ques2'>Question 2: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary>
 ```{r, c113,echo=T}
 acad_tree_dist <- sumTreeDBHDist(park = "ACAD", status = 'live')
 
@@ -111,7 +121,7 @@ head(acad_top_70)
 ```
 </details>
 <br>
-<details><summary class='ques2'>Question 10: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary>
+<details><summary class='ques2'>Question 3: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary>
 
 ```{r, c114,echo=T}
 acad_exo <- makeSppList(park = "ACAD", from = 2019, to = 2019, speciesType = "exotic") 
@@ -134,8 +144,8 @@ head(acad_wide_pivot)
 ```
 </details>
 <br>
-<h2>Day 4</h2>
-<details><summary class='ques2'>Question 11: Take the gett_final graph and make 2 more changes to it.</summary>
+
+<details><summary class='ques2'>Question 4: Take the acad_final graph and make 2 more changes to it.</summary>
 
 You may have chosen other things to do than I did. Here are a couple of changes to the ggplot bar chart
 ```{r, c115,echo=T}
