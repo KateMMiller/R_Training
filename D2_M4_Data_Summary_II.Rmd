@@ -25,7 +25,7 @@ A couple of things to note:
 <ol>
 <li>The dplyr package has recently added a .groups statement to summarize. If you don't specify, you get a warning about the default that was used. For 99% of the cases I use summarize for, the default .groups='drop' is what I want to happen. You don't have to specify that, if you don't mind the chatty console (tidyverse functions are notoriously chatty).</li> 
 <li>When you use group_by() and summarize(), any columns not mentioned in either of those two functions will get dropped from the final output. For example, notice that PctFreq, Invasive, and Protected are not in the final output. If you want those fields included, and they are consistent within your grouping variables. For example, if we wanted to include Site_Type (Sentinel or RAM), which is consistent within each site, we can either add it to the group_by() statement, or we can add it to the summarize statement, as demonstrated below.</li>
-
+</ol>
 ```{r, c28c, echo=T, results='show'}
 wetsum_opt1 <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0)) %>% 
                           group_by(Site_Name, Site_Type, Year) %>% 

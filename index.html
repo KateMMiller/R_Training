@@ -1552,6 +1552,7 @@ The dplyr package has recently added a .groups statement to summarize. If you do
 <li>
 When you use group_by() and summarize(), any columns not mentioned in either of those two functions will get dropped from the final output. For example, notice that PctFreq, Invasive, and Protected are not in the final output. If you want those fields included, and they are consistent within your grouping variables. For example, if we wanted to include Site_Type (Sentinel or RAM), which is consistent within each site, we can either add it to the group_by() statement, or we can add it to the summarize statement, as demonstrated below.
 </li>
+</ol>
 <pre class="r"><code>wetsum_opt1 &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
                           group_by(Site_Name, Site_Type, Year) %&gt;% 
                           summarize(numspp = sum(present),
