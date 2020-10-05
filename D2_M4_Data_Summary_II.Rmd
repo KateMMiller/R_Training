@@ -1,31 +1,56 @@
-<details open><summary class='drop'>Summarizing Data</summary>
-The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park. 
+#### Data Summary II
 
-To demonstrate how this works, let's load in a test dataset.
+<details open><summary class='drop'>Summarizing Data</summary>
+The next topic is summarizing data using group_by() and summarize() functions from dplyr (also a core tidyverse package). The group_by() function allows you to specify the columns you want to summarize over. For example grouping by site, and counting up the number of trees or critters observed in each site. This is a very similar idea to using Totals in MS Access queries, although the tools are more powerful, flexible, and efficient than MS Access. The summarize() function is similar to the mutate() function we saw earlier. The main difference is that mutate creates a new field that has the exact number of rows as the original dataset. The summarize() will return only as many rows are there are unique combinations of groups in your group_by(). 
+
+To demonstrate how this works, let's load a cleaned version of the wetland dataset from before. Let's start by counting the number of species found in each site by year.
 ```{r, c27, echo=T, results='hide'}
-regdf <- read.csv('./data/example_data/Regen_test_data.csv')
-head(regdf)
+wetdat <- read.csv('./data/example_data/ACAD_wetland_data_clean.csv')
+head(wetdat)
 ```
-The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let's say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code). 
 
 ```{r, c28, echo=T, results='hide'}
-
-reg_by_park <- regdf %>% group_by(Unit_Code) %>% 
-                         summarize(avg_seed_dens = mean(seed_den_m2),
-                                   avg_sap_dens = mean(sap_den_m2),
-                                   avg_stock = mean(stock),
-                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
-                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
-                                   se_stock = sd(stock)/sqrt(n()),
-                                   numplots = n()
-                                   )
+wetsum <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0)) %>% 
+                     group_by(Site_Name, Year) %>% 
+                     summarize(numspp = sum(present),
+                               .groups = 'drop')
 ```
-```{r, c29, echo=T}
-print(reg_by_park)
+```{r, c28b, echo=T, results='show'}
+head(wetdat)
 ```
 
-In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.
+In the code above, we added a column named "present" using mutate, and we set present to 1 if a species has an Ave_Cov > 0 and isn't NA. We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.   
 
-<p class='ques'>Question 6: How would you calculate the min and max for seed_den_m2?</p>
+A couple of things to note: 
+<ol>
+<li>The dplyr package has recently added a .groups statement to summarize. If you don't specify, you get a warning about the default that was used. For 99% of the cases I use summarize for, the default .groups='drop' is what I want to happen. You don't have to specify that, if you don't mind the chatty console (tidyverse functions are notoriously chatty).</li> 
+<li>When you use group_by() and summarize(), any columns not mentioned in either of those two functions will get dropped from the final output. For example, notice that PctFreq, Invasive, and Protected are not in the final output. If you want those fields included, and they are consistent within your grouping variables. For example, if we wanted to include Site_Type (Sentinel or RAM), which is consistent within each site, we can either add it to the group_by() statement, or we can add it to the summarize statement, as demonstrated below.</li>
+
+```{r, c28c, echo=T, results='show'}
+wetsum_opt1 <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0)) %>% 
+                          group_by(Site_Name, Site_Type, Year) %>% 
+                          summarize(numspp = sum(present),
+                                    .groups = 'drop')
+
+wetsum_opt2 <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0)) %>% 
+                          group_by(Site_Name, Year) %>% 
+                          summarize(Site_Type = first(Site_Type), 
+                                    numspp = sum(present),
+                                   .groups = 'drop')
+```
+
+Taking this a step further, let's pretend that we want to know what the average number of species per site was, and whether this has changed over time. First we need to remove the Sentinel site data, because we only have 1 visit for those sites. Then we'll calculate the mean and standard error for years 2012 and 2017 across the RAM sites.
+
+```{r, c28d, echo=T, results='show'}
+wetsum_yr <- wetsum_opt1 %>% filter(Site_Type == "RAM") %>% 
+                             group_by(Year) %>% 
+                             summarize(mean_numspp = mean(numspp),
+                                       se_numspp = sd(numspp)/sqrt(n()), 
+                                       .groups = 'drop')
+wetsum_yr
+```
+
+
+<p class='ques'>Question 5: How would you calculate the min and max number of species by year?</p>
 </details>
 </br>

@@ -1,5 +1,7 @@
-#### Data Wrangling Part I{.tabset}
-We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you've never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. Based on the survey you all filled out, this was the most checked topic to learn, so I'll cover this in (painful?) detail.
+#### Data Wrangling I{.tabset}
+We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you've never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. Based on the survey you all filled out, this was the most checked topic to learn, so I'll cover this in (painful?) detail. 
+
+<b>Disclaimer: While R provides lots of ways to check and clean up data, these tools are no replacement for sound data management that prevents data issues from happening in the first place.</b>
 
 For this training module, we're going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100. 
 
@@ -180,10 +182,10 @@ Problems solved (character(0) means no records returned). Note that there are ot
 <br>
 
 <details open><summary class='drop'>Checking your work</summary>
-If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you've still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn't get an error or warning, doesn't mean the code you ran worked! 
+If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you've still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn't get an error or warning, doesn't mean the code you ran worked the way you intended it to! 
 
 In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird (hence the sort(unique()) line).
-```{r, c21l, echo=T, results='hide'}
+```{r, c21l, echo=T, results='show'}
 dim(wetdat) # reports # rows then # cols
 nrow(wetdat) # reports # rows only
 
@@ -191,7 +193,6 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-
 sort(unique(wetdat$Common)) # see all the common names in the dataset
 ```
 

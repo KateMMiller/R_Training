@@ -83,11 +83,12 @@ head(wetdat_sort_tidy)
 <details><summary class='ques2'>Question 1: There's a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</summary>
 
 ```{r, c110, echo=T, results='show'}
-sort(unique(wetdat$Latin_Name)) # use your eyes to spot the "Alnus incana++"
+sort(unique(wetdat$Latin_Name))[1:10] # Low-tech way: use your eyes to spot the "Alnus incana++". I truncated to first 10.
 
 # The regular expression way to find non-alphabetical symbols (now you know why I didn't cover this).
-wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record
-# This took longer than I'd like to admit to make work, by the way.
+wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record 
+  # ^ and +$ are telling R to start with first word and check every following word within a record.
+  # This took longer than I'd like to admit to make work, by the way.
 
 ```
 </details>
@@ -97,22 +98,39 @@ wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # looks for anythin
 ```{r, c110b, echo=T, results='show'}
 wetdat$Latin_Name[wetdat$Latin_Name == "Alnus incana++"] <- "Alnus incana"
 wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # regex approach 
-sort(unique(wetdat$Latin_Name)) # using your eyes approach
+sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach
 
 ```
 
 </details>
 <br>
 
-
-<details><summary class='ques2'>Question 4: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary>
+<details><summary class='ques2'>Question 3: Question 3: How would you take only the plots on MDI (eg Unit_ID = "ACAD_MDI") in the loc table and join them to their corresponding visits in the events table?</summary>
 ```{r, c111,echo=T, results='hide'}
-eventQAQC <- event %>% filter(Event_QAQC == TRUE)
-locevent_QAQC <- merge(loc, eventQAQC, by="Location_ID", all.x = F, all.y = T)
+# Step by step:
+head(loc)
+loc_MDI <- loc %>% filter(Unit_ID == "ACAD_MDI")
+locev_MDI <- left_join(loc_MDI, event, by = "Location_ID")
+
+# All in one:
+locev_MDI2 <- loc %>% filter(Unit_ID == "ACAD_MDI") %>% 
+                      left_join(event, by = "Location_ID")
+
 ```
-This is technically a right join, because I'm telling R to take all of the records from the right table (eventQAQC) and only join records in left (loc) table that match. This is just a style preference. I prefer to keep higher level tables to the left of lower level tables (eg tables with 1 to many relationships). The loc (tbl_Locations) table is higher level than the event (tbl_Events) table, because the loc table has the 1 plot record and the event table has the many visits for the plot records. If this is confusing, don't worry about it. You'll just notice that it's the order I generally organize data in my code.  
 </details>
 <br>
+
+<details><summary class='ques2'>Question 4: How would you join the stand data to the locev table (the one we made that dropped QAQC events)?</summary>
+```{r, c111b, echo=T}
+locev <- merge(loc, event[event$Event_QAQC == FALSE, ], all.x = TRUE, all.y = TRUE)
+intersect(names(locev), names(stand))
+locev_stand <- merge(locev, stand, by = "Event_ID", all.x = TRUE, all.y = TRUE) #base R
+locev_stand_tidy <- full_join(locev, stand, by = "Event_ID")
+```
+
+</details>
+<br>
+
 <h2>Day 3</h2>
 <details><summary class='ques2'>Question 1: How many plots were sampled in ACAD in 2018?</summary>
 ```{r, c112,echo=T}

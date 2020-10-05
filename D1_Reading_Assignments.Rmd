@@ -7,6 +7,14 @@ Please complete the assignments below  (they're ordered from highest to lowest p
   <li>STAT545: <a href="https://stat545.com/basic-data-care.html">Chapter 5. Basic care and feeding of data in R</a></li>
   <li>STAT545: <a href="https://stat545.com/dplyr-intro.html">Chapter 6. Intro to dplyr</a></li>
   <li>R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a></li>
+  </ul>
+
+If you don't have experience with relational databases and joining tables, the resources below might help you prepare. These are here as more of an FYI than an expectation that you'll read/watch all of these before the 2nd day of training.    
+  <ul>
+  <li>MSAccess tutorial: <a href="https://www.youtube.com/watch?v=eXiCza050ug">Intro to Databases</a></li>
+  <li>MSAccess tutorial: <a href="https://www.youtube.com/watch?v=bWKf6gT8_JI&list=PLpQQipWcxwt-EHfE5zXtUrLtFYnOPBRE_&index=3&t=0s">Intro to Objects</a></li>
+  <li>STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables (in R)</a></li>
+  <li>R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational Data (in R)</a></li>
 </ul>
 
 <hr>

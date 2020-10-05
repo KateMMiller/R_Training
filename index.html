@@ -1087,14 +1087,31 @@ STAT545: <a href="https://stat545.com/dplyr-intro.html">Chapter 6. Intro to dply
 R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a>
 </li>
 </ul>
+If you don’t have experience with relational databases and joining tables, the resources below might help you prepare. These are here as more of an FYI than an expectation that you’ll read/watch all of these before the 2nd day of training.<br />
+
+<ul>
+<li>
+MSAccess tutorial: <a href="https://www.youtube.com/watch?v=eXiCza050ug">Intro to Databases</a>
+</li>
+<li>
+MSAccess tutorial: <a href="https://www.youtube.com/watch?v=bWKf6gT8_JI&amp;list=PLpQQipWcxwt-EHfE5zXtUrLtFYnOPBRE_&amp;index=3&amp;t=0s">Intro to Objects</a>
+</li>
+<li>
+STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables (in R)</a>
+</li>
+<li>
+R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational Data (in R)</a>
+</li>
+</ul>
 <hr>
 </div>
 </div>
 <div id="day-2" class="section level3 tabset">
 <h3>Day 2</h3>
-<div id="data-wrangling-part-i" class="section level4 tabset">
-<h4>Data Wrangling Part I</h4>
+<div id="data-wrangling-i" class="section level4 tabset">
+<h4>Data Wrangling I</h4>
 <p>We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. Based on the survey you all filled out, this was the most checked topic to learn, so I’ll cover this in (painful?) detail.</p>
+<p><b>Disclaimer: While R provides lots of ways to check and clean up data, these tools are no replacement for sound data management that prevents data issues from happening in the first place.</b></p>
 <p>For this training module, we’re going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
 <p>Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script. Then, load the tidyverse package and the wetland dataset we used yesterday.</p>
 <pre class="r"><code>library(tidyverse)
@@ -1275,17 +1292,92 @@ sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a co
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked!</p>
+<p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked the way you intended it to!</p>
 <p>In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird (hence the sort(unique()) line).</p>
-<pre class="r"><code>dim(wetdat) # reports # rows then # cols
-nrow(wetdat) # reports # rows only
-
-length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
-length(unique(wetdat$Year)) # number of unique years
-
-table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-
-sort(unique(wetdat$Common)) # see all the common names in the dataset</code></pre>
+<pre class="r"><code>dim(wetdat) # reports # rows then # cols</code></pre>
+<pre><code>## [1] 508   9</code></pre>
+<pre class="r"><code>nrow(wetdat) # reports # rows only</code></pre>
+<pre><code>## [1] 508</code></pre>
+<pre class="r"><code>length(unique(wetdat$Site_Name)) # number of unique values in Site_Name</code></pre>
+<pre><code>## [1] 7</code></pre>
+<pre class="r"><code>length(unique(wetdat$Year)) # number of unique years</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years</code></pre>
+<pre><code>##         
+##          2011 2012 2017
+##   RAM-05    0   44   54
+##   RAM-41    0   33   40
+##   RAM-44    0   34   45
+##   RAM-53    0   48   50
+##   RAM-62    0   26   26
+##   SEN-01   75    0    0
+##   SEN-03   33    0    0</code></pre>
+<pre class="r"><code>sort(unique(wetdat$Common)) # see all the common names in the dataset</code></pre>
+<pre><code>##   [1] &quot;American mountain ash&quot;              &quot;apple&quot;                             
+##   [3] &quot;bigleaf aster&quot;                      &quot;bigtooth aspen&quot;                    
+##   [5] &quot;bird vetch&quot;                         &quot;black chokeberry&quot;                  
+##   [7] &quot;black crowberry&quot;                    &quot;black huckleberry&quot;                 
+##   [9] &quot;black spruce&quot;                       &quot;blackberry&quot;                        
+##  [11] &quot;Blake&#39;s aster&quot;                      &quot;blue skullcap&quot;                     
+##  [13] &quot;bluejoint&quot;                          &quot;bog aster&quot;                         
+##  [15] &quot;bog goldenrod&quot;                      &quot;bog Labrador tea&quot;                  
+##  [17] &quot;bog laurel&quot;                         &quot;bog muhly&quot;                         
+##  [19] &quot;bog rosemary&quot;                       &quot;bog willowherb&quot;                    
+##  [21] &quot;boreal bog sedge&quot;                   &quot;bristly dewberry&quot;                  
+##  [23] &quot;broadleaf cattail&quot;                  &quot;bunchberry dogwood&quot;                
+##  [25] &quot;Canada mayflower&quot;                   &quot;Canadian rush&quot;                     
+##  [27] &quot;cinnamon fern&quot;                      &quot;coastal sedge&quot;                     
+##  [29] &quot;common gypsyweed&quot;                   &quot;common juniper&quot;                    
+##  [31] &quot;common rush&quot;                        &quot;common winterberry&quot;                
+##  [33] &quot;creeping snowberry&quot;                 &quot;crested woodfern&quot;                  
+##  [35] &quot;dragon&#39;s mouth&quot;                     &quot;dwarf huckleberry&quot;                 
+##  [37] &quot;earth loosestrife&quot;                  &quot;eastern marsh fern&quot;                
+##  [39] &quot;eastern white cedar&quot;                &quot;eastern white pine&quot;                
+##  [41] &quot;fewflower sedge&quot;                    &quot;fewnerved cottongrass&quot;             
+##  [43] &quot;field horsetail&quot;                    &quot;fineleaf sheep fescue&quot;             
+##  [45] &quot;fowl manna grass&quot;                   &quot;garden lupine&quot;                     
+##  [47] &quot;glossy buckthorn&quot;                   &quot;grasspink&quot;                         
+##  [49] &quot;gray alder&quot;                         &quot;gray birch&quot;                        
+##  [51] &quot;hairy sedge&quot;                        &quot;harlequin blueflag&quot;                
+##  [53] &quot;highbush blueberry&quot;                 &quot;horned bladderwort&quot;                
+##  [55] &quot;Huachuca skulcap&quot;                   &quot;Indianpipe&quot;                        
+##  [57] &quot;inundataed clubmoss&quot;                &quot;jack pine&quot;                         
+##  [59] &quot;large cranberry&quot;                    &quot;leatherleaf&quot;                       
+##  [61] &quot;lingonberry&quot;                        &quot;long sedge&quot;                        
+##  [63] &quot;low rough aster&quot;                    &quot;lowbush blueberry&quot;                 
+##  [65] &quot;mannagrass&quot;                         &quot;marsh St. Johnswort&quot;               
+##  [67] &quot;mountain holly/catberry&quot;            &quot;mud sedge&quot;                         
+##  [69] &quot;narrowleaf cowwheat&quot;                &quot;New York aster&quot;                    
+##  [71] &quot;northern bayberry&quot;                  &quot;northern dewberry&quot;                 
+##  [73] &quot;northern red oak&quot;                   &quot;northern wild raisin&quot;              
+##  [75] &quot;northern yellow-eyed-grass&quot;         &quot;Northwest Territory sedge&quot;         
+##  [77] &quot;parasol whitetop&quot;                   &quot;poverty oatgrass&quot;                  
+##  [79] &quot;prickly bog sedge&quot;                  &quot;purple pitcherplant&quot;               
+##  [81] &quot;quaking aspen&quot;                      &quot;rattlesnakeroot&quot;                   
+##  [83] &quot;red maple&quot;                          &quot;red spruce&quot;                        
+##  [85] &quot;rhodora&quot;                            &quot;rose pogonia&quot;                      
+##  [87] &quot;round-leaf sundew&quot;                  &quot;royal fern&quot;                        
+##  [89] &quot;sedge species&quot;                      &quot;sensitive fern&quot;                    
+##  [91] &quot;serviceberry&quot;                       &quot;sheep laurel&quot;                      
+##  [93] &quot;shining rose&quot;                       &quot;skunk cabbage&quot;                     
+##  [95] &quot;slender willow&quot;                     &quot;small cranberry&quot;                   
+##  [97] &quot;spatterdock&quot;                        &quot;spoonleaf sundew&quot;                  
+##  [99] &quot;spreading dogbane&quot;                  &quot;starflower&quot;                        
+## [101] &quot;steeplebush&quot;                        &quot;swamp rose&quot;                        
+## [103] &quot;sweet fern&quot;                         &quot;sweetgale&quot;                         
+## [105] &quot;tall buttercup&quot;                     &quot;tall cottongrass&quot;                  
+## [107] &quot;tamarack&quot;                           &quot;tapered rosette grass&quot;             
+## [109] &quot;tapertip rush&quot;                      &quot;tawny cottongrass&quot;                 
+## [111] &quot;threeleaf false lily of the valley&quot; &quot;threeseeded sedge&quot;                 
+## [113] &quot;threeway sedge&quot;                     &quot;timothy&quot;                           
+## [115] &quot;tufted bulrush&quot;                     &quot;tussock cottongrass&quot;               
+## [117] &quot;upright sedge&quot;                      &quot;velvetleaf huckleberry&quot;            
+## [119] &quot;violet&quot;                             &quot;Virginia marsh St. Johnswort&quot;      
+## [121] &quot;Virginia rose&quot;                      &quot;white beaksedge&quot;                   
+## [123] &quot;white meadowsweet&quot;                  &quot;white spruce&quot;                      
+## [125] &quot;wild raisin&quot;                        &quot;willow&quot;                            
+## [127] &quot;woolgrass&quot;                          &quot;woolly-fruit sedge&quot;                
+## [129] &quot;wrinkleleaf goldenrod&quot;</code></pre>
 <p class="ques">
 Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?
 </p>
@@ -1296,39 +1388,38 @@ Question 2: Now that you’ve found it, fix it, and check that you fixed it.
 <p><br></p>
 <hr>
 </div>
-<div id="joining-dataframes" class="section level4">
-<h4>Joining dataframes</h4>
-<h2>
-Joining dataframes
-</h2>
-<p>Because our data are stored in a relational database, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables, we often have to join the tables together to work with them. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys. Let’s load some of our forest data tables, and use the primary keys to join them together.</p>
-<pre class="r"><code>loc&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Locations.csv&quot;)
-event&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Events.csv&quot;)</code></pre>
-<pre class="r"><code>View(loc) #Location_ID
-View(event) #Location_ID links to tbl_Location; Event_ID links other visit-level tables to this table</code></pre>
-<pre class="r"><code>intersect(names(loc), names(event)) # way to check columns two tables have in common.</code></pre>
-<pre><code>## [1] &quot;Location_ID&quot;  &quot;Created_By&quot;   &quot;Created_Date&quot; &quot;Updated_By&quot;   &quot;Updated_Date&quot;</code></pre>
-<p>The primary key to join the loc and event table is Location_ID, which the intersect function also shows is a column they have in common. Notice that while the loc table has a lot of important information in it, there’s no information about when and how often a plot has been sampled. The event table, on the other hand has all of the dates a plot was sampled, but it doesn’t have the park or plot columns to determine which parks/plots those dates are associated with. We need to join the data from both tables (I’m using dataframe and table interchangeably here) together, to determine that.</p>
-As you read in the training materials yesterday afternoon, there are different flavors of joining tables. The main joins we use are
+<div id="joining-data-frames" class="section level4">
+<h4>Joining data frames</h4>
+<details open>
+<p><summary class="drop">Basics of joining tables</summary> In NETN, most of our data are stored in relational databases, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables, we often have to join the tables together to work with them in R. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys, which I’ll point out in the next section.</p>
+There are different flavors of joining tables. The main joins we use are:
 <ul>
 <li>
-<b>Left joins:</b> take all of the records in the primary key on the left side dataframe (ie the first dataframe specified in the function) and tries to find one or more matching records in the right side dataframe (ie the second dataframe speficied). Any records in the left dataframe that don’t have a match in the right dataframe will still be included in the final result, but all of the columns coming from the right dataframe will be NA (blank). Records on the right dataframe without a match in the left dataframe are dropped from the result.
+<b>Left joins:</b> take all of the records in the primary key on the left side data frame (ie the first data frame specified in the function) and find one or more matching records in the right side data frame (ie the second data frame specified). Any records in the left data frame that don’t have a match in the right data frame will still be included in the final result, but all of the columns coming from the right data frame will be NA (blank). Records on the right data frame without a match in the left data frame are dropped from the result.
+</li>
+<li>
+<b>Right joins:</b> basically the same as left joins, except the second dataset includes all records and the first only includes records with matching primary keys.
+</li>
+<li>
+<b>Semi joins:</b> only take records from both left and right datasets that have matching primary keys.
 </li>
 <li>
 <b>Full joins:</b> take all of the records from both sides of the join. Records on both sides without matches are included in the results with blanks in the cells that came from the table missing a match.
 </li>
 </ul>
-<p>Let’s try this out on simple datasets first, then we’ll build up to our forest data. Another great example with visuals can be found <a href="https://mgimond.github.io/ES218/Week03c.html">here</a>.</p>
+<p>In practice, I use left and full joins the most often, so I’ll focus mostly on those in the rest of this module. We’ll try this out on simple datasets first, then we’ll build up to more complex examples with our forest data. Another great example with visuals can be found <a href="https://mgimond.github.io/ES218/Week03c.html">here</a>.</p>
 <pre class="r"><code>tree &lt;- data.frame(plot = c(&quot;p1&quot;,&quot;p1&quot;,&quot;p1&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p4&quot;), 
                   treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
-                  species = c(&quot;ACERUB&quot; ,&quot;PINTAE&quot;, &quot;PINTAE&quot;, &quot;QUEALB&quot;, &quot;QUEALB&quot;, 
-                              &quot;QUEPHE&quot;, &quot;FAGGRA&quot;, &quot;QUERUB&quot;))
+                  species = c(&quot;ACERUB&quot; ,&quot;PINSTR&quot;, &quot;PINSTR&quot;, &quot;QUERUB&quot;, &quot;PICRUB&quot;, 
+                              &quot;PICRUB&quot;, &quot;PICRUB&quot;, &quot;ACERUB&quot;))
 tree
 
 tree_data &lt;- data.frame(plot = c(&quot;p1&quot;, &quot;p1&quot;, &quot;p1&quot;, &quot;p1&quot;, &quot;p1&quot;,&quot;p1&quot;, &quot;p2&quot;, &quot;p2&quot;, &quot;p5&quot;, &quot;p7&quot;),
                         year = c(2012, 2012, 2012, 2016, 2016, 2016, 2012, 2012, 2016, 2016),
                         treenum = c(1, 2, 3, 1, 2, 3, 11, 12, 51, 71),
                         DBH = c(12.5, 14.5, 16.1, 12.8, 14.9, 17.2, 28.1, 35.4, 36.1, 45.2))
+
+tree_data
 
 tree_full_join &lt;- full_join(tree, tree_data, by = c(&quot;plot&quot;, &quot;treenum&quot;))
 tree_left_join &lt;- left_join(tree, tree_data, by = c(&quot;plot&quot;, &quot;treenum&quot;))</code></pre>
@@ -1340,111 +1431,151 @@ tree_left_join &lt;- left_join(tree, tree_data, by = c(&quot;plot&quot;, &quot;t
 <pre><code>##    plot treenum species year  DBH
 ## 1    p1       1  ACERUB 2012 12.5
 ## 2    p1       1  ACERUB 2016 12.8
-## 3    p1       2  PINTAE 2012 14.5
-## 4    p1       2  PINTAE 2016 14.9
-## 5    p1       3  PINTAE 2012 16.1
-## 6    p1       3  PINTAE 2016 17.2
-## 7    p2      11  QUEALB 2012 28.1
-## 8    p2      12  QUEALB 2012 35.4
-## 9    p3      21  QUEPHE   NA   NA
-## 10   p4      32  FAGGRA   NA   NA
-## 11   p4      33  QUERUB   NA   NA
+## 3    p1       2  PINSTR 2012 14.5
+## 4    p1       2  PINSTR 2016 14.9
+## 5    p1       3  PINSTR 2012 16.1
+## 6    p1       3  PINSTR 2016 17.2
+## 7    p2      11  QUERUB 2012 28.1
+## 8    p2      12  PICRUB 2012 35.4
+## 9    p3      21  PICRUB   NA   NA
+## 10   p4      32  PICRUB   NA   NA
+## 11   p4      33  ACERUB   NA   NA
 ## 12   p5      51    &lt;NA&gt; 2016 36.1
 ## 13   p7      71    &lt;NA&gt; 2016 45.2</code></pre>
 <pre class="r"><code>print(tree_left_join)</code></pre>
 <pre><code>##    plot treenum species year  DBH
 ## 1    p1       1  ACERUB 2012 12.5
 ## 2    p1       1  ACERUB 2016 12.8
-## 3    p1       2  PINTAE 2012 14.5
-## 4    p1       2  PINTAE 2016 14.9
-## 5    p1       3  PINTAE 2012 16.1
-## 6    p1       3  PINTAE 2016 17.2
-## 7    p2      11  QUEALB 2012 28.1
-## 8    p2      12  QUEALB 2012 35.4
-## 9    p3      21  QUEPHE   NA   NA
-## 10   p4      32  FAGGRA   NA   NA
-## 11   p4      33  QUERUB   NA   NA</code></pre>
+## 3    p1       2  PINSTR 2012 14.5
+## 4    p1       2  PINSTR 2016 14.9
+## 5    p1       3  PINSTR 2012 16.1
+## 6    p1       3  PINSTR 2016 17.2
+## 7    p2      11  QUERUB 2012 28.1
+## 8    p2      12  PICRUB 2012 35.4
+## 9    p3      21  PICRUB   NA   NA
+## 10   p4      32  PICRUB   NA   NA
+## 11   p4      33  ACERUB   NA   NA</code></pre>
 <p>Note the left join has fewer records, and doesn’t include p5 and p7 in the plot column from tree_data. There’s also no tree data for plots p3 and p4 because there wasn’t any data in the tree_data that matched. The full join includes plots and tree numbers from both tables, but there are NAs where there wasn’t a matching record in one of the tables.</p>
-<p>Now we’re going to get more advanced and join the loc and event tables from our forest database.</p>
+</details>
+<br>
+<details open>
+<p><summary class="drop">Advanced table joins</summary> Let’s load some example forest data, and use the primary keys to join them together.</p>
+<pre class="r"><code>library(tidyverse)
+loc &lt;- read.csv(&quot;./data/example_data/tbl_Locations_example.csv&quot;) # plot level data for forest plots in NETN
+event &lt;- read.csv(&quot;./data/example_data/tbl_Events_example.csv&quot;) # data on each visit in NETN forest plots
+stand &lt;- read.csv(&quot;./data/example_data/tbl_Stand_Data_example.csv&quot;) # stand data collected in plots</code></pre>
+<pre class="r"><code>View(loc) #Location_ID
+View(event) #Location_ID links to tbl_Location; Event_ID links other visit-level tables to this table
+View(stand) #Event_ID links stand table to event table. </code></pre>
+<pre class="r"><code>intersect(names(loc), names(event)) # way to check columns two tables have in common.</code></pre>
+<pre><code>## [1] &quot;Location_ID&quot;</code></pre>
+<p>The primary key to join the loc and event table is Location_ID, which the intersect function also shows is a column they have in common. Notice that while the loc table has a lot of important information in it, there’s no information about when and how often a plot has been sampled. The event table, on the other hand has all of the dates a plot was sampled, but it doesn’t have the park or plot columns to determine which parks/plots those dates are associated with. We need to join the data from both tables (I’m using data frame and table interchangeably here) together, to determine that.</p>
 <pre class="r"><code># base R version
 names(loc) # to help me pick the columns to include in the join
 names(event)
-loc_event_full &lt;- merge(loc[ , c(&quot;Location_ID&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;, &quot;Unit_ID&quot;, &quot;Plot_Number&quot;, &quot;Rejected&quot;)], 
-                     event[, c(&quot;Location_ID&quot;, &quot;Event_ID&quot;, &quot;Start_Date&quot;, &quot;Event_QAQC&quot;)], 
-                     by = &quot;Location_ID&quot;, 
-                     all.x = TRUE, all.y = TRUE)</code></pre>
+loc_event_full &lt;- merge(loc, event, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = TRUE) # base R full join
+loc_event_full_tidy &lt;- full_join(loc, event, by = &quot;Location_ID&quot;) # tidyverse full join</code></pre>
 <pre class="r"><code>View(loc_event_full) # Now you can see all the times a plot has been sampled. You&#39;ll also see that some plots 
 # don&#39;t have sample dates. That&#39;s because the loc table includes plots that were rejected and never sampled.</code></pre>
-<pre class="r"><code>loc_event_left &lt;- merge(loc[ , c(&quot;Location_ID&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;, &quot;Unit_ID&quot;, &quot;Plot_Number&quot;, &quot;Rejected&quot;, &quot;Loc_Type&quot;)], 
-                     event[, c(&quot;Location_ID&quot;, &quot;Event_ID&quot;, &quot;Start_Date&quot;, &quot;Event_QAQC&quot;)], 
-                     by = &quot;Location_ID&quot;, 
-                     all.x = TRUE, all.y = FALSE)
-
+<pre class="r"><code>loc_event_left &lt;- merge(loc, event, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = FALSE)
+loc_event_left_tidy &lt;- left_join(loc, event, by = &quot;Location_ID&quot;)
 nrow(loc_event_full) # same number of rows because all events have a location record</code></pre>
-<pre><code>## [1] 1309</code></pre>
+<pre><code>## [1] 164</code></pre>
 <pre class="r"><code>nrow(loc_event_left) # same number of rows because all events have a location record</code></pre>
-<pre><code>## [1] 1309</code></pre>
+<pre><code>## [1] 164</code></pre>
 <pre class="r"><code># tidyverse version
-loc2 &lt;- loc %&gt;% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Plot_Number, Rejected, Loc_Type)
-event2 &lt;- event %&gt;% select(Location_ID, Event_ID, Start_Date, Event_QAQC)
-
-loc_event_full_tidy &lt;- full_join(loc2, event2, by = &quot;Location_ID&quot;)
+loc_event_full_tidy &lt;- full_join(loc, event, by = &quot;Location_ID&quot;)
 nrow(loc_event_full_tidy) # same number of rows because all events have a location record</code></pre>
-<pre><code>## [1] 1309</code></pre>
-<pre class="r"><code>loc_event_left_tidy &lt;- left_join(loc2, event2, by = &quot;Location_ID&quot;)
+<pre><code>## [1] 164</code></pre>
+<pre class="r"><code>loc_event_left_tidy &lt;- left_join(loc, event, by = &quot;Location_ID&quot;)
 nrow(loc_event_left_tidy) # same number of rows because all events have a location record</code></pre>
-<pre><code>## [1] 1309</code></pre>
-<p>Getting more advanced, let’s filter the loc table so that we only have active plots (ie no rejected plots), and only include plots that are part of the random sample design (Loc_Type == “VS”). Let’s also filter the event table to only include visits that are not QAQC visits (We resample 5% of plots each year to check the crew’s accuracy, but we generally don’t want to include them in analyses.). Next, join the resulting loc and event tables.</p>
-<pre class="r"><code>loc2 &lt;- loc %&gt;% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Plot_Number, Rejected, Loc_Type) %&gt;% 
-                filter(Rejected == FALSE &amp; Loc_Type == &quot;VS&quot;)
-table(loc2$Rejected)
+<pre><code>## [1] 164</code></pre>
+<p>Note that the merge() function is the base R way of joining databases. The all.x = TRUE and all.y = TRUE makes it a full join. Left join is all.x = TRUE, all.y = FALSE, and right join is all.x = FALSE, all.y = TRUE. I tend to use merge over the tidyverse join approach, because it’s a bit faster when you have huge datasets, and it’s what I’ve gotten used to. The exception, which I’ll show below, is if I’m chaining multiple steps that include a join via pipes.</p>
+<p>Let’s filter the location data to only include ACAD plots, and the event table to only include non-QAQC plots (we resample 5% of plots per year; QAQC=TRUE represents the 2nd visit).</p>
+<pre class="r"><code># Base R approach
+locev &lt;- merge(loc[loc$Park_Code == &quot;ACAD&quot;, ], 
+               event[event$Event_QAQC == FALSE, ], 
+               all.x = TRUE, all.y = FALSE)
 
-event2 &lt;- event %&gt;% select(Location_ID, Event_ID, Start_Date, Event_QAQC) %&gt;% 
-                    filter(Event_QAQC == FALSE)
-table(event2$Event_QAQC)
+# Tidyverse approach
+loc_ACAD &lt;- loc %&gt;% filter(Park_Code == &quot;ACAD&quot;)
+locev_tidy &lt;- event %&gt;% filter(Event_QAQC == FALSE) %&gt;% 
+                        left_join(loc_ACAD, ., by = &quot;Location_ID&quot;)
 
-locevent_full &lt;- merge(loc2, event2, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = TRUE) # I learned merge first, 
-# and tend to use it more often, but full_join works here too.
-locevent_left &lt;- merge(loc2, event2, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = FALSE)
-
-nrow(locevent_full) #1200
-nrow(locevent_left) #1150</code></pre>
-<pre class="r"><code>View(locevent_full)
-View(locevent_left)</code></pre>
-<p>Notice that when you view locevent_full, there are events with NAs. That’s because there are sampling events for deer and BN plots that are in the event table, but don’t have matches in the location table, because we filtered out all non-VS plots in the loc table first. When you do the left join to get locevent_left, you don’t have those blanks, because you only matched the events that match the plots you care about in the loc table.</p>
+nrow(locev) 
+nrow(locev_tidy)</code></pre>
+<pre class="r"><code>View(locev)
+View(locev_tidy)</code></pre>
+<p>Note the use of “.” above. Functions in the tidyverse all assume the dataset to the left of the pipe will go into the first argument in the function following the pipe. When that’s not the case, such as in the left_join above, you can use the “.” to specify where to use the dataset.</p>
 <p class="ques">
-Question 7: How would you take only QA/QC events and join the loc table to QA/QC events only (this is a hard one, I know!)?
+Question 3: How would you take only the plots on MDI (eg Unit_ID = “ACAD_MDI”) in the loc table and join them to their corresponding visits in the events table?
 </p>
-<hr />
-<p>I should mention that this is pretty advanced stuff. I coded for years before attempting this in R. If you don’t quite understand the concepts, don’t worry. The forestNETN package does most of the heavy lifting with joining tables for you! I’m just giving you a hint of what’s under the hood, so you understand what you’re doing when you use the functions. The key is to understand which function in that package you need to use for your summary, and how to ask it to give you the data you want. Tomorrow, we take a tour of the forestNETN package.</p>
-<p>That’s it for Day 2! Please save your script and complete the tasks in the assignments tab.</p>
-<details open>
-<p><summary class="drop">Summarizing Data</summary> The next topic is summarizing data using group_by() and summarize() functions from dplyr. The group_by() function allows you to specify the columns you want to summarize for each like row in the column. For example grouping by plot number, and summing the basal area for all trees on each plot. Another example is grouping by park (Unit_ID), and calculating the average tree basal area in a park.</p>
-<p>To demonstrate how this works, let’s load in a test dataset.</p>
-<pre class="r"><code>regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
-head(regdf)</code></pre>
-<p>The regdf dataframe has seedling and sapling densities for the latest visit in each plot in HOFU, RICH and VAFO parks. The stock column is the stocking index, which is another measure of regeneration abundance. Let’s say we want to calculate the mean and standard error of each of the 3 regeneration metrics at the park level (ie Unit_Code).</p>
-<pre class="r"><code>reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
-                         summarize(avg_seed_dens = mean(seed_den_m2),
-                                   avg_sap_dens = mean(sap_den_m2),
-                                   avg_stock = mean(stock),
-                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
-                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
-                                   se_stock = sd(stock)/sqrt(n()),
-                                   numplots = n()
-                                   )</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre class="r"><code>print(reg_by_park)</code></pre>
-<pre><code>## # A tibble: 3 x 8
-##   Unit_Code avg_seed_dens avg_sap_dens avg_stock se_seed_dens se_sap_dens
-##   &lt;chr&gt;             &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
-## 1 HOFU              1.32        0.0155      4.76        0.563     0.00596
-## 2 RICH              0.438       0.0733      4.60        0.125     0.0151 
-## 3 VAFO              0.473       0.0316      2.65        0.126     0.00934
-## # ... with 2 more variables: se_stock &lt;dbl&gt;, numplots &lt;int&gt;</code></pre>
-<p>In the code chunk above, we started with a seed_den_m2, sap_den_m2, and stock record for each plot (regdf). We then grouped by Unit_Code, which is the 4-letter park code, to come up with a mean, min, max and SE for each regen metric at the park level. Because there were only 3 parks in the dataframe, the resulting summary returned 3 results. Note that n() counts the number of rows within each group. By calculating sd(metric)/sqrt(n), we get the standard error.</p>
 <p class="ques">
-Question 6: How would you calculate the min and max for seed_den_m2?
+Question 4: How would you join the stand data to the locev table?
+</p>
+</details>
+<br>
+<hr>
+</div>
+<div id="data-summary-ii" class="section level4">
+<h4>Data Summary II</h4>
+<details open>
+<p><summary class="drop">Summarizing Data</summary> The next topic is summarizing data using group_by() and summarize() functions from dplyr (also a core tidyverse package). The group_by() function allows you to specify the columns you want to summarize over. For example grouping by site, and counting up the number of trees or critters observed in each site. This is a very similar idea to using Totals in MS Access queries, although the tools are more powerful, flexible, and efficient than MS Access. The summarize() function is similar to the mutate() function we saw earlier. The main difference is that mutate creates a new field that has the exact number of rows as the original dataset. The summarize() will return only as many rows are there are unique combinations of groups in your group_by().</p>
+<p>To demonstrate how this works, let’s load a cleaned version of the wetland dataset from before. Let’s start by counting the number of species found in each site by year.</p>
+<pre class="r"><code>wetdat &lt;- read.csv(&#39;./data/example_data/ACAD_wetland_data_clean.csv&#39;)
+head(wetdat)</code></pre>
+<pre class="r"><code>wetsum &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                     group_by(Site_Name, Year) %&gt;% 
+                     summarize(numspp = sum(present),
+                               .groups = &#39;drop&#39;)</code></pre>
+<pre class="r"><code>head(wetdat)</code></pre>
+<pre><code>##   Site_Name Site_Type          Latin_Name           Common Year PctFreq Ave_Cov
+## 1    SEN-01  Sentinel         Acer rubrum        red maple 2011       0    0.02
+## 2    SEN-01  Sentinel         Amelanchier     serviceberry 2011      20    0.02
+## 3    SEN-01  Sentinel Andromeda polifolia     bog rosemary 2011      80    2.22
+## 4    SEN-01  Sentinel    Arethusa bulbosa   dragon&#39;s mouth 2011      40    0.04
+## 5    SEN-01  Sentinel  Aronia melanocarpa black chokeberry 2011     100    2.64
+## 6    SEN-01  Sentinel        Carex exilis    coastal sedge 2011      60    6.60
+##   Invasive Protected
+## 1    FALSE     FALSE
+## 2    FALSE     FALSE
+## 3    FALSE     FALSE
+## 4    FALSE      TRUE
+## 5    FALSE     FALSE
+## 6    FALSE     FALSE</code></pre>
+<p>In the code above, we added a column named “present” using mutate, and we set present to 1 if a species has an Ave_Cov &gt; 0 and isn’t NA. We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.</p>
+A couple of things to note:
+<ol>
+<li>
+The dplyr package has recently added a .groups statement to summarize. If you don’t specify, you get a warning about the default that was used. For 99% of the cases I use summarize for, the default .groups=‘drop’ is what I want to happen. You don’t have to specify that, if you don’t mind the chatty console (tidyverse functions are notoriously chatty).
+</li>
+<li>
+When you use group_by() and summarize(), any columns not mentioned in either of those two functions will get dropped from the final output. For example, notice that PctFreq, Invasive, and Protected are not in the final output. If you want those fields included, and they are consistent within your grouping variables. For example, if we wanted to include Site_Type (Sentinel or RAM), which is consistent within each site, we can either add it to the group_by() statement, or we can add it to the summarize statement, as demonstrated below.
+</li>
+<pre class="r"><code>wetsum_opt1 &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                          group_by(Site_Name, Site_Type, Year) %&gt;% 
+                          summarize(numspp = sum(present),
+                                    .groups = &#39;drop&#39;)
+
+wetsum_opt2 &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                          group_by(Site_Name, Year) %&gt;% 
+                          summarize(Site_Type = first(Site_Type), 
+                                    numspp = sum(present),
+                                   .groups = &#39;drop&#39;)</code></pre>
+<p>Taking this a step further, let’s pretend that we want to know what the average number of species per site was, and whether this has changed over time. First we need to remove the Sentinel site data, because we only have 1 visit for those sites. Then we’ll calculate the mean and standard error for years 2012 and 2017 across the RAM sites.</p>
+<pre class="r"><code>wetsum_yr &lt;- wetsum_opt1 %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
+                             group_by(Year) %&gt;% 
+                             summarize(mean_numspp = mean(numspp),
+                                       se_numspp = sd(numspp)/sqrt(n()), 
+                                       .groups = &#39;drop&#39;)
+wetsum_yr</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##    Year mean_numspp se_numspp
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+## 1  2012          37      3.97
+## 2  2017          43      4.86</code></pre>
+<p class="ques">
+Question 5: How would you calculate the min and max number of species by year?
 </p>
 </details>
 <p></br></p>
@@ -1455,10 +1586,10 @@ The last thing today is how to write the data you’re working on to a file in y
 <p class="code">
 The following code saves reg_by_park to file:
 </p>
-<pre class="r"><code>write.csv(reg_by_park, &quot;./data/Regen_test_summary.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(wetsum_yr, &quot;./data/wetland_summary_by_year.csv&quot;)</code></pre>
 <p>You should now see a new file in your data folder. Note that csv stands for comma separated values, and is a generic version of a spreadsheet that most programs can read. They’re lightweight, can open in most spreadsheet-like and text editing software. They don’t save any kind of formatting though (eg cell borders, bolded text, merged cells, etc). We’ll use the csv format to save all of our data to file, until we want to format it for publication, which we’ll use .xlsx for.</p>
 <p>We’re not actually going to use that file for anything, so you can delete it now (either manually, or running the following code.)</p>
-<pre class="r"><code>file.remove(&quot;./data/Regen_test_summary.csv&quot;)</code></pre>
+<pre class="r"><code>file.remove(&quot;./data/wetland_summary_by_year.csv&quot;)</code></pre>
 </div>
 <div id="assignments-1" class="section level4">
 <h4>Assignments</h4>
@@ -1890,77 +2021,17 @@ Day 2
 </h2>
 <details>
 <p><summary class="ques2">Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</summary></p>
-<pre class="r"><code>sort(unique(wetdat$Latin_Name)) # use your eyes to spot the &quot;Alnus incana++&quot;</code></pre>
-<pre><code>##   [1] &quot;Acer rubrum&quot;                     &quot;Alnus incana&quot;                   
-##   [3] &quot;Alnus incana++&quot;                  &quot;Amelanchier&quot;                    
-##   [5] &quot;Andromeda polifolia&quot;             &quot;Apocynum androsaemifolium&quot;      
-##   [7] &quot;Arethusa bulbosa&quot;                &quot;Aronia melanocarpa&quot;             
-##   [9] &quot;Betula populifolia&quot;              &quot;Calamagrostis canadensis&quot;       
-##  [11] &quot;Calopogon tuberosus&quot;             &quot;Carex&quot;                          
-##  [13] &quot;Carex atlantica&quot;                 &quot;Carex exilis&quot;                   
-##  [15] &quot;Carex folliculata&quot;               &quot;Carex lacustris&quot;                
-##  [17] &quot;Carex lasiocarpa&quot;                &quot;Carex limosa&quot;                   
-##  [19] &quot;Carex magellanica&quot;               &quot;Carex Ovalis group&quot;             
-##  [21] &quot;Carex pauciflora&quot;                &quot;Carex stricta&quot;                  
-##  [23] &quot;Carex trisperma&quot;                 &quot;Carex utriculata&quot;               
-##  [25] &quot;Chamaedaphne calyculata&quot;         &quot;Comptonia peregrina&quot;            
-##  [27] &quot;Cornus canadensis&quot;               &quot;Danthonia spicata&quot;              
-##  [29] &quot;Dichanthelium acuminatum&quot;        &quot;Doellingeria umbellata&quot;         
-##  [31] &quot;Drosera intermedia&quot;              &quot;Drosera rotundifolia&quot;           
-##  [33] &quot;Dryopteris cristata&quot;             &quot;Dulichium arundinaceum&quot;         
-##  [35] &quot;Empetrum nigrum&quot;                 &quot;Epilobium leptophyllum&quot;         
-##  [37] &quot;Equisetum arvense&quot;               &quot;Eriophorum angustifolium&quot;       
-##  [39] &quot;Eriophorum tenellum&quot;             &quot;Eriophorum vaginatum&quot;           
-##  [41] &quot;Eriophorum virginicum&quot;           &quot;Eurybia macrophylla&quot;            
-##  [43] &quot;Eurybia radula&quot;                  &quot;Festuca filiformis&quot;             
-##  [45] &quot;Gaultheria hispidula&quot;            &quot;Gaylussacia baccata&quot;            
-##  [47] &quot;Gaylussacia dumosa&quot;              &quot;Glyceria&quot;                       
-##  [49] &quot;Glyceria striata&quot;                &quot;Ilex mucronata&quot;                 
-##  [51] &quot;Ilex verticillata&quot;               &quot;Iris versicolor&quot;                
-##  [53] &quot;Juncus acuminatus&quot;               &quot;Juncus canadensis&quot;              
-##  [55] &quot;Juncus effusus&quot;                  &quot;Juniperus communis&quot;             
-##  [57] &quot;Kalmia angustifolia&quot;             &quot;Kalmia polifolia&quot;               
-##  [59] &quot;Larix laricina&quot;                  &quot;Lupinus polyphyllus&quot;            
-##  [61] &quot;Lycopodiella inundata&quot;           &quot;Lysimachia terrestris&quot;          
-##  [63] &quot;Maianthemum canadense&quot;           &quot;Maianthemum trifolium&quot;          
-##  [65] &quot;Malus&quot;                           &quot;Melampyrum lineare&quot;             
-##  [67] &quot;Monotropa uniflora&quot;              &quot;Morella pensylvanica&quot;           
-##  [69] &quot;Muhlenbergia uniflora&quot;           &quot;Myrica gale&quot;                    
-##  [71] &quot;Nuphar variegata&quot;                &quot;Oclemena nemoralis&quot;             
-##  [73] &quot;Oclemena X blakei&quot;               &quot;Onoclea sensibilis&quot;             
-##  [75] &quot;Osmunda regalis&quot;                 &quot;Osmundastrum cinnamomea&quot;        
-##  [77] &quot;Phleum pratense&quot;                 &quot;Picea glauca&quot;                   
-##  [79] &quot;Picea mariana&quot;                   &quot;Picea rubens&quot;                   
-##  [81] &quot;Pinus banksiana&quot;                 &quot;Pinus strobus&quot;                  
-##  [83] &quot;Pogonia ophioglossoides&quot;         &quot;Populus grandidentata&quot;          
-##  [85] &quot;Populus tremuloides&quot;             &quot;Prenanthes&quot;                     
-##  [87] &quot;Quercus rubra&quot;                   &quot;Ranunculus acris&quot;               
-##  [89] &quot;Rhamnus frangula&quot;                &quot;Rhododendron canadense&quot;         
-##  [91] &quot;Rhododendron groenlandicum&quot;      &quot;Rhynchospora alba&quot;              
-##  [93] &quot;Rosa nitida&quot;                     &quot;Rosa palustris&quot;                 
-##  [95] &quot;Rosa virginiana&quot;                 &quot;Rubus&quot;                          
-##  [97] &quot;Rubus flagellaris&quot;               &quot;Rubus hispidus&quot;                 
-##  [99] &quot;Salix&quot;                           &quot;Salix petiolaris&quot;               
-## [101] &quot;Sarracenia purpurea&quot;             &quot;Scirpus cyperinus&quot;              
-## [103] &quot;Scutellaria&quot;                     &quot;Scutellaria lateriflora&quot;        
-## [105] &quot;Solidago rugosa&quot;                 &quot;Solidago uliginosa&quot;             
-## [107] &quot;Sorbus americana&quot;                &quot;Spiraea alba&quot;                   
-## [109] &quot;Spiraea tomentosa&quot;               &quot;Symphyotrichum novi-belgii&quot;     
-## [111] &quot;Symplocarpus foetidus&quot;           &quot;Thelypteris palustris&quot;          
-## [113] &quot;Thuja occidentalis&quot;              &quot;Triadenum&quot;                      
-## [115] &quot;Triadenum virginicum&quot;            &quot;Trichophorum cespitosum&quot;        
-## [117] &quot;Trientalis borealis&quot;             &quot;Typha latifolia&quot;                
-## [119] &quot;Utricularia cornuta&quot;             &quot;Vaccinium angustifolium&quot;        
-## [121] &quot;Vaccinium corymbosum&quot;            &quot;Vaccinium macrocarpon&quot;          
-## [123] &quot;Vaccinium myrtilloides&quot;          &quot;Vaccinium oxycoccos&quot;            
-## [125] &quot;Vaccinium vitis-idaea&quot;           &quot;Veronica officinalis&quot;           
-## [127] &quot;Viburnum nudum&quot;                  &quot;Viburnum nudum var. cassinoides&quot;
-## [129] &quot;Vicia cracca&quot;                    &quot;Viola&quot;                          
-## [131] &quot;Xyris montana&quot;</code></pre>
+<pre class="r"><code>sort(unique(wetdat$Latin_Name))[1:10] # Low-tech way: use your eyes to spot the &quot;Alnus incana++&quot;. I truncated to first 10.</code></pre>
+<pre><code>##  [1] &quot;Acer rubrum&quot;               &quot;Alnus incana&quot;             
+##  [3] &quot;Alnus incana++&quot;            &quot;Amelanchier&quot;              
+##  [5] &quot;Andromeda polifolia&quot;       &quot;Apocynum androsaemifolium&quot;
+##  [7] &quot;Arethusa bulbosa&quot;          &quot;Aronia melanocarpa&quot;       
+##  [9] &quot;Betula populifolia&quot;        &quot;Calamagrostis canadensis&quot;</code></pre>
 <pre class="r"><code># The regular expression way to find non-alphabetical symbols (now you know why I didn&#39;t cover this).
-wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record</code></pre>
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record </code></pre>
 <pre><code>## [1] &quot;Alnus incana++&quot;</code></pre>
-<pre class="r"><code># This took longer than I&#39;d like to admit to make work, by the way.</code></pre>
+<pre class="r"><code>  # ^ and +$ are telling R to start with first word and check every following word within a record.
+  # This took longer than I&#39;d like to admit to make work, by the way.</code></pre>
 </details>
 <p><br></p>
 <details>
@@ -1968,81 +2039,35 @@ wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks f
 <pre class="r"><code>wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot;
 wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex approach </code></pre>
 <pre><code>## character(0)</code></pre>
-<pre class="r"><code>sort(unique(wetdat$Latin_Name)) # using your eyes approach</code></pre>
-<pre><code>##   [1] &quot;Acer rubrum&quot;                     &quot;Alnus incana&quot;                   
-##   [3] &quot;Amelanchier&quot;                     &quot;Andromeda polifolia&quot;            
-##   [5] &quot;Apocynum androsaemifolium&quot;       &quot;Arethusa bulbosa&quot;               
-##   [7] &quot;Aronia melanocarpa&quot;              &quot;Betula populifolia&quot;             
-##   [9] &quot;Calamagrostis canadensis&quot;        &quot;Calopogon tuberosus&quot;            
-##  [11] &quot;Carex&quot;                           &quot;Carex atlantica&quot;                
-##  [13] &quot;Carex exilis&quot;                    &quot;Carex folliculata&quot;              
-##  [15] &quot;Carex lacustris&quot;                 &quot;Carex lasiocarpa&quot;               
-##  [17] &quot;Carex limosa&quot;                    &quot;Carex magellanica&quot;              
-##  [19] &quot;Carex Ovalis group&quot;              &quot;Carex pauciflora&quot;               
-##  [21] &quot;Carex stricta&quot;                   &quot;Carex trisperma&quot;                
-##  [23] &quot;Carex utriculata&quot;                &quot;Chamaedaphne calyculata&quot;        
-##  [25] &quot;Comptonia peregrina&quot;             &quot;Cornus canadensis&quot;              
-##  [27] &quot;Danthonia spicata&quot;               &quot;Dichanthelium acuminatum&quot;       
-##  [29] &quot;Doellingeria umbellata&quot;          &quot;Drosera intermedia&quot;             
-##  [31] &quot;Drosera rotundifolia&quot;            &quot;Dryopteris cristata&quot;            
-##  [33] &quot;Dulichium arundinaceum&quot;          &quot;Empetrum nigrum&quot;                
-##  [35] &quot;Epilobium leptophyllum&quot;          &quot;Equisetum arvense&quot;              
-##  [37] &quot;Eriophorum angustifolium&quot;        &quot;Eriophorum tenellum&quot;            
-##  [39] &quot;Eriophorum vaginatum&quot;            &quot;Eriophorum virginicum&quot;          
-##  [41] &quot;Eurybia macrophylla&quot;             &quot;Eurybia radula&quot;                 
-##  [43] &quot;Festuca filiformis&quot;              &quot;Gaultheria hispidula&quot;           
-##  [45] &quot;Gaylussacia baccata&quot;             &quot;Gaylussacia dumosa&quot;             
-##  [47] &quot;Glyceria&quot;                        &quot;Glyceria striata&quot;               
-##  [49] &quot;Ilex mucronata&quot;                  &quot;Ilex verticillata&quot;              
-##  [51] &quot;Iris versicolor&quot;                 &quot;Juncus acuminatus&quot;              
-##  [53] &quot;Juncus canadensis&quot;               &quot;Juncus effusus&quot;                 
-##  [55] &quot;Juniperus communis&quot;              &quot;Kalmia angustifolia&quot;            
-##  [57] &quot;Kalmia polifolia&quot;                &quot;Larix laricina&quot;                 
-##  [59] &quot;Lupinus polyphyllus&quot;             &quot;Lycopodiella inundata&quot;          
-##  [61] &quot;Lysimachia terrestris&quot;           &quot;Maianthemum canadense&quot;          
-##  [63] &quot;Maianthemum trifolium&quot;           &quot;Malus&quot;                          
-##  [65] &quot;Melampyrum lineare&quot;              &quot;Monotropa uniflora&quot;             
-##  [67] &quot;Morella pensylvanica&quot;            &quot;Muhlenbergia uniflora&quot;          
-##  [69] &quot;Myrica gale&quot;                     &quot;Nuphar variegata&quot;               
-##  [71] &quot;Oclemena nemoralis&quot;              &quot;Oclemena X blakei&quot;              
-##  [73] &quot;Onoclea sensibilis&quot;              &quot;Osmunda regalis&quot;                
-##  [75] &quot;Osmundastrum cinnamomea&quot;         &quot;Phleum pratense&quot;                
-##  [77] &quot;Picea glauca&quot;                    &quot;Picea mariana&quot;                  
-##  [79] &quot;Picea rubens&quot;                    &quot;Pinus banksiana&quot;                
-##  [81] &quot;Pinus strobus&quot;                   &quot;Pogonia ophioglossoides&quot;        
-##  [83] &quot;Populus grandidentata&quot;           &quot;Populus tremuloides&quot;            
-##  [85] &quot;Prenanthes&quot;                      &quot;Quercus rubra&quot;                  
-##  [87] &quot;Ranunculus acris&quot;                &quot;Rhamnus frangula&quot;               
-##  [89] &quot;Rhododendron canadense&quot;          &quot;Rhododendron groenlandicum&quot;     
-##  [91] &quot;Rhynchospora alba&quot;               &quot;Rosa nitida&quot;                    
-##  [93] &quot;Rosa palustris&quot;                  &quot;Rosa virginiana&quot;                
-##  [95] &quot;Rubus&quot;                           &quot;Rubus flagellaris&quot;              
-##  [97] &quot;Rubus hispidus&quot;                  &quot;Salix&quot;                          
-##  [99] &quot;Salix petiolaris&quot;                &quot;Sarracenia purpurea&quot;            
-## [101] &quot;Scirpus cyperinus&quot;               &quot;Scutellaria&quot;                    
-## [103] &quot;Scutellaria lateriflora&quot;         &quot;Solidago rugosa&quot;                
-## [105] &quot;Solidago uliginosa&quot;              &quot;Sorbus americana&quot;               
-## [107] &quot;Spiraea alba&quot;                    &quot;Spiraea tomentosa&quot;              
-## [109] &quot;Symphyotrichum novi-belgii&quot;      &quot;Symplocarpus foetidus&quot;          
-## [111] &quot;Thelypteris palustris&quot;           &quot;Thuja occidentalis&quot;             
-## [113] &quot;Triadenum&quot;                       &quot;Triadenum virginicum&quot;           
-## [115] &quot;Trichophorum cespitosum&quot;         &quot;Trientalis borealis&quot;            
-## [117] &quot;Typha latifolia&quot;                 &quot;Utricularia cornuta&quot;            
-## [119] &quot;Vaccinium angustifolium&quot;         &quot;Vaccinium corymbosum&quot;           
-## [121] &quot;Vaccinium macrocarpon&quot;           &quot;Vaccinium myrtilloides&quot;         
-## [123] &quot;Vaccinium oxycoccos&quot;             &quot;Vaccinium vitis-idaea&quot;          
-## [125] &quot;Veronica officinalis&quot;            &quot;Viburnum nudum&quot;                 
-## [127] &quot;Viburnum nudum var. cassinoides&quot; &quot;Vicia cracca&quot;                   
-## [129] &quot;Viola&quot;                           &quot;Xyris montana&quot;</code></pre>
+<pre class="r"><code>sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach</code></pre>
+<pre><code>##  [1] &quot;Acer rubrum&quot;               &quot;Alnus incana&quot;             
+##  [3] &quot;Amelanchier&quot;               &quot;Andromeda polifolia&quot;      
+##  [5] &quot;Apocynum androsaemifolium&quot; &quot;Arethusa bulbosa&quot;         
+##  [7] &quot;Aronia melanocarpa&quot;        &quot;Betula populifolia&quot;       
+##  [9] &quot;Calamagrostis canadensis&quot;  &quot;Calopogon tuberosus&quot;</code></pre>
 </details>
 <p><br></p>
 <details>
-<p><summary class="ques2">Question 4: How would you take only QA/QC events and join the loc table to QA/QC events only?</summary></p>
-<pre class="r"><code>eventQAQC &lt;- event %&gt;% filter(Event_QAQC == TRUE)
-locevent_QAQC &lt;- merge(loc, eventQAQC, by=&quot;Location_ID&quot;, all.x = F, all.y = T)</code></pre>
-This is technically a right join, because I’m telling R to take all of the records from the right table (eventQAQC) and only join records in left (loc) table that match. This is just a style preference. I prefer to keep higher level tables to the left of lower level tables (eg tables with 1 to many relationships). The loc (tbl_Locations) table is higher level than the event (tbl_Events) table, because the loc table has the 1 plot record and the event table has the many visits for the plot records. If this is confusing, don’t worry about it. You’ll just notice that it’s the order I generally organize data in my code.
+<p><summary class="ques2">Question 3: Question 3: How would you take only the plots on MDI (eg Unit_ID = “ACAD_MDI”) in the loc table and join them to their corresponding visits in the events table?</summary></p>
+<pre class="r"><code># Step by step:
+head(loc)
+loc_MDI &lt;- loc %&gt;% filter(Unit_ID == &quot;ACAD_MDI&quot;)
+locev_MDI &lt;- left_join(loc_MDI, event, by = &quot;Location_ID&quot;)
+
+# All in one:
+locev_MDI2 &lt;- loc %&gt;% filter(Unit_ID == &quot;ACAD_MDI&quot;) %&gt;% 
+                      left_join(event, by = &quot;Location_ID&quot;)</code></pre>
 </details>
-<br>
+<p><br></p>
+<details>
+<p><summary class="ques2">Question 4: How would you join the stand data to the locev table (the one we made that dropped QAQC events)?</summary></p>
+<pre class="r"><code>locev &lt;- merge(loc, event[event$Event_QAQC == FALSE, ], all.x = TRUE, all.y = TRUE)
+intersect(names(locev), names(stand))</code></pre>
+<pre><code>## [1] &quot;Created_By&quot;   &quot;Created_Date&quot; &quot;Updated_By&quot;   &quot;Updated_Date&quot; &quot;Event_ID&quot;</code></pre>
+<pre class="r"><code>locev_stand &lt;- merge(locev, stand, by = &quot;Event_ID&quot;, all.x = TRUE, all.y = TRUE) #base R
+locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;)</code></pre>
+</details>
+<p><br></p>
 <h2>
 Day 3
 </h2>
@@ -2452,18 +2477,11 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-
 sort(unique(wetdat$Common)) # see all the common names in the dataset
-loc&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Locations.csv&quot;)
-event&lt;-read.csv(&quot;./data/NETN_forest_csvs/tbl_Events.csv&quot;)
-View(loc) #Location_ID
-View(event) #Location_ID links to tbl_Location; Event_ID links other visit-level tables to this table
-intersect(names(loc), names(event)) # way to check columns two tables have in common.
-
 tree &lt;- data.frame(plot = c(&quot;p1&quot;,&quot;p1&quot;,&quot;p1&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p4&quot;), 
                   treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
-                  species = c(&quot;ACERUB&quot; ,&quot;PINTAE&quot;, &quot;PINTAE&quot;, &quot;QUEALB&quot;, &quot;QUEALB&quot;, 
-                              &quot;QUEPHE&quot;, &quot;FAGGRA&quot;, &quot;QUERUB&quot;))
+                  species = c(&quot;ACERUB&quot; ,&quot;PINSTR&quot;, &quot;PINSTR&quot;, &quot;QUERUB&quot;, &quot;PICRUB&quot;, 
+                              &quot;PICRUB&quot;, &quot;PICRUB&quot;, &quot;ACERUB&quot;))
 tree
 
 tree_data &lt;- data.frame(plot = c(&quot;p1&quot;, &quot;p1&quot;, &quot;p1&quot;, &quot;p1&quot;, &quot;p1&quot;,&quot;p1&quot;, &quot;p2&quot;, &quot;p2&quot;, &quot;p5&quot;, &quot;p7&quot;),
@@ -2471,71 +2489,82 @@ tree_data &lt;- data.frame(plot = c(&quot;p1&quot;, &quot;p1&quot;, &quot;p1&quo
                         treenum = c(1, 2, 3, 1, 2, 3, 11, 12, 51, 71),
                         DBH = c(12.5, 14.5, 16.1, 12.8, 14.9, 17.2, 28.1, 35.4, 36.1, 45.2))
 
+tree_data
+
 tree_full_join &lt;- full_join(tree, tree_data, by = c(&quot;plot&quot;, &quot;treenum&quot;))
 tree_left_join &lt;- left_join(tree, tree_data, by = c(&quot;plot&quot;, &quot;treenum&quot;))
-
 nrow(tree_full_join)
 nrow(tree_left_join)
 print(tree_full_join)
 print(tree_left_join)
+library(tidyverse)
+loc &lt;- read.csv(&quot;./data/example_data/tbl_Locations_example.csv&quot;) # plot level data for forest plots in NETN
+event &lt;- read.csv(&quot;./data/example_data/tbl_Events_example.csv&quot;) # data on each visit in NETN forest plots
+stand &lt;- read.csv(&quot;./data/example_data/tbl_Stand_Data_example.csv&quot;) # stand data collected in plots
+View(loc) #Location_ID
+View(event) #Location_ID links to tbl_Location; Event_ID links other visit-level tables to this table
+View(stand) #Event_ID links stand table to event table. 
+intersect(names(loc), names(event)) # way to check columns two tables have in common.
+
 # base R version
 names(loc) # to help me pick the columns to include in the join
 names(event)
-loc_event_full &lt;- merge(loc[ , c(&quot;Location_ID&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;, &quot;Unit_ID&quot;, &quot;Plot_Number&quot;, &quot;Rejected&quot;)], 
-                     event[, c(&quot;Location_ID&quot;, &quot;Event_ID&quot;, &quot;Start_Date&quot;, &quot;Event_QAQC&quot;)], 
-                     by = &quot;Location_ID&quot;, 
-                     all.x = TRUE, all.y = TRUE)
+loc_event_full &lt;- merge(loc, event, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = TRUE) # base R full join
+loc_event_full_tidy &lt;- full_join(loc, event, by = &quot;Location_ID&quot;) # tidyverse full join
+
 View(loc_event_full) # Now you can see all the times a plot has been sampled. You&#39;ll also see that some plots 
 # don&#39;t have sample dates. That&#39;s because the loc table includes plots that were rejected and never sampled.
-loc_event_left &lt;- merge(loc[ , c(&quot;Location_ID&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;, &quot;Unit_ID&quot;, &quot;Plot_Number&quot;, &quot;Rejected&quot;, &quot;Loc_Type&quot;)], 
-                     event[, c(&quot;Location_ID&quot;, &quot;Event_ID&quot;, &quot;Start_Date&quot;, &quot;Event_QAQC&quot;)], 
-                     by = &quot;Location_ID&quot;, 
-                     all.x = TRUE, all.y = FALSE)
-
+loc_event_left &lt;- merge(loc, event, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = FALSE)
+loc_event_left_tidy &lt;- left_join(loc, event, by = &quot;Location_ID&quot;)
 nrow(loc_event_full) # same number of rows because all events have a location record
 nrow(loc_event_left) # same number of rows because all events have a location record
 
 # tidyverse version
-loc2 &lt;- loc %&gt;% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Plot_Number, Rejected, Loc_Type)
-event2 &lt;- event %&gt;% select(Location_ID, Event_ID, Start_Date, Event_QAQC)
-
-loc_event_full_tidy &lt;- full_join(loc2, event2, by = &quot;Location_ID&quot;)
+loc_event_full_tidy &lt;- full_join(loc, event, by = &quot;Location_ID&quot;)
 nrow(loc_event_full_tidy) # same number of rows because all events have a location record
 
-loc_event_left_tidy &lt;- left_join(loc2, event2, by = &quot;Location_ID&quot;)
+loc_event_left_tidy &lt;- left_join(loc, event, by = &quot;Location_ID&quot;)
 nrow(loc_event_left_tidy) # same number of rows because all events have a location record
 
-loc2 &lt;- loc %&gt;% select(Location_ID, X_Coord, Y_Coord, Unit_ID, Plot_Number, Rejected, Loc_Type) %&gt;% 
-                filter(Rejected == FALSE &amp; Loc_Type == &quot;VS&quot;)
-table(loc2$Rejected)
+# Base R approach
+locev &lt;- merge(loc[loc$Park_Code == &quot;ACAD&quot;, ], 
+               event[event$Event_QAQC == FALSE, ], 
+               all.x = TRUE, all.y = FALSE)
 
-event2 &lt;- event %&gt;% select(Location_ID, Event_ID, Start_Date, Event_QAQC) %&gt;% 
-                    filter(Event_QAQC == FALSE)
-table(event2$Event_QAQC)
+# Tidyverse approach
+loc_ACAD &lt;- loc %&gt;% filter(Park_Code == &quot;ACAD&quot;)
+locev_tidy &lt;- event %&gt;% filter(Event_QAQC == FALSE) %&gt;% 
+                        left_join(loc_ACAD, ., by = &quot;Location_ID&quot;)
 
-locevent_full &lt;- merge(loc2, event2, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = TRUE) # I learned merge first, 
-# and tend to use it more often, but full_join works here too.
-locevent_left &lt;- merge(loc2, event2, by = &quot;Location_ID&quot;, all.x = TRUE, all.y = FALSE)
+nrow(locev) 
+nrow(locev_tidy)
+View(locev)
+View(locev_tidy)
+wetdat &lt;- read.csv(&#39;./data/example_data/ACAD_wetland_data_clean.csv&#39;)
+head(wetdat)
+wetsum &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                     group_by(Site_Name, Year) %&gt;% 
+                     summarize(numspp = sum(present),
+                               .groups = &#39;drop&#39;)
+head(wetdat)
+wetsum_opt1 &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                          group_by(Site_Name, Site_Type, Year) %&gt;% 
+                          summarize(numspp = sum(present),
+                                    .groups = &#39;drop&#39;)
 
-nrow(locevent_full) #1200
-nrow(locevent_left) #1150
-View(locevent_full)
-View(locevent_left)
-regdf &lt;- read.csv(&#39;./data/example_data/Regen_test_data.csv&#39;)
-head(regdf)
-
-reg_by_park &lt;- regdf %&gt;% group_by(Unit_Code) %&gt;% 
-                         summarize(avg_seed_dens = mean(seed_den_m2),
-                                   avg_sap_dens = mean(sap_den_m2),
-                                   avg_stock = mean(stock),
-                                   se_seed_dens = sd(seed_den_m2)/sqrt(n()),
-                                   se_sap_dens = sd(sap_den_m2)/sqrt(n()),
-                                   se_stock = sd(stock)/sqrt(n()),
-                                   numplots = n()
-                                   )
-print(reg_by_park)
-write.csv(reg_by_park, &quot;./data/Regen_test_summary.csv&quot;)
-file.remove(&quot;./data/Regen_test_summary.csv&quot;)
+wetsum_opt2 &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                          group_by(Site_Name, Year) %&gt;% 
+                          summarize(Site_Type = first(Site_Type), 
+                                    numspp = sum(present),
+                                   .groups = &#39;drop&#39;)
+wetsum_yr &lt;- wetsum_opt1 %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
+                             group_by(Year) %&gt;% 
+                             summarize(mean_numspp = mean(numspp),
+                                       se_numspp = sd(numspp)/sqrt(n()), 
+                                       .groups = &#39;drop&#39;)
+wetsum_yr
+write.csv(wetsum_yr, &quot;./data/wetland_summary_by_year.csv&quot;)
+file.remove(&quot;./data/wetland_summary_by_year.csv&quot;)
 library(tidyverse)
 library(forestNETN)
 library(rgdal)
@@ -2698,18 +2727,30 @@ wetdat_sort &lt;- wetdat[order(-wetdat$Ave_Cov, wetdat$Latin_Name), ] # base R
 head(wetdat_sort)
 wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(-Ave_Cov, Latin_Name) #tidyverse
 head(wetdat_sort_tidy)
-sort(unique(wetdat$Latin_Name)) # use your eyes to spot the &quot;Alnus incana++&quot;
+sort(unique(wetdat$Latin_Name))[1:10] # Low-tech way: use your eyes to spot the &quot;Alnus incana++&quot;. I truncated to first 10.
 
 # The regular expression way to find non-alphabetical symbols (now you know why I didn&#39;t cover this).
-wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record
-# This took longer than I&#39;d like to admit to make work, by the way.
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record 
+  # ^ and +$ are telling R to start with first word and check every following word within a record.
+  # This took longer than I&#39;d like to admit to make work, by the way.
 
 wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot;
 wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex approach 
-sort(unique(wetdat$Latin_Name)) # using your eyes approach
+sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach
 
-eventQAQC &lt;- event %&gt;% filter(Event_QAQC == TRUE)
-locevent_QAQC &lt;- merge(loc, eventQAQC, by=&quot;Location_ID&quot;, all.x = F, all.y = T)
+# Step by step:
+head(loc)
+loc_MDI &lt;- loc %&gt;% filter(Unit_ID == &quot;ACAD_MDI&quot;)
+locev_MDI &lt;- left_join(loc_MDI, event, by = &quot;Location_ID&quot;)
+
+# All in one:
+locev_MDI2 &lt;- loc %&gt;% filter(Unit_ID == &quot;ACAD_MDI&quot;) %&gt;% 
+                      left_join(event, by = &quot;Location_ID&quot;)
+
+locev &lt;- merge(loc, event[event$Event_QAQC == FALSE, ], all.x = TRUE, all.y = TRUE)
+intersect(names(locev), names(stand))
+locev_stand &lt;- merge(locev, stand, by = &quot;Event_ID&quot;, all.x = TRUE, all.y = TRUE) #base R
+locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;)
 acad &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2018, to = 2018)
 length(unique(acad$Plot_Number))
 acad_tree_dist &lt;- sumTreeDBHDist(park = &quot;ACAD&quot;, status = &#39;live&#39;)
