@@ -1066,7 +1066,7 @@ Question 8: How would you sort the wetdat by Ave_Cov (high to low) and Latin_Nam
 </div>
 <div id="assignments" class="section level4">
 <h4>Assignments</h4>
-Please complete the assignments below (they’re ordered from highest to lowest priority). Note that the readings are to expose you to new topics, but you’re not expected to understand or digest 100% of the material. If you’ve already read Chapter 2 of STAT545, you can skip it.
+Please complete the assignments below (they’re ordered from highest to lowest priority). Note that the readings are to expose you to new topics, but you’re not expected to understand or digest 100% of the material.
 <ul>
 <li>
 Answer the questions for this day and review today’s code. Answers are in the Answers tab.
@@ -1075,32 +1075,31 @@ Answer the questions for this day and review today’s code. Answers are in the 
 Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&amp;Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&amp;TopView=Preview">Feedback form</a> by the end of the day
 </li>
 <li>
+R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a>
+</li>
+<li>
+STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables</a>
+</li>
+<li>
+R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational Data</a>
+</li>
+</ul>
+If you didn’t fully understand the material we covered in the first 4 tabs of today’s training (Intro to R &amp; R Studio to Types of Data), the links below might help.
+<ul>
+<li>
 STAT545: <a href="https://stat545.com/r-basics.html">Chapter 2. R basics and workflows</a>
 </li>
 <li>
 STAT545: <a href="https://stat545.com/basic-data-care.html">Chapter 5. Basic care and feeding of data in R</a>
 </li>
-<li>
-STAT545: <a href="https://stat545.com/dplyr-intro.html">Chapter 6. Intro to dplyr</a>
-</li>
-<li>
-R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a>
-</li>
 </ul>
-If you don’t have experience with relational databases and joining tables, the resources below might help you prepare. These are here as more of an FYI than an expectation that you’ll read/watch all of these before the 2nd day of training.<br />
-
+If you don’t have experience with relational databases and joining tables, the resources below introduce the topics.
 <ul>
 <li>
 MSAccess tutorial: <a href="https://www.youtube.com/watch?v=eXiCza050ug">Intro to Databases</a>
 </li>
 <li>
 MSAccess tutorial: <a href="https://www.youtube.com/watch?v=bWKf6gT8_JI&amp;list=PLpQQipWcxwt-EHfE5zXtUrLtFYnOPBRE_&amp;index=3&amp;t=0s">Intro to Objects</a>
-</li>
-<li>
-STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables (in R)</a>
-</li>
-<li>
-R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational Data (in R)</a>
 </li>
 </ul>
 <hr>
@@ -1110,12 +1109,15 @@ R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relation
 <h3>Day 2</h3>
 <div id="data-wrangling-i" class="section level4 tabset">
 <h4>Data Wrangling I</h4>
-<p>We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. Based on the survey you all filled out, this was the most checked topic to learn, so I’ll cover this in (painful?) detail.</p>
+<details open>
+<p><summary class="drop">Data Wrangling Intro</summary> We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. This was the most checked topic in the survey you all filled out, so I’ll cover this in (painful?) detail.</p>
 <p><b>Disclaimer: While R provides lots of ways to check and clean up data, these tools are no replacement for sound data management that prevents data issues from happening in the first place.</b></p>
 <p>For this training module, we’re going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
 <p>Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script. Then, load the tidyverse package and the wetland dataset we used yesterday.</p>
 <pre class="r"><code>library(tidyverse)
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)</code></pre>
+</details>
+<br>
 <details open>
 <p><summary class="drop">Explore data structure</summary> Once you’ve loaded the wetdat dataset, remember that you can view the structure of the <b>wetdat</b> by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet. Both of these are acceptable ways to explore data, but I prefer to explore datasets through code, rather than by mouse.</p>
 <p>The code below is usually where I start (though I rarely use tail).</p>
@@ -1312,72 +1314,12 @@ sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a co
 ##   RAM-62    0   26   26
 ##   SEN-01   75    0    0
 ##   SEN-03   33    0    0</code></pre>
-<pre class="r"><code>sort(unique(wetdat$Common)) # see all the common names in the dataset</code></pre>
-<pre><code>##   [1] &quot;American mountain ash&quot;              &quot;apple&quot;                             
-##   [3] &quot;bigleaf aster&quot;                      &quot;bigtooth aspen&quot;                    
-##   [5] &quot;bird vetch&quot;                         &quot;black chokeberry&quot;                  
-##   [7] &quot;black crowberry&quot;                    &quot;black huckleberry&quot;                 
-##   [9] &quot;black spruce&quot;                       &quot;blackberry&quot;                        
-##  [11] &quot;Blake&#39;s aster&quot;                      &quot;blue skullcap&quot;                     
-##  [13] &quot;bluejoint&quot;                          &quot;bog aster&quot;                         
-##  [15] &quot;bog goldenrod&quot;                      &quot;bog Labrador tea&quot;                  
-##  [17] &quot;bog laurel&quot;                         &quot;bog muhly&quot;                         
-##  [19] &quot;bog rosemary&quot;                       &quot;bog willowherb&quot;                    
-##  [21] &quot;boreal bog sedge&quot;                   &quot;bristly dewberry&quot;                  
-##  [23] &quot;broadleaf cattail&quot;                  &quot;bunchberry dogwood&quot;                
-##  [25] &quot;Canada mayflower&quot;                   &quot;Canadian rush&quot;                     
-##  [27] &quot;cinnamon fern&quot;                      &quot;coastal sedge&quot;                     
-##  [29] &quot;common gypsyweed&quot;                   &quot;common juniper&quot;                    
-##  [31] &quot;common rush&quot;                        &quot;common winterberry&quot;                
-##  [33] &quot;creeping snowberry&quot;                 &quot;crested woodfern&quot;                  
-##  [35] &quot;dragon&#39;s mouth&quot;                     &quot;dwarf huckleberry&quot;                 
-##  [37] &quot;earth loosestrife&quot;                  &quot;eastern marsh fern&quot;                
-##  [39] &quot;eastern white cedar&quot;                &quot;eastern white pine&quot;                
-##  [41] &quot;fewflower sedge&quot;                    &quot;fewnerved cottongrass&quot;             
-##  [43] &quot;field horsetail&quot;                    &quot;fineleaf sheep fescue&quot;             
-##  [45] &quot;fowl manna grass&quot;                   &quot;garden lupine&quot;                     
-##  [47] &quot;glossy buckthorn&quot;                   &quot;grasspink&quot;                         
-##  [49] &quot;gray alder&quot;                         &quot;gray birch&quot;                        
-##  [51] &quot;hairy sedge&quot;                        &quot;harlequin blueflag&quot;                
-##  [53] &quot;highbush blueberry&quot;                 &quot;horned bladderwort&quot;                
-##  [55] &quot;Huachuca skulcap&quot;                   &quot;Indianpipe&quot;                        
-##  [57] &quot;inundataed clubmoss&quot;                &quot;jack pine&quot;                         
-##  [59] &quot;large cranberry&quot;                    &quot;leatherleaf&quot;                       
-##  [61] &quot;lingonberry&quot;                        &quot;long sedge&quot;                        
-##  [63] &quot;low rough aster&quot;                    &quot;lowbush blueberry&quot;                 
-##  [65] &quot;mannagrass&quot;                         &quot;marsh St. Johnswort&quot;               
-##  [67] &quot;mountain holly/catberry&quot;            &quot;mud sedge&quot;                         
-##  [69] &quot;narrowleaf cowwheat&quot;                &quot;New York aster&quot;                    
-##  [71] &quot;northern bayberry&quot;                  &quot;northern dewberry&quot;                 
-##  [73] &quot;northern red oak&quot;                   &quot;northern wild raisin&quot;              
-##  [75] &quot;northern yellow-eyed-grass&quot;         &quot;Northwest Territory sedge&quot;         
-##  [77] &quot;parasol whitetop&quot;                   &quot;poverty oatgrass&quot;                  
-##  [79] &quot;prickly bog sedge&quot;                  &quot;purple pitcherplant&quot;               
-##  [81] &quot;quaking aspen&quot;                      &quot;rattlesnakeroot&quot;                   
-##  [83] &quot;red maple&quot;                          &quot;red spruce&quot;                        
-##  [85] &quot;rhodora&quot;                            &quot;rose pogonia&quot;                      
-##  [87] &quot;round-leaf sundew&quot;                  &quot;royal fern&quot;                        
-##  [89] &quot;sedge species&quot;                      &quot;sensitive fern&quot;                    
-##  [91] &quot;serviceberry&quot;                       &quot;sheep laurel&quot;                      
-##  [93] &quot;shining rose&quot;                       &quot;skunk cabbage&quot;                     
-##  [95] &quot;slender willow&quot;                     &quot;small cranberry&quot;                   
-##  [97] &quot;spatterdock&quot;                        &quot;spoonleaf sundew&quot;                  
-##  [99] &quot;spreading dogbane&quot;                  &quot;starflower&quot;                        
-## [101] &quot;steeplebush&quot;                        &quot;swamp rose&quot;                        
-## [103] &quot;sweet fern&quot;                         &quot;sweetgale&quot;                         
-## [105] &quot;tall buttercup&quot;                     &quot;tall cottongrass&quot;                  
-## [107] &quot;tamarack&quot;                           &quot;tapered rosette grass&quot;             
-## [109] &quot;tapertip rush&quot;                      &quot;tawny cottongrass&quot;                 
-## [111] &quot;threeleaf false lily of the valley&quot; &quot;threeseeded sedge&quot;                 
-## [113] &quot;threeway sedge&quot;                     &quot;timothy&quot;                           
-## [115] &quot;tufted bulrush&quot;                     &quot;tussock cottongrass&quot;               
-## [117] &quot;upright sedge&quot;                      &quot;velvetleaf huckleberry&quot;            
-## [119] &quot;violet&quot;                             &quot;Virginia marsh St. Johnswort&quot;      
-## [121] &quot;Virginia rose&quot;                      &quot;white beaksedge&quot;                   
-## [123] &quot;white meadowsweet&quot;                  &quot;white spruce&quot;                      
-## [125] &quot;wild raisin&quot;                        &quot;willow&quot;                            
-## [127] &quot;woolgrass&quot;                          &quot;woolly-fruit sedge&quot;                
-## [129] &quot;wrinkleleaf goldenrod&quot;</code></pre>
+<pre class="r"><code>sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset</code></pre>
+<pre><code>##  [1] &quot;American mountain ash&quot; &quot;apple&quot;                 &quot;bigleaf aster&quot;        
+##  [4] &quot;bigtooth aspen&quot;        &quot;bird vetch&quot;            &quot;black chokeberry&quot;     
+##  [7] &quot;black crowberry&quot;       &quot;black huckleberry&quot;     &quot;black spruce&quot;         
+## [10] &quot;blackberry&quot;</code></pre>
+<pre class="r"><code># I truncated to first 10 just to keep the output short.</code></pre>
 <p class="ques">
 Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?
 </p>
@@ -1391,7 +1333,7 @@ Question 2: Now that you’ve found it, fix it, and check that you fixed it.
 <div id="joining-data-frames" class="section level4">
 <h4>Joining data frames</h4>
 <details open>
-<p><summary class="drop">Basics of joining tables</summary> In NETN, most of our data are stored in relational databases, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables, we often have to join the tables together to work with them in R. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys, which I’ll point out in the next section.</p>
+<p><summary class="drop">Basics of joining tables</summary> Most of the data we collect in NETN are stored in relational databases, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables. Databases are a way to efficiently organize data (eg not a lot of duplication across tables), standardize values through lookup tables, and enforce rules like required fields. To work with the data stored in databases, we typically pull the individual tables into R and join them together. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys, which I’ll point out in the next section.</p>
 There are different flavors of joining tables. The main joins we use are:
 <ul>
 <li>
@@ -1520,7 +1462,8 @@ Question 4: How would you join the stand data to the locev table?
 <div id="data-summary-ii" class="section level4">
 <h4>Data Summary II</h4>
 <details open>
-<p><summary class="drop">Summarizing Data</summary> The next topic is summarizing data using group_by() and summarize() functions from dplyr (also a core tidyverse package). The group_by() function allows you to specify the columns you want to summarize over. For example grouping by site, and counting up the number of trees or critters observed in each site. This is a very similar idea to using Totals in MS Access queries, although the tools are more powerful, flexible, and efficient than MS Access. The summarize() function is similar to the mutate() function we saw earlier. The main difference is that mutate creates a new field that has the exact number of rows as the original dataset. The summarize() will return only as many rows are there are unique combinations of groups in your group_by().</p>
+<p><summary class="drop">Summarizing Data</summary> On the first day, we talked about summarizing data for the entire dataset by using mean, min, max, etc. Now we’re going to talk about summarizing data for groups within your data set using group_by() and summarize() functions from dplyr (a core tidyverse package). The group_by() function allows you to specify the columns you want to summarize over. For example grouping by site, and counting up the number of trees or critters observed in each site. Other examples include grouping by year, park unit, watershed, stream, etc. The process is very similar using Totals in MS Access queries or subtotals in Excel, although the tools in R are more powerful, flexible, and efficient.</p>
+<p>The summarize() function that we’re going to use is similar to the mutate() function we saw earlier. The main difference is that mutate() creates a new field that always has the exact number of rows as the original dataset. The summarize() function will return only as many rows are there are unique combinations of groups in your group_by(). For example, if your grouping variables are stream and years, and say you have 3 streams and 2 years, summarize will return 6 rows (3 streams X 2 years).</p>
 <p>To demonstrate how this works, let’s load a cleaned version of the wetland dataset from before. Let’s start by counting the number of species found in each site by year.</p>
 <pre class="r"><code>wetdat &lt;- read.csv(&#39;./data/example_data/ACAD_wetland_data_clean.csv&#39;)
 head(wetdat)</code></pre>
@@ -1543,7 +1486,8 @@ head(wetdat)</code></pre>
 ## 4    FALSE      TRUE
 ## 5    FALSE     FALSE
 ## 6    FALSE     FALSE</code></pre>
-<p>In the code above, we added a column named “present” using mutate, and we set present to 1 if a species has an Ave_Cov &gt; 0 and isn’t NA. We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.</p>
+<p>In the code above, we added a column named “present” using mutate, and we set present to 1 if a species has an Ave_Cov &gt; 0 and isn’t NA. In case you’ve never seen if/then or if/else statements, these are conditional statements that run a different set of commands depending on whether an expression is true or false. They’re foundational to most programming, can be done in Excel, Access, R, and most programming languages. In the code above, the ifelse statement takes the statement to check for true/false (Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov). )</p>
+<p>We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.</p>
 A couple of things to note:
 <ol>
 <li>
@@ -1564,57 +1508,80 @@ wetsum_opt2 &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is
                                     numspp = sum(present),
                                    .groups = &#39;drop&#39;)</code></pre>
 <p>Taking this a step further, let’s pretend that we want to know what the average number of species per site was, and whether this has changed over time. First we need to remove the Sentinel site data, because we only have 1 visit for those sites. Then we’ll calculate the mean and standard error for years 2012 and 2017 across the RAM sites.</p>
-<pre class="r"><code>wetsum_yr &lt;- wetsum_opt1 %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
-                             group_by(Year) %&gt;% 
-                             summarize(mean_numspp = mean(numspp),
-                                       se_numspp = sd(numspp)/sqrt(n()), 
-                                       .groups = &#39;drop&#39;)
+<pre class="r"><code>wetsum_pre &lt;- wetdat %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
+                         mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                         group_by(Site_Name, Site_Type, Year) %&gt;% 
+                         summarize(numspp = sum(present), .groups = &#39;drop&#39;)
+
+wetsum_yr &lt;- wetsum_pre %&gt;% group_by(Year) %&gt;% 
+                            summarize(mean_numspp = mean(numspp),
+                                      numplots = n(), 
+                                      se_numspp = sd(numspp)/sqrt(numplots), 
+                                      .groups = &#39;drop&#39;)
 wetsum_yr</code></pre>
-<pre><code>## # A tibble: 2 x 3
-##    Year mean_numspp se_numspp
-##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
-## 1  2012          37      3.97
-## 2  2017          43      4.86</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##    Year mean_numspp numplots se_numspp
+##   &lt;int&gt;       &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1  2012          37        5      3.97
+## 2  2017          43        5      4.86</code></pre>
+A couple of things to note here:
+<ol>
+<li>
+Note the use of n() in the second step. That counts the number of rows within a group. You do have to be careful when you use n(), because it also counts NAs. If you don’t want NAs to be counted, you need to use a similar approach to how I calculated present, then numspp.
+</li>
+<li>
+Note that I created numplots and then used it in the following line within the same summarize() call. That’s a handy trick with both summarize and mutate- as soon as you create them, you can call them to calculate other metrics.
+</li>
+<li>
+While I did this in 2 steps for clarity, this could all have been 1 step. In general, I try to keep my pipes relatively short, so they’re easier to understand and test incrementally, and easier to debug if something breaks. There’s no hard rule on this, but I generally keep pipes to 4 or less steps. If I need more, I break the code up into separate steps.
+</li>
+</ol>
 <p class="ques">
 Question 5: How would you calculate the min and max number of species by year?
 </p>
+<p class="ques">
+Question 6: What percent of RAM sites had an invasive species present in 2012 and 2017?
+</p>
 </details>
-<p></br></p>
+</br>
+<hr>
 </div>
-<div id="saving-data-to-file" class="section level4">
-<h4>Saving data to file</h4>
+<div id="saving-tabular-data-to-file" class="section level4">
+<h4>Saving tabular data to file</h4>
 The last thing today is how to write the data you’re working on to a file in your computer.
 <p class="code">
-The following code saves reg_by_park to file:
+The following code saves the wetland data you cleaned up to file:
 </p>
-<pre class="r"><code>write.csv(wetsum_yr, &quot;./data/wetland_summary_by_year.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(wetdat, &quot;./data/ACAD_wetland_data_clean.csv&quot;)</code></pre>
 <p>You should now see a new file in your data folder. Note that csv stands for comma separated values, and is a generic version of a spreadsheet that most programs can read. They’re lightweight, can open in most spreadsheet-like and text editing software. They don’t save any kind of formatting though (eg cell borders, bolded text, merged cells, etc). We’ll use the csv format to save all of our data to file, until we want to format it for publication, which we’ll use .xlsx for.</p>
 <p>We’re not actually going to use that file for anything, so you can delete it now (either manually, or running the following code.)</p>
-<pre class="r"><code>file.remove(&quot;./data/wetland_summary_by_year.csv&quot;)</code></pre>
+<pre class="r"><code>file.remove(&quot;./data/ACAD_wetland_data_clean.csv&quot;)</code></pre>
+<hr>
 </div>
 <div id="assignments-1" class="section level4">
 <h4>Assignments</h4>
-<p>Please complete the assignments below.</p>
+Please complete the assignments below (they’re ordered from highest to lowest priority). Note that the readings are to expose you to new topics, but you’re not expected to understand or digest 100% of the material.
 <ul>
+<li>
+Answer the questions for this day and review today’s code. Answers are in the Answers tab.
+</li>
+<li>
+Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&amp;Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&amp;TopView=Preview">Feedback form</a> by the end of the day
+</li>
 <li>
 R4DS: <a href="https://r4ds.had.co.nz/tidy-data.html">Chapter 12. Tidy data</a>
 </li>
 <li>
-R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational data</a>
+Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.1. Basic plotting with ggplot2</a>
 </li>
 <li>
 STAT545: <a href="https://stat545.com/dplyr-single.html">Chapter 7. Single table dplyr functions</a>
 </li>
 <li>
-STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables</a>
-</li>
-<li>
-Answer the questions for this day and review today’s code
-</li>
-<li>
-Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&amp;Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&amp;TopView=Preview">Feedback form</a> by the end of the day
+Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.2. Customizing ggplot2 plots</a>
 </li>
 </ul>
+<hr>
 </div>
 </div>
 <div id="day-3" class="section level3 tabset">
@@ -1879,31 +1846,34 @@ Question 11: Take the acad_final graph and make 2 more changes to it. For exampl
 </div>
 <div id="assignments-2" class="section level4">
 <h4>Assignments</h4>
-Please complete the assignments below.
+Now that training has ended, the only tasks I ask for you to complete are to work through the code and answer the questions for today, and complete the feedback form. All other bullets are suggested resources for further reading, primarily related to data visualization and ggplot2. While I only suggested a few chapters from the R for Data Science book and STAT545.com site, they are both great resources that cover lots of other topics in R. I encourage you to read through to these resources as you have time and keep working on your R skills!
 <ul>
-<li>
-R4DS: <a href="https://r4ds.had.co.nz/data-visualisation.html">Chapter 3. Data visualization</a>
-</li>
-<li>
-Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.1. Basic plotting with ggplot2</a>
-</li>
-<li>
-Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.2. Customizing ggplot2 plots</a>
-</li>
 <li>
 Answer the questions for this day and review today’s code. Answers are in the Answers tab.
 </li>
 <li>
 Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&amp;Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&amp;TopView=Preview">Feedback form</a> by the end of the day
 </li>
+<li>
+<a href="https://www.r-graph-gallery.com/">R Graphics Gallery</a>
+</li>
+<li>
+R4DS: <a href="https://r4ds.had.co.nz/data-visualisation.html">Chapter 3. Data visualization</a>
+</li>
+<li>
+STAT545: <a href="https://stat545.com/effective-graphs.html">Chapter 24. Do’s and dont’s of making effective graphics</a>. Note that I don’t completely agree with her dislike of pie charts, but I do agree that there are often better options than pie charts.
+</li>
+<li>
+Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/mapping.html">Chapter 4.3. Mapping (GIS) in ggplot2</a>
+</li>
 </ul>
+<hr>
 </div>
 </div>
 <div id="answers" class="section level3">
 <h3>Answers</h3>
-<h2>
-Day 1
-</h2>
+<details open>
+<summary class="drop">Day 1</summary> <br>
 <details>
 <p><summary class="ques2">Question 1: How do you find the value of the 3rd row of domSpp?</summary></p>
 <pre class="r"><code>df[3, c(&quot;domSpp&quot;)] # option 1</code></pre>
@@ -2017,9 +1987,10 @@ head(wetdat_sort_tidy)</code></pre>
 ## 6 threeleaf false lily of the valley 2012     100      51    FALSE     FALSE</code></pre>
 </details>
 <br>
-<h2>
-Day 2
-</h2>
+</details>
+<hr>
+<details open>
+<summary class="drop">Day 2</summary> <br>
 <details>
 <p><summary class="ques2">Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</summary></p>
 <pre class="r"><code>sort(unique(wetdat$Latin_Name))[1:10] # Low-tech way: use your eyes to spot the &quot;Alnus incana++&quot;. I truncated to first 10.</code></pre>
@@ -2049,7 +2020,7 @@ wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex a
 </details>
 <p><br></p>
 <details>
-<p><summary class="ques2">Question 3: Question 3: How would you take only the plots on MDI (eg Unit_ID = “ACAD_MDI”) in the loc table and join them to their corresponding visits in the events table?</summary></p>
+<p><summary class="ques2">Question 3: How would you take only the plots on MDI (eg Unit_ID = “ACAD_MDI”) in the loc table and join them to their corresponding visits in the events table?</summary></p>
 <pre class="r"><code># Step by step:
 head(loc)
 loc_MDI &lt;- loc %&gt;% filter(Unit_ID == &quot;ACAD_MDI&quot;)
@@ -2065,13 +2036,83 @@ locev_MDI2 &lt;- loc %&gt;% filter(Unit_ID == &quot;ACAD_MDI&quot;) %&gt;%
 <pre class="r"><code>locev &lt;- merge(loc, event[event$Event_QAQC == FALSE, ], all.x = TRUE, all.y = TRUE)
 intersect(names(locev), names(stand))</code></pre>
 <pre><code>## [1] &quot;Created_By&quot;   &quot;Created_Date&quot; &quot;Updated_By&quot;   &quot;Updated_Date&quot; &quot;Event_ID&quot;</code></pre>
-<pre class="r"><code>locev_stand &lt;- merge(locev, stand, by = &quot;Event_ID&quot;, all.x = TRUE, all.y = TRUE) #base R
-locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;)</code></pre>
+<pre class="r"><code>locev_stand &lt;- merge(locev, stand, by = &quot;Event_ID&quot;, all.x = TRUE, all.y = TRUE) #base R full join
+locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;) #tidyverse full join</code></pre>
 </details>
 <p><br></p>
-<h2>
-Day 3
-</h2>
+<details>
+<p><summary class="ques2">Question 5: How would you calculate the min and max number of species by year?</summary></p>
+<pre class="r"><code>head(wetdat)</code></pre>
+<pre><code>##   Site_Name Site_Type          Latin_Name           Common Year PctFreq Ave_Cov
+## 1    SEN-01  Sentinel         Acer rubrum        red maple 2011       0    0.02
+## 2    SEN-01  Sentinel         Amelanchier     serviceberry 2011      20    0.02
+## 3    SEN-01  Sentinel Andromeda polifolia     bog rosemary 2011      80    2.22
+## 4    SEN-01  Sentinel    Arethusa bulbosa   dragon&#39;s mouth 2011      40    0.04
+## 5    SEN-01  Sentinel  Aronia melanocarpa black chokeberry 2011     100    2.64
+## 6    SEN-01  Sentinel        Carex exilis    coastal sedge 2011      60    6.60
+##   Invasive Protected
+## 1    FALSE     FALSE
+## 2    FALSE     FALSE
+## 3    FALSE     FALSE
+## 4    FALSE      TRUE
+## 5    FALSE     FALSE
+## 6    FALSE     FALSE</code></pre>
+<pre class="r"><code>wetmin_max &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt;0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                         group_by(Site_Name, Year) %&gt;% 
+                         summarize(numspp = sum(present)) %&gt;% 
+                         group_by(Year) %&gt;% 
+                         summarize(minspp = min(numspp),
+                                   maxspp = max(numspp), 
+                                  .groups = &quot;drop&quot;)</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;Site_Name&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>wetmin_max</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##    Year minspp maxspp
+##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1  2011     33     75
+## 2  2012     26     48
+## 3  2017     26     54</code></pre>
+Note that first I had to sum up the number of species within a site (hence group_by(Site_Name, Year)). After I calculate that, I grouped by Year only, then found the min and max number of species recorded within a year.
+</details>
+<p><br></p>
+<details>
+<p><summary class="ques2">Question 6: What percent of RAM sites had an invasive species present in 2012 and 2017?</summary></p>
+<pre class="r"><code>#head(wetdat)
+wetinv1 &lt;- wetdat %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
+                      group_by(Site_Name, Year) %&gt;% 
+                      summarize(num_invspp = sum(Invasive), 
+                                plot_inv = ifelse(num_invspp &gt; 0, 1, 0), 
+                                .groups = &quot;drop&quot;)
+head(wetinv1)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   Site_Name  Year num_invspp plot_inv
+##   &lt;chr&gt;     &lt;int&gt;      &lt;int&gt;    &lt;dbl&gt;
+## 1 RAM-05     2012          0        0
+## 2 RAM-05     2017          0        0
+## 3 RAM-41     2012          0        0
+## 4 RAM-41     2017          0        0
+## 5 RAM-44     2012          1        1
+## 6 RAM-44     2017          1        1</code></pre>
+<pre class="r"><code># Note plot_inv is to set plot to 1 or 0 even if multiple invasives are found on the plot.
+wetinv &lt;- wetinv1 %&gt;% group_by(Year) %&gt;% 
+                      summarize(tot_inv_plots = (sum(plot_inv)/n())*100,
+                                .groups = &quot;drop&quot;)
+
+wetinv #40 % of plots both years</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##    Year tot_inv_plots
+##   &lt;int&gt;         &lt;dbl&gt;
+## 1  2012            40
+## 2  2017            40</code></pre>
+<p>Note that logical fields (ie TRUE/FALSE) are interpreted as numbers in R when you use sum. If the value is TRUE, R interprets it as 1. If it’s FALSE, R interprets it as 0. So sum(Invasive) is summing all of the TRUEs in the Invasive column.</p>
+</details>
+<br>
+</details>
+<hr>
+<details open>
+<summary class="drop">Day 3
+</details>
+<br>
 <details>
 <p><summary class="ques2">Question 1: How many plots were sampled in ACAD in 2018?</summary></p>
 <pre class="r"><code>acad &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2018, to = 2018)
@@ -2212,7 +2253,9 @@ head(acad_wide_pivot)</code></pre>
 <p><img src="data:image/png;base64,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" width="672" /></p>
 Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars. lwd is the weight of the line.
 </details>
-<p><br></p>
+<br>
+</details>
+<hr>
 </div>
 <div id="code-printout" class="section level3 tabset">
 <h3>Code printout</h3>
@@ -2478,7 +2521,8 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-sort(unique(wetdat$Common)) # see all the common names in the dataset
+sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset
+# I truncated to first 10 just to keep the output short.
 tree &lt;- data.frame(plot = c(&quot;p1&quot;,&quot;p1&quot;,&quot;p1&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p4&quot;), 
                   treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
                   species = c(&quot;ACERUB&quot; ,&quot;PINSTR&quot;, &quot;PINSTR&quot;, &quot;QUERUB&quot;, &quot;PICRUB&quot;, 
@@ -2558,14 +2602,19 @@ wetsum_opt2 &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is
                           summarize(Site_Type = first(Site_Type), 
                                     numspp = sum(present),
                                    .groups = &#39;drop&#39;)
-wetsum_yr &lt;- wetsum_opt1 %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
-                             group_by(Year) %&gt;% 
-                             summarize(mean_numspp = mean(numspp),
-                                       se_numspp = sd(numspp)/sqrt(n()), 
-                                       .groups = &#39;drop&#39;)
+wetsum_pre &lt;- wetdat %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
+                         mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                         group_by(Site_Name, Site_Type, Year) %&gt;% 
+                         summarize(numspp = sum(present), .groups = &#39;drop&#39;)
+
+wetsum_yr &lt;- wetsum_pre %&gt;% group_by(Year) %&gt;% 
+                            summarize(mean_numspp = mean(numspp),
+                                      numplots = n(), 
+                                      se_numspp = sd(numspp)/sqrt(numplots), 
+                                      .groups = &#39;drop&#39;)
 wetsum_yr
-write.csv(wetsum_yr, &quot;./data/wetland_summary_by_year.csv&quot;)
-file.remove(&quot;./data/wetland_summary_by_year.csv&quot;)
+write.csv(wetdat, &quot;./data/ACAD_wetland_data_clean.csv&quot;)
+file.remove(&quot;./data/ACAD_wetland_data_clean.csv&quot;)
 library(tidyverse)
 library(forestNETN)
 library(rgdal)
@@ -2750,8 +2799,31 @@ locev_MDI2 &lt;- loc %&gt;% filter(Unit_ID == &quot;ACAD_MDI&quot;) %&gt;%
 
 locev &lt;- merge(loc, event[event$Event_QAQC == FALSE, ], all.x = TRUE, all.y = TRUE)
 intersect(names(locev), names(stand))
-locev_stand &lt;- merge(locev, stand, by = &quot;Event_ID&quot;, all.x = TRUE, all.y = TRUE) #base R
-locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;)
+locev_stand &lt;- merge(locev, stand, by = &quot;Event_ID&quot;, all.x = TRUE, all.y = TRUE) #base R full join
+locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;) #tidyverse full join
+head(wetdat)
+wetmin_max &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt;0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
+                         group_by(Site_Name, Year) %&gt;% 
+                         summarize(numspp = sum(present)) %&gt;% 
+                         group_by(Year) %&gt;% 
+                         summarize(minspp = min(numspp),
+                                   maxspp = max(numspp), 
+                                  .groups = &quot;drop&quot;)
+wetmin_max
+#head(wetdat)
+wetinv1 &lt;- wetdat %&gt;% filter(Site_Type == &quot;RAM&quot;) %&gt;% 
+                      group_by(Site_Name, Year) %&gt;% 
+                      summarize(num_invspp = sum(Invasive), 
+                                plot_inv = ifelse(num_invspp &gt; 0, 1, 0), 
+                                .groups = &quot;drop&quot;)
+head(wetinv1)
+# Note plot_inv is to set plot to 1 or 0 even if multiple invasives are found on the plot.
+wetinv &lt;- wetinv1 %&gt;% group_by(Year) %&gt;% 
+                      summarize(tot_inv_plots = (sum(plot_inv)/n())*100,
+                                .groups = &quot;drop&quot;)
+
+wetinv #40 % of plots both years
+
 acad &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2018, to = 2018)
 length(unique(acad$Plot_Number))
 acad_tree_dist &lt;- sumTreeDBHDist(park = &quot;ACAD&quot;, status = &#39;live&#39;)

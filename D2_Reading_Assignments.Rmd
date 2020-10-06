@@ -1,11 +1,11 @@
 #### Assignments
-Please complete the assignments below. 
-
+Please complete the assignments below (they're ordered from highest to lowest priority). Note that the readings are to expose you to new topics, but you're not expected to understand or digest 100% of the material.
 <ul>
-  <li>R4DS: <a href="https://r4ds.had.co.nz/tidy-data.html">Chapter 12. Tidy data</a></li>
-  <li>R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational data</a></li>
-  <li>STAT545: <a href="https://stat545.com/dplyr-single.html">Chapter 7. Single table dplyr functions</a></li>
-  <li>STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables</a></li>
-  <li>Answer the questions for this day and review today's code</li>
+  <li>Answer the questions for this day and review today's code. Answers are in the Answers tab.</li>
   <li>Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview">Feedback form</a> by the end of the day</li>
+  <li>R4DS: <a href="https://r4ds.had.co.nz/tidy-data.html">Chapter 12. Tidy data</a></li>
+  <li>Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.1. Basic plotting with ggplot2</a></li>
+  <li>STAT545: <a href="https://stat545.com/dplyr-single.html">Chapter 7. Single table dplyr functions</a></li>
+  <li>Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.2. Customizing ggplot2 plots</a></li>
 </ul>
+<hr>

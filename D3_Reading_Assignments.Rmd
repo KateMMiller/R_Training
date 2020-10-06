@@ -1,9 +1,11 @@
 #### Assignments
-Please complete the assignments below. 
+Now that training has ended, the only tasks I ask for you to complete are to work through the code and answer the questions for today, and complete the feedback form. All other bullets are suggested resources for further reading, primarily related to data visualization and ggplot2. While I only suggested a few chapters from the R for Data Science book and STAT545.com site, they are both great resources that cover lots of other topics in R. I encourage you to read through to these resources as you have time and keep working on your R skills! 
 <ul>
-  <li>R4DS: <a href="https://r4ds.had.co.nz/data-visualisation.html">Chapter 3. Data visualization</a></li>
-  <li>Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.1. Basic plotting with ggplot2</a></li>
-  <li>Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/basic-plotting-with-ggplot2.html">Chapter 4.2. Customizing ggplot2 plots</a></li>
   <li>Answer the questions for this day and review today's code. Answers are in the Answers tab.</li>
   <li>Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview">Feedback form</a> by the end of the day</li>
+  <li><a href="https://www.r-graph-gallery.com/">R Graphics Gallery</a></li> 
+  <li>R4DS: <a href="https://r4ds.had.co.nz/data-visualisation.html">Chapter 3. Data visualization</a></li>
+  <li>STAT545: <a href="https://stat545.com/effective-graphs.html">Chapter 24. Do's and dont's of making effective graphics</a>. Note that I don't completely agree with her dislike of pie charts, but I do agree that there are often better options than pie charts.</li>
+<li>Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgDA/mapping.html">Chapter 4.3. Mapping (GIS) in ggplot2</a></li>
 </ul>
+<hr>

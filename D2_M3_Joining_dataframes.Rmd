@@ -1,7 +1,6 @@
 #### Joining data frames
-
 <details open><summary class='drop'>Basics of joining tables</summary>
-In NETN, most of our data are stored in relational databases, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables, we often have to join the tables together to work with them in R. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys, which I'll point out in the next section. 
+Most of the data we collect in NETN are stored in relational databases, where plot-level data that never change (eg X, Y coords) are stored in 1 table (tbl_Location) and data related to each visit (also called events) are stored in other tables. Databases are a way to efficiently organize data (eg not a lot of duplication across tables), standardize values through lookup tables, and enforce rules like required fields. To work with the data stored in databases, we typically pull the individual tables into R and join them together. To do that, we use a column that is found in each table called a primary key, that allows you to match the correct records in one table to the other. In our database, we typically use GUIDs (globally unique identifiers) as our keys, which I'll point out in the next section. 
 
 There are different flavors of joining tables. The main joins we use are: 
 <ul>

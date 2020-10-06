@@ -1,4 +1,5 @@
-<h2>Day 1</h2>
+<details open><summary class='drop'>Day 1</summary>
+<br>
 <details><summary class='ques2'>Question 1: How do you find the value of the 3rd row of domSpp?</summary>
 ```{r, c105,echo=T, results='show'}
 df[3, c("domSpp")] # option 1
@@ -21,7 +22,6 @@ head(df)
 ```
 </details>
 <br>
-
 
 <details><summary class='ques2'>Question 4: How would you calculate the percent of trees that are dead in the df data frame?</summary>
 ```{r, c107,echo=T, results='hide'}
@@ -79,7 +79,10 @@ head(wetdat_sort_tidy)
 ```
 </details>
 <br>
-<h2>Day 2</h2>
+</details>
+<hr>
+<details open><summary class='drop'>Day 2</summary>
+<br>
 <details><summary class='ques2'>Question 1: There's a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</summary>
 
 ```{r, c110, echo=T, results='show'}
@@ -101,11 +104,10 @@ wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # regex approach
 sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach
 
 ```
-
 </details>
 <br>
 
-<details><summary class='ques2'>Question 3: Question 3: How would you take only the plots on MDI (eg Unit_ID = "ACAD_MDI") in the loc table and join them to their corresponding visits in the events table?</summary>
+<details><summary class='ques2'>Question 3: How would you take only the plots on MDI (eg Unit_ID = "ACAD_MDI") in the loc table and join them to their corresponding visits in the events table?</summary>
 ```{r, c111,echo=T, results='hide'}
 # Step by step:
 head(loc)
@@ -124,14 +126,54 @@ locev_MDI2 <- loc %>% filter(Unit_ID == "ACAD_MDI") %>%
 ```{r, c111b, echo=T}
 locev <- merge(loc, event[event$Event_QAQC == FALSE, ], all.x = TRUE, all.y = TRUE)
 intersect(names(locev), names(stand))
-locev_stand <- merge(locev, stand, by = "Event_ID", all.x = TRUE, all.y = TRUE) #base R
-locev_stand_tidy <- full_join(locev, stand, by = "Event_ID")
+locev_stand <- merge(locev, stand, by = "Event_ID", all.x = TRUE, all.y = TRUE) #base R full join
+locev_stand_tidy <- full_join(locev, stand, by = "Event_ID") #tidyverse full join
 ```
 
 </details>
 <br>
 
-<h2>Day 3</h2>
+<details><summary class='ques2'>Question 5: How would you calculate the min and max number of species by year?</summary>
+```{r, c111c, echo=T}
+head(wetdat)
+wetmin_max <- wetdat %>% mutate(present = ifelse(Ave_Cov >0 & !is.na(Ave_Cov), 1, 0)) %>% 
+                         group_by(Site_Name, Year) %>% 
+                         summarize(numspp = sum(present)) %>% 
+                         group_by(Year) %>% 
+                         summarize(minspp = min(numspp),
+                                   maxspp = max(numspp), 
+                                  .groups = "drop")
+wetmin_max
+```
+Note that first I had to sum up the number of species within a site (hence group_by(Site_Name, Year)). After I calculate that, I grouped by Year only, then found the min and max number of species recorded within a year.
+</details>
+<br>
+
+<details><summary class='ques2'>Question 6: What percent of RAM sites had an invasive species present in 2012 and 2017?</summary>
+```{r, c111d, echo=T}
+#head(wetdat)
+wetinv1 <- wetdat %>% filter(Site_Type == "RAM") %>% 
+                      group_by(Site_Name, Year) %>% 
+                      summarize(num_invspp = sum(Invasive), 
+                                plot_inv = ifelse(num_invspp > 0, 1, 0), 
+                                .groups = "drop")
+head(wetinv1)
+# Note plot_inv is to set plot to 1 or 0 even if multiple invasives are found on the plot.
+wetinv <- wetinv1 %>% group_by(Year) %>% 
+                      summarize(tot_inv_plots = (sum(plot_inv)/n())*100,
+                                .groups = "drop")
+
+wetinv #40 % of plots both years
+
+```
+Note that logical fields (ie TRUE/FALSE) are interpreted as numbers in R when you use sum. If the value is TRUE, R interprets it as 1. If it's FALSE, R interprets it as 0. So sum(Invasive) is summing all of the TRUEs in the Invasive column. 
+
+</details>
+<br>
+</details>
+<hr>
+<details open><summary class='drop'>Day 3</details>
+<br>
 <details><summary class='ques2'>Question 1: How many plots were sampled in ACAD in 2018?</summary>
 ```{r, c112,echo=T}
 acad <- joinLocEvent(park = "ACAD", from = 2018, to = 2018)
@@ -196,3 +238,5 @@ You may have chosen other things to do than I did. Here are a couple of changes 
 Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars. lwd is the weight of the line. 
 </details>
 <br>
+</details>
+<hr>

@@ -1,7 +1,9 @@
 #### Data Summary II
 
 <details open><summary class='drop'>Summarizing Data</summary>
-The next topic is summarizing data using group_by() and summarize() functions from dplyr (also a core tidyverse package). The group_by() function allows you to specify the columns you want to summarize over. For example grouping by site, and counting up the number of trees or critters observed in each site. This is a very similar idea to using Totals in MS Access queries, although the tools are more powerful, flexible, and efficient than MS Access. The summarize() function is similar to the mutate() function we saw earlier. The main difference is that mutate creates a new field that has the exact number of rows as the original dataset. The summarize() will return only as many rows are there are unique combinations of groups in your group_by(). 
+On the first day, we talked about summarizing data for the entire dataset by using mean, min, max, etc. Now we're going to talk about summarizing data for groups within your data set using group_by() and summarize() functions from dplyr (a core tidyverse package). The group_by() function allows you to specify the columns you want to summarize over. For example grouping by site, and counting up the number of trees or critters observed in each site. Other examples include grouping by year, park unit, watershed, stream, etc. The process is very similar using Totals in MS Access queries or subtotals in Excel, although the tools in R are more powerful, flexible, and efficient. 
+
+The summarize() function that we're going to use is similar to the mutate() function we saw earlier. The main difference is that mutate() creates a new field that always has the exact number of rows as the original dataset. The summarize() function will return only as many rows are there are unique combinations of groups in your group_by(). For example, if your grouping variables are stream and years, and say you have 3 streams and 2 years, summarize will return 6 rows (3 streams X 2 years).   
 
 To demonstrate how this works, let's load a cleaned version of the wetland dataset from before. Let's start by counting the number of species found in each site by year.
 ```{r, c27, echo=T, results='hide'}
@@ -19,7 +21,9 @@ wetsum <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0
 head(wetdat)
 ```
 
-In the code above, we added a column named "present" using mutate, and we set present to 1 if a species has an Ave_Cov > 0 and isn't NA. We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.   
+In the code above, we added a column named "present" using mutate, and we set present to 1 if a species has an Ave_Cov > 0 and isn't NA. In case you've never seen if/then or if/else statements, these are conditional statements that run a different set of commands depending on whether an expression is true or false. They're foundational to most programming, can be done in Excel, Access, R, and most programming languages. In the code above, the ifelse statement takes the statement to check for true/false (Ave_Cov > 0 & !is.na(Ave_Cov). )
+
+We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.   
 
 A couple of things to note: 
 <ol>
@@ -42,15 +46,29 @@ wetsum_opt2 <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov),
 Taking this a step further, let's pretend that we want to know what the average number of species per site was, and whether this has changed over time. First we need to remove the Sentinel site data, because we only have 1 visit for those sites. Then we'll calculate the mean and standard error for years 2012 and 2017 across the RAM sites.
 
 ```{r, c28d, echo=T, results='show'}
-wetsum_yr <- wetsum_opt1 %>% filter(Site_Type == "RAM") %>% 
-                             group_by(Year) %>% 
-                             summarize(mean_numspp = mean(numspp),
-                                       se_numspp = sd(numspp)/sqrt(n()), 
-                                       .groups = 'drop')
+wetsum_pre <- wetdat %>% filter(Site_Type == "RAM") %>% 
+                         mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0)) %>% 
+                         group_by(Site_Name, Site_Type, Year) %>% 
+                         summarize(numspp = sum(present), .groups = 'drop')
+
+wetsum_yr <- wetsum_pre %>% group_by(Year) %>% 
+                            summarize(mean_numspp = mean(numspp),
+                                      numplots = n(), 
+                                      se_numspp = sd(numspp)/sqrt(numplots), 
+                                      .groups = 'drop')
 wetsum_yr
 ```
 
+A couple of things to note here:
+<ol>
+<li>Note the use of n() in the second step. That counts the number of rows within a group. You do have to be careful when you use n(), because it also counts NAs. If you don't want NAs to be counted, you need to use a similar approach to how I calculated present, then numspp.</li>
+<li>Note that I created numplots and then used it in the following line within the same summarize() call. That's a handy trick with both summarize and mutate- as soon as you create them, you can call them to calculate other metrics.</li>
+<li>While I did this in 2 steps for clarity, this could all have been 1 step. In general, I try to keep my pipes relatively short, so they're easier to understand and test incrementally, and easier to debug if something breaks. There's no hard rule on this, but I generally keep pipes to 4 or less steps. If I need more, I break the code up into separate steps. </li>
+</ol>
 
 <p class='ques'>Question 5: How would you calculate the min and max number of species by year?</p>
+
+<p class='ques'>Question 6: What percent of RAM sites had an invasive species present in 2012 and 2017?</p>
 </details>
 </br>
+<hr>

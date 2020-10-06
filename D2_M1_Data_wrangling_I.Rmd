@@ -1,5 +1,6 @@
 #### Data Wrangling I{.tabset}
-We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you've never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. Based on the survey you all filled out, this was the most checked topic to learn, so I'll cover this in (painful?) detail. 
+<details open><summary class='drop'>Data Wrangling Intro</summary>
+We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you've never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. This was the most checked topic in the survey you all filled out, so I'll cover this in (painful?) detail. 
 
 <b>Disclaimer: While R provides lots of ways to check and clean up data, these tools are no replacement for sound data management that prevents data issues from happening in the first place.</b>
 
@@ -10,7 +11,8 @@ Before we get started, open the R_training.Rproj project in RStudio, start a Day
 library(tidyverse)
 wetdat <- read.csv("./data/example_data/ACAD_wetland_data_example.csv")
 ```
-
+</details>
+<br>
 <details open><summary class='drop'>Explore data structure</summary>
 Once you've loaded the wetdat dataset, remember that you can view the structure of the <b>wetdat</b> by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet. Both of these are acceptable ways to explore data, but I prefer to explore datasets through code, rather than by mouse.
 
@@ -193,7 +195,8 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-sort(unique(wetdat$Common)) # see all the common names in the dataset
+sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset
+# I truncated to first 10 just to keep the output short.
 ```
 
 <p class='ques'>Question 1: There's a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</p>
