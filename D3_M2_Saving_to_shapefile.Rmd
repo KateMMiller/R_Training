@@ -1,4 +1,12 @@
 #### Saving data to Shapefile
+```{r, c63a, echo=T}
+library(tidyverse)
+library(forestNETN)
+library(rgdal)
+importCSV("./data/NETN_forest_csvs")
+```
+
+
 Many of the metrics we're going to summarize will be saved as shapefiles to map in QGIS. The process is relatively straightforward. The keys are to have the X, Y Coordinates included in your final summary (may have to do some table joining to get them back), and to know which Coordinate Reference System to specify (abbreviated CRS). NETN covers 2 UTM Zones, which can be extra tricky. The datum and projection for each park are listed below. 
 
 <ul>
@@ -11,20 +19,13 @@ Most of the major coordinate systems have a registered EPSG Code assigned to it,
 To start out, let's use acad_exo_wide from the previous section to create our first shapefile. The first thing we need to do is add the X, Y Coordinates back into the dataset. 
 
 ```{r, c63, echo=T, results='hide'}
-head(acad_exo_wide) # Created at the end of Data Wrangling Part II.
 
-acad_19 <- joinLocEvent(park = "ACAD", from = 2019, to = 2019)
+acad_exo <- makeSppList(park = "ACAD", from = 2019, to = 2019, speciesType = 'exotic') %>% 
+            mutate(present = ifelse(!is.na(Latin_Name), 1, 0))
 
-acad_for_shp <- merge(acad_19[ , c("Plot_Name", "X_Coord", "Y_Coord")], acad_exo_wide, by = "Plot_Name", 
-                      all.x = TRUE, all.y = TRUE)
-
-# Note that if we had used the code below to generate acad_exo_wide, the coordinates would already be in there
-acad_exo_wide <- acad_exospp %>% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, spp_pres) %>% 
-                                 arrange(Latin_Name, Plot_Name) %>% 
-                                 pivot_wider(names_from = "Latin_Name", 
-                                             values_from = "spp_pres", 
-                                             values_fill = 0) %>% 
-                                 arrange(Plot_Name)
+acad_exo_wide <- acad_exo %>% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, present) %>% 
+                              pivot_wider(names_from = "Latin_Name", values_from = "present", 
+                                          values_fill = 0)
 ```
 
 Now that our dataframe has the GPS Coordinates, we need to tell R that these columns are X Y coordinates, and then tell R what the projection and datum are. The rgdal package has the functions to do this.
@@ -34,7 +35,7 @@ head(acad_exo_wide)
 
 # Step 1: Create spatial object by specifying the coordinates
 coordinates(acad_exo_wide) <- ~X_Coord + Y_Coord
-names(acad_exo_wide[1:5])
+
 plot(acad_exo_wide) # These points now plot in space
 # Step 2: Define the coordinate system 
 proj4string(acad_exo_wide) <- CRS("+init=epsg:26919")

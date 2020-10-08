@@ -1315,10 +1315,10 @@ sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a co
 ##   SEN-01   75    0    0
 ##   SEN-03   33    0    0</code></pre>
 <pre class="r"><code>sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset</code></pre>
-<pre><code>##  [1] &quot;American mountain ash&quot; &quot;apple&quot;                 &quot;bigleaf aster&quot;        
-##  [4] &quot;bigtooth aspen&quot;        &quot;bird vetch&quot;            &quot;black chokeberry&quot;     
-##  [7] &quot;black crowberry&quot;       &quot;black huckleberry&quot;     &quot;black spruce&quot;         
-## [10] &quot;blackberry&quot;</code></pre>
+<pre><code>##  [1] &quot;American mountain ash&quot; &quot;apple&quot;                 &quot;Asian bittersweet&quot;    
+##  [4] &quot;bigleaf aster&quot;         &quot;bigtooth aspen&quot;        &quot;bird vetch&quot;           
+##  [7] &quot;black chokeberry&quot;      &quot;black crowberry&quot;       &quot;black huckleberry&quot;    
+## [10] &quot;black spruce&quot;</code></pre>
 <pre class="r"><code># I truncated to first 10 just to keep the output short.</code></pre>
 <p class="ques">
 Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?
@@ -1586,119 +1586,256 @@ Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgD
 </div>
 <div id="day-3" class="section level3 tabset">
 <h3>Day 3</h3>
-<div id="data-wrangling-part-ii" class="section level4">
-<h4>Data Wrangling Part II</h4>
-<p>Before we start, let’s restart our R session to clear our history and global environment by pressing CTRL + SHFT + F10. You essentially just closed and reopened RStudio, without having to do it physically. So, we’ll need to load the packages and import the data again.</p>
-<pre class="r"><code>library(tidyverse)
-library(forestNETN)
-library(rgdal)
-
-importCSV(&quot;./data/NETN_forest_csvs&quot;)</code></pre>
+<div id="data-wrangling-ii" class="section level4">
+<h4>Data Wrangling II</h4>
 <h2>
-Data Wrangling Part II- Reshaping Data
+Reshaping Data
 </h2>
-<p>Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which most of our NETN forest data start as, consists of each row being an observation (ie if there are 3 visits to a plot, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, numseeds). In summary tables, we often want to reshape the data to be wide, so that there’s only one row per plot, a column for each cycle, and the numseeds as the value in the cell.</p>
-<pre class="r"><code>regen_long &lt;- data.frame(plot = c(&quot;p1&quot;,&quot;p1&quot;,&quot;p1&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p3&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p4&quot;),
-                         cycle = c(&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c1&quot;,&quot;c2&quot;),
-                         numsds = c(1,4,5,3,2,6,4,9,10,3,1))
-print(regen_long)</code></pre>
-<pre><code>##    plot cycle numsds
-## 1    p1    c1      1
-## 2    p1    c2      4
-## 3    p1    c3      5
-## 4    p2    c1      3
-## 5    p2    c2      2
-## 6    p2    c3      6
-## 7    p3    c1      4
-## 8    p3    c2      9
-## 9    p3    c3     10
-## 10   p4    c1      3
-## 11   p4    c2      1</code></pre>
-<p>To make this wide, we’re essentially going to make a pivot table using functions in tidyr. There are two functions you can use. The spread() function was original to tidyr, is what I know the best, and still performs faster on larger datasets than pivot_wider(), the replacement for spread. I show both options, so you can use whichever function makes the most sense to you.</p>
-<pre class="r"><code>regen_wide &lt;- regen_long %&gt;% spread(&quot;cycle&quot;, &quot;numsds&quot;) #retired spread function
-regen_wide</code></pre>
-<pre><code>##   plot c1 c2 c3
-## 1   p1  1  4  5
-## 2   p2  3  2  6
-## 3   p3  4  9 10
-## 4   p4  3  1 NA</code></pre>
-<pre class="r"><code>regen_wide2 &lt;- regen_long %&gt;% pivot_wider(names_from = &quot;cycle&quot;, values_from = &quot;numsds&quot;) #replacement in tidyr
-regen_wide2</code></pre>
-<pre><code>## # A tibble: 4 x 4
-##   plot     c1    c2    c3
-##   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 p1        1     4     5
-## 2 p2        3     2     6
-## 3 p3        4     9    10
-## 4 p4        3     1    NA</code></pre>
-<p>Note the NA in c3 for p4. That’s because the long version didn’t have a data point for that combination. The tidyr package will assign NA when reshaping for combinations not represented in the original dataset. For plots that haven’t been sampled in the 3rd cycle in this scenrio, NA makes sense. However, say p4 had been sampled in c3, and there just weren’t any seedlings found. You can tell tidyr to fill blanks with 0. This is a handy feature, but it’s not to be abused. <b>You should always think carefully before filling blanks with 0s.</b></p>
-<pre class="r"><code>regen_wide_fill0 &lt;- regen_long %&gt;% spread(&quot;cycle&quot;, &quot;numsds&quot;, fill=0)
-regen_wide_fill0</code></pre>
-<pre><code>##   plot c1 c2 c3
-## 1   p1  1  4  5
-## 2   p2  3  2  6
-## 3   p3  4  9 10
-## 4   p4  3  1  0</code></pre>
-<pre class="r"><code>regen_wide2_fill0 &lt;- regen_long %&gt;% pivot_wider(names_from = &quot;cycle&quot;, values_from = &quot;numsds&quot;, values_fill=0)
-regen_wide2_fill0</code></pre>
-<pre><code>## # A tibble: 4 x 4
-##   plot     c1    c2    c3
-##   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 p1        1     4     5
-## 2 p2        3     2     6
-## 3 p3        4     9    10
-## 4 p4        3     1     0</code></pre>
-<p>Now, say you want to take the wide version of the dataframe and make it long, so that you have a row for every time a plot has been sampled, a column for cycle, and a column for the numseeds. You can use gather(), the original tidyr function, or pivot_longer(), the new one.</p>
-<pre class="r"><code>regen_long2 &lt;- regen_wide_fill0 %&gt;% gather(&quot;cycle&quot;, &quot;numseeds&quot;, -plot)
-regen_long2</code></pre>
-<pre><code>##    plot cycle numseeds
-## 1    p1    c1        1
-## 2    p2    c1        3
-## 3    p3    c1        4
-## 4    p4    c1        3
-## 5    p1    c2        4
-## 6    p2    c2        2
-## 7    p3    c2        9
-## 8    p4    c2        1
-## 9    p1    c3        5
-## 10   p2    c3        6
-## 11   p3    c3       10
-## 12   p4    c3        0</code></pre>
-<pre class="r"><code>names(regen_wide_fill0)</code></pre>
-<pre><code>## [1] &quot;plot&quot; &quot;c1&quot;   &quot;c2&quot;   &quot;c3&quot;</code></pre>
-<pre class="r"><code>regen_long2b &lt;- regen_wide_fill0 %&gt;% pivot_longer(cols=c(c1, c2, c3), names_to = &quot;cycle&quot;, values_to = &quot;numseeds&quot;)</code></pre>
-<p>Both functions above are keeping a plot column, and to take the columns c1, c2, and c3 and put their names into a new cycle column, and their values into a new numseeds column. Because we used the wide dataset where NAs were filled with 0, cycle 3 for plot p4 now has 0 instead of NA.</p>
-<p>This approach comes in handy when you want to generate a consistent species list for each plot and show 0s where it didn’t occur. For example, say we want a list of all all species found in GETT in 2019 and we want to calculate the number of plots each of those species occurred in.</p>
-<pre class="r"><code>acad_exospp &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, QAQC = FALSE, speciesType = &quot;exotic&quot;)
-# Need to add a column that says the species is present.
-acad_exospp$spp_pres&lt;-1
-head(acad_exospp)
-acad_exo_wide  &lt;- acad_exospp %&gt;% select(Plot_Name, Latin_Name, spp_pres) %&gt;% # helps to take only the columns you&#39;re interested in
-                                 arrange(Latin_Name, Plot_Name) %&gt;% #arrange is piped here so columns will be alphabetical
-                                 pivot_wider(names_from = &quot;Latin_Name&quot;,
-                                             values_from = &quot;spp_pres&quot;,
-                                             values_fill = 0) %&gt;%
-                                 arrange(Plot_Name)
-head(acad_exo_wide)
-#Now to make the the long version of wide, we species we didn&#39;t find on a plot are not included and have a 0.
-
-acad_exo_long &lt;- acad_exo_wide %&gt;% pivot_longer(-Plot_Name,
-                                                names_to = &quot;Latin_Name&quot;,
-                                                values_to = &quot;Present&quot;) %&gt;%
-                                   arrange(Plot_Name, Latin_Name)
-
-head(acad_exo_long)</code></pre>
-<p>For the pivot_longer, there are a lot of columns that I want to put into the new Latin_Name column. Instead of having to list every single column, I’m telling R to use all but Plot_Name column. Then I sorted by Plot_Name and Latin_Name using arrange.</p>
-<p class="ques">
-Question 10: How would you create a wide matrix for FRSP plots in 2019 that has plots for rows, and exotic species as columns?
-</p>
-<p>Open the R_training.Rproj project, start a new Day_3.R script, and load the packages we’ll use today.</p>
+<p>Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which is the structure database tables often take, consists of each row being an observation (ie if there are 3 visits to a site, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, number of critters, % plant cover, etc). In summary tables, we often want to reshape the data to be wide, so that there’s only one row per plot, a column for each visit, or species, and the abundance of that species as the value in the cell.</p>
+<p>We’re going to work with a fake bat dataset to see how this works. To get started, load the dataset and packages, as shown below.</p>
 <pre class="r"><code>library(tidyverse)
-library(forestNETN)
-library(rgdal) # for saving to shapefile</code></pre>
+bat_long &lt;- read.csv(&quot;./data/example_data/fake_bats.csv&quot;)
+head(bat_long)</code></pre>
+<pre><code>##         Site Julian Year                  Latin              Common
+## 1 BrownMtnCR    195 2015          Myotis leibii        small-footed
+## 2 BrownMtnCR    214 2015          Myotis leibii        small-footed
+## 3 BrownMtnCR    237 2016          Myotis leibii        small-footed
+## 4 BrownMtnCR    230 2017       Myotis lucifugus        little brown
+## 5 BrownMtnCR    201 2016      Lasiurus cinereus               hoary
+## 6 BrownMtnCR    230 2018 Myotis septentrionalis northern long-eared</code></pre>
+<p>The data in this example dataset are simplified capture data. Every row represents an individual bat that was captured at a given site and date. We want to turn this into a wide data frame that has a column for every species, and the number of individuals of that species that were caught for each year and site combination. Before we start, we’ll make a species code that will be easier to work with (R doesn’t like spaces). We’ll also summarize the data, so we have a count of the number of individuals of each species found per year.</p>
+<pre class="r"><code>bat_long &lt;- bat_long %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin, 1), 1, 3),
+                                                         substr(word(Latin, 2), 1, 3))))
+
+bat_long_sum &lt;- bat_long %&gt;% group_by(Site, Year, sppcode) %&gt;% 
+                          summarize(numindiv = sum(!is.na(sppcode)),
+                                    .groups = &#39;drop&#39;)
+
+head(bat_long_sum)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   Site        Year sppcode numindiv
+##   &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;      &lt;int&gt;
+## 1 BrownMtnCR  2013 MYOLEI         1
+## 2 BrownMtnCR  2014 MYOLUC         2
+## 3 BrownMtnCR  2015 MYOLEI         2
+## 4 BrownMtnCR  2016 LASCIN         1
+## 5 BrownMtnCR  2016 MYOLEI         2
+## 6 BrownMtnCR  2016 MYOLUC         1</code></pre>
+<p>In case you don’t follow what I just did, there are 3 main steps that happened above. First, we used the word() function to pull out the genus (word(Latin, 1)) and species (word(Latin, 2)). The substr() function is taking the first through third characters of each genus and species. The paste0 function is pasting the first three characters of genus and species together. The toupper is making them all capitalized. Note that the 0 after paste means not to separate the elements of the paste. If you wanted to separate the elements by a underscore, you’d use paste instead of paste0, like paste(element1, element2, sep = &quot;_&quot;).</p>
+<p>To make this wide, we’re essentially going to make a pivot table using functions in tidyr. There are two functions you can use. The spread() function was original to tidyr, is what I know the best, and still performs faster on larger datasets than pivot_wider(), the replacement for spread. I show both options, so you can use whichever function makes the most sense to you.</p>
+<pre class="r"><code>bat_wide &lt;- bat_long_sum %&gt;% spread(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;) #retired spread function
+bat_wide</code></pre>
+<pre><code>## # A tibble: 21 x 6
+##    Site        Year LASCIN MYOLEI MYOLUC MYOSEP
+##    &lt;chr&gt;      &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
+##  1 BrownMtnCR  2013     NA      1     NA     NA
+##  2 BrownMtnCR  2014     NA     NA      2     NA
+##  3 BrownMtnCR  2015     NA      2     NA     NA
+##  4 BrownMtnCR  2016      1      2      1     NA
+##  5 BrownMtnCR  2017     NA      1      1     NA
+##  6 BrownMtnCR  2018     NA      1     NA      1
+##  7 BrownMtnCR  2019      1     NA     NA     NA
+##  8 BrownMtnGH  2013     NA     NA     NA      1
+##  9 BrownMtnGH  2014     NA      2      1     NA
+## 10 BrownMtnGH  2015      1     NA     NA      1
+## # ... with 11 more rows</code></pre>
+<pre class="r"><code>bat_wide2 &lt;- bat_long_sum %&gt;% pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;numindiv&quot;) #replacement in tidyr
+bat_wide2</code></pre>
+<pre><code>## # A tibble: 21 x 6
+##    Site        Year MYOLEI MYOLUC LASCIN MYOSEP
+##    &lt;chr&gt;      &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
+##  1 BrownMtnCR  2013      1     NA     NA     NA
+##  2 BrownMtnCR  2014     NA      2     NA     NA
+##  3 BrownMtnCR  2015      2     NA     NA     NA
+##  4 BrownMtnCR  2016      2      1      1     NA
+##  5 BrownMtnCR  2017      1      1     NA     NA
+##  6 BrownMtnCR  2018      1     NA     NA      1
+##  7 BrownMtnCR  2019     NA     NA      1     NA
+##  8 BrownMtnGH  2013     NA     NA     NA      1
+##  9 BrownMtnGH  2014      2      1     NA     NA
+## 10 BrownMtnGH  2015     NA     NA      1      1
+## # ... with 11 more rows</code></pre>
+<p>Note the NAs for the various species. That’s because original dataset didn’t have a data point for that combination of site/species/year. The tidyr package will assign NA when reshaping for combinations not represented in the original dataset. If there are sites that weren’t sampled in a certain year, NA makes sense. However, if all sites were sampled and there just weren’t any individuals found, then filling those with 0 makes sense, and you can tell tidyr to fill blanks with 0 when you rehape the data. This is a handy feature, but it’s not to be abused. <b>You should always think carefully before automatically filling blanks with 0s.</b></p>
+<p>Here’s the same reshape code from before, but now we fill NAs with 0.</p>
+<pre class="r"><code>bat_wide_fill &lt;- bat_long_sum %&gt;% spread(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;, fill = 0) #retired spread function
+head(bat_wide_fill)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##   Site        Year LASCIN MYOLEI MYOLUC MYOSEP
+##   &lt;chr&gt;      &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 BrownMtnCR  2013      0      1      0      0
+## 2 BrownMtnCR  2014      0      0      2      0
+## 3 BrownMtnCR  2015      0      2      0      0
+## 4 BrownMtnCR  2016      1      2      1      0
+## 5 BrownMtnCR  2017      0      1      1      0
+## 6 BrownMtnCR  2018      0      1      0      1</code></pre>
+<pre class="r"><code>bat_wide2_fill &lt;- bat_long_sum %&gt;% pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;numindiv&quot;, 
+                                               values_fill = 0) #replacement in tidyr</code></pre>
+<p>Now, say you want to take the wide version of the dataframe and make it long, so that you have a row for every site, year, and species combination. You can use gather(), the original tidyr function, or pivot_longer(), the new one.</p>
+<pre class="r"><code>bat_long2 &lt;- bat_wide_fill %&gt;% gather(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;, -Site, -Year) # old way
+head(bat_long2)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   Site        Year sppcode numindiv
+##   &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;
+## 1 BrownMtnCR  2013 LASCIN         0
+## 2 BrownMtnCR  2014 LASCIN         0
+## 3 BrownMtnCR  2015 LASCIN         0
+## 4 BrownMtnCR  2016 LASCIN         1
+## 5 BrownMtnCR  2017 LASCIN         0
+## 6 BrownMtnCR  2018 LASCIN         0</code></pre>
+<pre class="r"><code>names(bat_wide_fill)</code></pre>
+<pre><code>## [1] &quot;Site&quot;   &quot;Year&quot;   &quot;LASCIN&quot; &quot;MYOLEI&quot; &quot;MYOLUC&quot; &quot;MYOSEP&quot;</code></pre>
+<pre class="r"><code>bat_long2b &lt;- bat_wide_fill %&gt;% pivot_longer(cols=c(LASCIN, MYOLEI, MYOLUC, MYOSEP), 
+                                             names_to = &quot;sppcode&quot;, 
+                                             values_to = &quot;numindiv&quot;) #new way
+head(bat_long2b)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   Site        Year sppcode numindiv
+##   &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;
+## 1 BrownMtnCR  2013 LASCIN         0
+## 2 BrownMtnCR  2013 MYOLEI         1
+## 3 BrownMtnCR  2013 MYOLUC         0
+## 4 BrownMtnCR  2013 MYOSEP         0
+## 5 BrownMtnCR  2014 LASCIN         0
+## 6 BrownMtnCR  2014 MYOLEI         0</code></pre>
+<pre class="r"><code>nrow(bat_long_sum) # dataset before made wide, then long</code></pre>
+<pre><code>## [1] 34</code></pre>
+<pre class="r"><code>nrow(bat_long2) # dataset that has every species represented for every year and every site</code></pre>
+<pre><code>## [1] 84</code></pre>
+<p>Both functions above are keeping a Site and Year column. In the gather function, we’re telling R which ones not to make long. In the pivot_longer, we’re telling R which columns to gather, rather than which columns to ignore. I show both the old and new approach, because the pivot_### functions are still relatively new, slower with big datasets, and I find more examples online of the old approaches. But, personally I find the pivot_### functions to be more intuitive than gather/spread, so I’ve started using them more.</p>
+<p>This may seem like a lot of work for something you could do by hand in Excel. But, if you have a huge dataset that only stores records of species that were present, this can really come in handy. For example, say we want a list of all all invasive species found in ACAD wetland sites in 2017 and we want to calculate the proportion of plots invasive species occurred in. If we don’t find an invasive in a plot, there’s no record of the data. Let’s load the wetland dataset from before and work through that example.</p>
+<pre class="r"><code>wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
+head(wetdat)</code></pre>
+<pre><code>##   Site_Name Site_Type          Latin_Name           Common Year PctFreq Ave_Cov
+## 1    SEN-01  Sentinel         Acer rubrum        red maple 2011       0    0.02
+## 2    SEN-01  Sentinel         Amelanchier     serviceberry 2011      20    0.02
+## 3    SEN-01  Sentinel Andromeda polifolia     bog rosemary 2011      80    2.22
+## 4    SEN-01  Sentinel    Arethusa bulbosa   dragon&#39;s mouth 2011      40    0.04
+## 5    SEN-01  Sentinel  Aronia melanocarpa black chokeberry 2011     100    2.64
+## 6    SEN-01  Sentinel        Carex exilis    coastal sedge 2011      60    6.60
+##   Invasive Protected
+## 1    FALSE     FALSE
+## 2    FALSE     FALSE
+## 3    FALSE     FALSE
+## 4    FALSE      TRUE
+## 5    FALSE     FALSE
+## 6    FALSE     FALSE</code></pre>
+<pre class="r"><code># Prepare data for pivot
+wetdat_prep &lt;- wetdat %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin_Name, 1), 1, 3),
+                                                          substr(word(Latin_Name, 2), 1, 3))),
+                                 present = ifelse(Ave_Cov&gt;0, 1, 0)) %&gt;% 
+                                 filter(Year == 2017) 
+
+# Pivot wide, so every species has a column
+wetdat_wide &lt;- wetdat_prep %&gt;% select(Site_Name, Year, sppcode, present) %&gt;% 
+                               pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;present&quot;, 
+                                           values_fill = 0)
+head(wetdat_wide)</code></pre>
+<pre><code>## # A tibble: 5 x 106
+##   Site_Name  Year ACERUB ALNINC AMENA BERTHU CARFOL CARTRI CARNA CHACAL CORCAN
+##   &lt;chr&gt;     &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 RAM-41     2017      1      1     1      1      1      1     1      1      1
+## 2 RAM-53     2017      1      1     1      1      1      0     0      1      1
+## 3 RAM-62     2017      1      0     0      0      0      1     0      1      1
+## 4 RAM-44     2017      1      1     0      0      0      0     0      1      0
+## 5 RAM-05     2017      1      1     1      0      1      1     0      1      1
+## # ... with 95 more variables: DOEUMB &lt;dbl&gt;, DRYCRI &lt;dbl&gt;, ERIANG &lt;dbl&gt;,
+## #   GAYBAC &lt;dbl&gt;, ILEMUC &lt;dbl&gt;, ILEVER &lt;dbl&gt;, JUNEFF &lt;dbl&gt;, KALANG &lt;dbl&gt;,
+## #   LARLAR &lt;dbl&gt;, MAICAN &lt;dbl&gt;, MAITRI &lt;dbl&gt;, MYRGAL &lt;dbl&gt;, ONOSEN &lt;dbl&gt;,
+## #   OSMCIN &lt;dbl&gt;, PICGLA &lt;dbl&gt;, PICMAR &lt;dbl&gt;, PRENA &lt;dbl&gt;, RHOCAN &lt;dbl&gt;,
+## #   RHOGRO &lt;dbl&gt;, ROSNIT &lt;dbl&gt;, RUBHIS &lt;dbl&gt;, SOLULI &lt;dbl&gt;, SPIALB &lt;dbl&gt;,
+## #   SYMFOE &lt;dbl&gt;, THEPAL &lt;dbl&gt;, TRIBOR &lt;dbl&gt;, VACANG &lt;dbl&gt;, VACCOR &lt;dbl&gt;,
+## #   VACMYR &lt;dbl&gt;, VACVIT &lt;dbl&gt;, VIBNUD &lt;dbl&gt;, AROMEL &lt;dbl&gt;, CALCAN &lt;dbl&gt;,
+## #   CARATL &lt;dbl&gt;, CARLAS &lt;dbl&gt;, CARSTR &lt;dbl&gt;, CELORB &lt;dbl&gt;, DANSPI &lt;dbl&gt;,
+## #   DICACU &lt;dbl&gt;, DROINT &lt;dbl&gt;, DROROT &lt;dbl&gt;, DULARU &lt;dbl&gt;, EPILEP &lt;dbl&gt;,
+## #   ERITEN &lt;dbl&gt;, ERIVIR &lt;dbl&gt;, JUNCAN &lt;dbl&gt;, LYSTER &lt;dbl&gt;, MORPEN &lt;dbl&gt;,
+## #   OCLNEM &lt;dbl&gt;, OSMREG &lt;dbl&gt;, PICRUB &lt;dbl&gt;, PINSTR &lt;dbl&gt;, POGOPH &lt;dbl&gt;,
+## #   RHAFRA &lt;dbl&gt;, SCICYP &lt;dbl&gt;, SPITOM &lt;dbl&gt;, SYMNOV &lt;dbl&gt;, TRINA &lt;dbl&gt;,
+## #   TYPLAT &lt;dbl&gt;, VACMAC &lt;dbl&gt;, GAUHIS &lt;dbl&gt;, MONUNI &lt;dbl&gt;, VACOXY &lt;dbl&gt;,
+## #   APOAND &lt;dbl&gt;, BETPOP &lt;dbl&gt;, CARLAC &lt;dbl&gt;, EQUARV &lt;dbl&gt;, EURMAC &lt;dbl&gt;,
+## #   FESFIL &lt;dbl&gt;, IRIVER &lt;dbl&gt;, POPGRA &lt;dbl&gt;, POPTRE &lt;dbl&gt;, QUERUB &lt;dbl&gt;,
+## #   RANACR &lt;dbl&gt;, ROSVIR &lt;dbl&gt;, RUBNA &lt;dbl&gt;, SALPET &lt;dbl&gt;, SOLRUG &lt;dbl&gt;,
+## #   UTRCOR &lt;dbl&gt;, VEROFF &lt;dbl&gt;, VICCRA &lt;dbl&gt;, AREBUL &lt;dbl&gt;, CALTUB &lt;dbl&gt;,
+## #   CAREXI &lt;dbl&gt;, CARMAG &lt;dbl&gt;, CARPAU &lt;dbl&gt;, EMPNIG &lt;dbl&gt;, EURRAD &lt;dbl&gt;,
+## #   GLYSTR &lt;dbl&gt;, KALPOL &lt;dbl&gt;, `LON-` &lt;dbl&gt;, OCLX &lt;dbl&gt;, RHYALB &lt;dbl&gt;,
+## #   SARPUR &lt;dbl&gt;, XYRMON &lt;dbl&gt;</code></pre>
+<pre class="r"><code># Pivot long, so every site has a species with 1 or 0 to denote present/absent
+wetdat_long &lt;- wetdat_wide %&gt;% pivot_longer(cols = c(-Site_Name, -Year), names_to = &quot;sppcode&quot;, 
+                                            values_to = &quot;present&quot;) %&gt;% 
+                               arrange(Site_Name, sppcode)
+
+# Now we need to filter the data to only include invasive species
+# First make a list of the invasive species
+inv_list &lt;- unique(wetdat_prep$sppcode[wetdat_prep$Invasive == TRUE])
+inv_list</code></pre>
+<pre><code>## [1] &quot;BERTHU&quot; &quot;CELORB&quot; &quot;RHAFRA&quot; &quot;LON-&quot;</code></pre>
+<pre class="r"><code>#Now filter on that invasive list
+wetdat_long_inv &lt;- wetdat_long %&gt;% filter(sppcode %in% inv_list)
+
+
+# Now summarize to count the percent of plots each species was found in
+wetdat_sum &lt;- wetdat_long_inv %&gt;% group_by(sppcode) %&gt;% 
+                                  summarize(pct_sites = sum(present)/n()*100, 
+                                           .groups = &#39;keep&#39;)</code></pre>
+<p class="ques">
+Question 1: How would you create a wide matrix for FRSP plots in 2019 that has plots for rows, and exotic species as columns?
+</p>
 </div>
 <div id="saving-data-to-shapefile" class="section level4">
 <h4>Saving data to Shapefile</h4>
+<pre class="r"><code>library(tidyverse)
+library(forestNETN)
+library(rgdal)
+importCSV(&quot;./data/NETN_forest_csvs&quot;)</code></pre>
+<pre><code>## 
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |===                                                                   |   4%
+  |                                                                            
+  |======                                                                |   9%
+  |                                                                            
+  |=========                                                             |  13%
+  |                                                                            
+  |============                                                          |  17%
+  |                                                                            
+  |===============                                                       |  22%
+  |                                                                            
+  |==================                                                    |  26%
+  |                                                                            
+  |=====================                                                 |  30%
+  |                                                                            
+  |========================                                              |  35%
+  |                                                                            
+  |===========================                                           |  39%
+  |                                                                            
+  |==============================                                        |  43%
+  |                                                                            
+  |=================================                                     |  48%
+  |                                                                            
+  |=====================================                                 |  52%
+  |                                                                            
+  |========================================                              |  57%
+  |                                                                            
+  |===========================================                           |  61%
+  |                                                                            
+  |==============================================                        |  65%
+  |                                                                            
+  |=================================================                     |  70%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |=======================================================               |  78%
+  |                                                                            
+  |==========================================================            |  83%
+  |                                                                            
+  |=============================================================         |  87%
+  |                                                                            
+  |================================================================      |  91%
+  |                                                                            
+  |===================================================================   |  96%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+<pre><code>## [1] data import complete</code></pre>
 <p>Many of the metrics we’re going to summarize will be saved as shapefiles to map in QGIS. The process is relatively straightforward. The keys are to have the X, Y Coordinates included in your final summary (may have to do some table joining to get them back), and to know which Coordinate Reference System to specify (abbreviated CRS). NETN covers 2 UTM Zones, which can be extra tricky. The datum and projection for each park are listed below.</p>
 <ul>
 <li>
@@ -1710,26 +1847,18 @@ library(rgdal) # for saving to shapefile</code></pre>
 </ul>
 <p>Most of the major coordinate systems have a registered EPSG Code assigned to it, including ours. Using the EPSG code is the fastest way to assign the coordinate system for our shapefile. For ACAD and MIMA, the EPSG Code is 26918. For the other parks it’s 26918 (notice the last digit is the only difference, and matches the UTM Zone above).</p>
 <p>To start out, let’s use acad_exo_wide from the previous section to create our first shapefile. The first thing we need to do is add the X, Y Coordinates back into the dataset.</p>
-<pre class="r"><code>head(acad_exo_wide) # Created at the end of Data Wrangling Part II.
+<pre class="r"><code>acad_exo &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, speciesType = &#39;exotic&#39;) %&gt;% 
+            mutate(present = ifelse(!is.na(Latin_Name), 1, 0))
 
-acad_19 &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2019, to = 2019)
-
-acad_for_shp &lt;- merge(acad_19[ , c(&quot;Plot_Name&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;)], acad_exo_wide, by = &quot;Plot_Name&quot;, 
-                      all.x = TRUE, all.y = TRUE)
-
-# Note that if we had used the code below to generate acad_exo_wide, the coordinates would already be in there
-acad_exo_wide &lt;- acad_exospp %&gt;% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, spp_pres) %&gt;% 
-                                 arrange(Latin_Name, Plot_Name) %&gt;% 
-                                 pivot_wider(names_from = &quot;Latin_Name&quot;, 
-                                             values_from = &quot;spp_pres&quot;, 
-                                             values_fill = 0) %&gt;% 
-                                 arrange(Plot_Name)</code></pre>
+acad_exo_wide &lt;- acad_exo %&gt;% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, present) %&gt;% 
+                              pivot_wider(names_from = &quot;Latin_Name&quot;, values_from = &quot;present&quot;, 
+                                          values_fill = 0)</code></pre>
 <p>Now that our dataframe has the GPS Coordinates, we need to tell R that these columns are X Y coordinates, and then tell R what the projection and datum are. The rgdal package has the functions to do this.</p>
 <pre class="r"><code>head(acad_exo_wide)
 
 # Step 1: Create spatial object by specifying the coordinates
 coordinates(acad_exo_wide) &lt;- ~X_Coord + Y_Coord
-names(acad_exo_wide[1:5])
+
 plot(acad_exo_wide) # These points now plot in space
 # Step 2: Define the coordinate system 
 proj4string(acad_exo_wide) &lt;- CRS(&quot;+init=epsg:26919&quot;)
@@ -1998,7 +2127,7 @@ head(wetdat_sort_tidy)</code></pre>
 ##  [3] &quot;Alnus incana++&quot;            &quot;Amelanchier&quot;              
 ##  [5] &quot;Andromeda polifolia&quot;       &quot;Apocynum androsaemifolium&quot;
 ##  [7] &quot;Arethusa bulbosa&quot;          &quot;Aronia melanocarpa&quot;       
-##  [9] &quot;Betula populifolia&quot;        &quot;Calamagrostis canadensis&quot;</code></pre>
+##  [9] &quot;Berberis thunbergii&quot;       &quot;Betula populifolia&quot;</code></pre>
 <pre class="r"><code># The regular expression way to find non-alphabetical symbols (now you know why I didn&#39;t cover this).
 wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record </code></pre>
 <pre><code>## [1] &quot;Alnus incana++&quot;</code></pre>
@@ -2015,8 +2144,8 @@ wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex a
 <pre><code>##  [1] &quot;Acer rubrum&quot;               &quot;Alnus incana&quot;             
 ##  [3] &quot;Amelanchier&quot;               &quot;Andromeda polifolia&quot;      
 ##  [5] &quot;Apocynum androsaemifolium&quot; &quot;Arethusa bulbosa&quot;         
-##  [7] &quot;Aronia melanocarpa&quot;        &quot;Betula populifolia&quot;       
-##  [9] &quot;Calamagrostis canadensis&quot;  &quot;Calopogon tuberosus&quot;</code></pre>
+##  [7] &quot;Aronia melanocarpa&quot;        &quot;Berberis thunbergii&quot;      
+##  [9] &quot;Betula populifolia&quot;        &quot;Calamagrostis canadensis&quot;</code></pre>
 </details>
 <p><br></p>
 <details>
@@ -2088,9 +2217,9 @@ head(wetinv1)</code></pre>
 ##   Site_Name  Year num_invspp plot_inv
 ##   &lt;chr&gt;     &lt;int&gt;      &lt;int&gt;    &lt;dbl&gt;
 ## 1 RAM-05     2012          0        0
-## 2 RAM-05     2017          0        0
+## 2 RAM-05     2017          1        1
 ## 3 RAM-41     2012          0        0
-## 4 RAM-41     2017          0        0
+## 4 RAM-41     2017          1        1
 ## 5 RAM-44     2012          1        1
 ## 6 RAM-44     2017          1        1</code></pre>
 <pre class="r"><code># Note plot_inv is to set plot to 1 or 0 even if multiple invasives are found on the plot.
@@ -2103,7 +2232,7 @@ wetinv #40 % of plots both years</code></pre>
 ##    Year tot_inv_plots
 ##   &lt;int&gt;         &lt;dbl&gt;
 ## 1  2012            40
-## 2  2017            40</code></pre>
+## 2  2017            80</code></pre>
 <p>Note that logical fields (ie TRUE/FALSE) are interpreted as numbers in R when you use sum. If the value is TRUE, R interprets it as 1. If it’s FALSE, R interprets it as 0. So sum(Invasive) is summing all of the TRUEs in the Invasive column.</p>
 </details>
 <br>
@@ -2616,72 +2745,88 @@ wetsum_yr
 write.csv(wetdat, &quot;./data/ACAD_wetland_data_clean.csv&quot;)
 file.remove(&quot;./data/ACAD_wetland_data_clean.csv&quot;)
 library(tidyverse)
-library(forestNETN)
-library(rgdal)
+bat_long &lt;- read.csv(&quot;./data/example_data/fake_bats.csv&quot;)
+head(bat_long)
 
-importCSV(&quot;./data/NETN_forest_csvs&quot;)
-regen_long &lt;- data.frame(plot = c(&quot;p1&quot;,&quot;p1&quot;,&quot;p1&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p3&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p4&quot;),
-                         cycle = c(&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c1&quot;,&quot;c2&quot;,&quot;c3&quot;,&quot;c1&quot;,&quot;c2&quot;),
-                         numsds = c(1,4,5,3,2,6,4,9,10,3,1))
-print(regen_long)
-regen_wide &lt;- regen_long %&gt;% spread(&quot;cycle&quot;, &quot;numsds&quot;) #retired spread function
-regen_wide
-regen_wide2 &lt;- regen_long %&gt;% pivot_wider(names_from = &quot;cycle&quot;, values_from = &quot;numsds&quot;) #replacement in tidyr
-regen_wide2
-regen_wide_fill0 &lt;- regen_long %&gt;% spread(&quot;cycle&quot;, &quot;numsds&quot;, fill=0)
-regen_wide_fill0
+bat_long &lt;- bat_long %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin, 1), 1, 3),
+                                                         substr(word(Latin, 2), 1, 3))))
 
-regen_wide2_fill0 &lt;- regen_long %&gt;% pivot_wider(names_from = &quot;cycle&quot;, values_from = &quot;numsds&quot;, values_fill=0)
-regen_wide2_fill0
+bat_long_sum &lt;- bat_long %&gt;% group_by(Site, Year, sppcode) %&gt;% 
+                          summarize(numindiv = sum(!is.na(sppcode)),
+                                    .groups = &#39;drop&#39;)
 
-regen_long2 &lt;- regen_wide_fill0 %&gt;% gather(&quot;cycle&quot;, &quot;numseeds&quot;, -plot)
-regen_long2
+head(bat_long_sum)
+bat_wide &lt;- bat_long_sum %&gt;% spread(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;) #retired spread function
+bat_wide
+bat_wide2 &lt;- bat_long_sum %&gt;% pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;numindiv&quot;) #replacement in tidyr
+bat_wide2
 
-names(regen_wide_fill0)
-regen_long2b &lt;- regen_wide_fill0 %&gt;% pivot_longer(cols=c(c1, c2, c3), names_to = &quot;cycle&quot;, values_to = &quot;numseeds&quot;)
+bat_wide_fill &lt;- bat_long_sum %&gt;% spread(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;, fill = 0) #retired spread function
+head(bat_wide_fill)
+bat_wide2_fill &lt;- bat_long_sum %&gt;% pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;numindiv&quot;, 
+                                               values_fill = 0) #replacement in tidyr
 
-acad_exospp &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, QAQC = FALSE, speciesType = &quot;exotic&quot;)
-# Need to add a column that says the species is present.
-acad_exospp$spp_pres&lt;-1
-head(acad_exospp)
-acad_exo_wide  &lt;- acad_exospp %&gt;% select(Plot_Name, Latin_Name, spp_pres) %&gt;% # helps to take only the columns you&#39;re interested in
-                                 arrange(Latin_Name, Plot_Name) %&gt;% #arrange is piped here so columns will be alphabetical
-                                 pivot_wider(names_from = &quot;Latin_Name&quot;,
-                                             values_from = &quot;spp_pres&quot;,
-                                             values_fill = 0) %&gt;%
-                                 arrange(Plot_Name)
-head(acad_exo_wide)
-#Now to make the the long version of wide, we species we didn&#39;t find on a plot are not included and have a 0.
+bat_long2 &lt;- bat_wide_fill %&gt;% gather(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;, -Site, -Year) # old way
+head(bat_long2)
 
-acad_exo_long &lt;- acad_exo_wide %&gt;% pivot_longer(-Plot_Name,
-                                                names_to = &quot;Latin_Name&quot;,
-                                                values_to = &quot;Present&quot;) %&gt;%
-                                   arrange(Plot_Name, Latin_Name)
+names(bat_wide_fill)
+bat_long2b &lt;- bat_wide_fill %&gt;% pivot_longer(cols=c(LASCIN, MYOLEI, MYOLUC, MYOSEP), 
+                                             names_to = &quot;sppcode&quot;, 
+                                             values_to = &quot;numindiv&quot;) #new way
+head(bat_long2b)
+nrow(bat_long_sum) # dataset before made wide, then long
+nrow(bat_long2) # dataset that has every species represented for every year and every site
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
+head(wetdat)
 
-head(acad_exo_long)
+# Prepare data for pivot
+wetdat_prep &lt;- wetdat %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin_Name, 1), 1, 3),
+                                                          substr(word(Latin_Name, 2), 1, 3))),
+                                 present = ifelse(Ave_Cov&gt;0, 1, 0)) %&gt;% 
+                                 filter(Year == 2017) 
+
+# Pivot wide, so every species has a column
+wetdat_wide &lt;- wetdat_prep %&gt;% select(Site_Name, Year, sppcode, present) %&gt;% 
+                               pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;present&quot;, 
+                                           values_fill = 0)
+head(wetdat_wide)
+
+# Pivot long, so every site has a species with 1 or 0 to denote present/absent
+wetdat_long &lt;- wetdat_wide %&gt;% pivot_longer(cols = c(-Site_Name, -Year), names_to = &quot;sppcode&quot;, 
+                                            values_to = &quot;present&quot;) %&gt;% 
+                               arrange(Site_Name, sppcode)
+
+# Now we need to filter the data to only include invasive species
+# First make a list of the invasive species
+inv_list &lt;- unique(wetdat_prep$sppcode[wetdat_prep$Invasive == TRUE])
+inv_list
+
+#Now filter on that invasive list
+wetdat_long_inv &lt;- wetdat_long %&gt;% filter(sppcode %in% inv_list)
+
+
+# Now summarize to count the percent of plots each species was found in
+wetdat_sum &lt;- wetdat_long_inv %&gt;% group_by(sppcode) %&gt;% 
+                                  summarize(pct_sites = sum(present)/n()*100, 
+                                           .groups = &#39;keep&#39;)
+
 
 library(tidyverse)
 library(forestNETN)
-library(rgdal) # for saving to shapefile
-head(acad_exo_wide) # Created at the end of Data Wrangling Part II.
+library(rgdal)
+importCSV(&quot;./data/NETN_forest_csvs&quot;)
 
-acad_19 &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2019, to = 2019)
+acad_exo &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, speciesType = &#39;exotic&#39;) %&gt;% 
+            mutate(present = ifelse(!is.na(Latin_Name), 1, 0))
 
-acad_for_shp &lt;- merge(acad_19[ , c(&quot;Plot_Name&quot;, &quot;X_Coord&quot;, &quot;Y_Coord&quot;)], acad_exo_wide, by = &quot;Plot_Name&quot;, 
-                      all.x = TRUE, all.y = TRUE)
-
-# Note that if we had used the code below to generate acad_exo_wide, the coordinates would already be in there
-acad_exo_wide &lt;- acad_exospp %&gt;% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, spp_pres) %&gt;% 
-                                 arrange(Latin_Name, Plot_Name) %&gt;% 
-                                 pivot_wider(names_from = &quot;Latin_Name&quot;, 
-                                             values_from = &quot;spp_pres&quot;, 
-                                             values_fill = 0) %&gt;% 
-                                 arrange(Plot_Name)
+acad_exo_wide &lt;- acad_exo %&gt;% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, present) %&gt;% 
+                              pivot_wider(names_from = &quot;Latin_Name&quot;, values_from = &quot;present&quot;, 
+                                          values_fill = 0)
 head(acad_exo_wide)
 
 # Step 1: Create spatial object by specifying the coordinates
 coordinates(acad_exo_wide) &lt;- ~X_Coord + Y_Coord
-names(acad_exo_wide[1:5])
+
 plot(acad_exo_wide) # These points now plot in space
 # Step 2: Define the coordinate system 
 proj4string(acad_exo_wide) &lt;- CRS(&quot;+init=epsg:26919&quot;)
