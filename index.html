@@ -1149,9 +1149,9 @@ summary(wetdat) # summarize each field based on data type</code></pre>
 <pre><code>##     Site_Name Site_Type            Latin_Name             Common Year PctFreq
 ## 83     SEN-03  Sentinel     Cornus canadensis bunchberry dogwood 2011     100
 ## 106    SEN-03  Sentinel Vaccinium macrocarpon    large cranberry 2011     100
-##     Ave_Cov Invasive Protected Ave_Cov_num
-## 83     &lt;0.1    FALSE     FALSE          NA
-## 106    &lt;0.1    FALSE     FALSE          NA</code></pre>
+##     Ave_Cov Invasive Protected X_Coord Y_Coord Ave_Cov_num
+## 83     &lt;0.1    FALSE     FALSE  553993 4898560          NA
+## 106    &lt;0.1    FALSE     FALSE  553993 4898560          NA</code></pre>
 <pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), &quot;Ave_Cov&quot;] # Ave_Cov only</code></pre>
 <pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
 <pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only </code></pre>
@@ -1162,7 +1162,7 @@ summary(wetdat) # summarize each field based on data type</code></pre>
 <pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
 #wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA
 str(wetdat)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    508 obs. of  10 variables:
+<pre><code>## &#39;data.frame&#39;:    508 obs. of  12 variables:
 ##  $ Site_Name  : chr  &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; ...
 ##  $ Site_Type  : chr  &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; ...
 ##  $ Latin_Name : chr  &quot;Acer rubrum&quot; &quot;Amelanchier&quot; &quot;Andromeda polifolia&quot; &quot;Arethusa bulbosa&quot; ...
@@ -1172,11 +1172,13 @@ str(wetdat)</code></pre>
 ##  $ Ave_Cov    : chr  &quot;0.02&quot; &quot;0.02&quot; &quot;2.22&quot; &quot;0.04&quot; ...
 ##  $ Invasive   : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ Protected  : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
+##  $ X_Coord    : num  574855 574855 574855 574855 574855 ...
+##  $ Y_Coord    : num  4911909 4911909 4911909 4911909 4911909 ...
 ##  $ Ave_Cov_num: num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...</code></pre>
 <p>You can now View(wetdat) to see if &lt;0.1 is still in the data frame (it shouldn’t be). However, notice that Ave_Cov is still considered a chr (text field). Once R assigns a data type to a column, you have to manually change it to something different. Now that we fixed &lt;0.1, we shouldn’t get any NAs introduced by coercion when we convert to numeric. I’m going to overwrite the Ave_Cov_num field because it’s just a temporary field for the purpose of data checking.</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
 str(wetdat) </code></pre>
-<pre><code>## &#39;data.frame&#39;:    508 obs. of  10 variables:
+<pre><code>## &#39;data.frame&#39;:    508 obs. of  12 variables:
 ##  $ Site_Name  : chr  &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; ...
 ##  $ Site_Type  : chr  &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; ...
 ##  $ Latin_Name : chr  &quot;Acer rubrum&quot; &quot;Amelanchier&quot; &quot;Andromeda polifolia&quot; &quot;Arethusa bulbosa&quot; ...
@@ -1186,6 +1188,8 @@ str(wetdat) </code></pre>
 ##  $ Ave_Cov    : chr  &quot;0.02&quot; &quot;0.02&quot; &quot;2.22&quot; &quot;0.04&quot; ...
 ##  $ Invasive   : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ Protected  : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
+##  $ X_Coord    : num  574855 574855 574855 574855 574855 ...
+##  $ Y_Coord    : num  4911909 4911909 4911909 4911909 4911909 ...
 ##  $ Ave_Cov_num: num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...</code></pre>
 <p>Ave_Cov_num is now numeric and no NAs were introduced by coercion. It’s now safe to overwrite the original Ave_Cov field. The entire workflow from start to finish is below:</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)</code></pre>
@@ -1196,7 +1200,7 @@ str(wetdat) </code></pre>
 wetdat$Ave_Cov &lt;- as.numeric(wetdat$Ave_Cov)
 wetdat &lt;- subset(wetdat, select = -c(Ave_Cov_num)) #now drop the temp column Ave_Cov_num
 str(wetdat) #Ave_Cov is now numeric</code></pre>
-<pre><code>## &#39;data.frame&#39;:    508 obs. of  9 variables:
+<pre><code>## &#39;data.frame&#39;:    508 obs. of  11 variables:
 ##  $ Site_Name : chr  &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; ...
 ##  $ Site_Type : chr  &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; &quot;Sentinel&quot; ...
 ##  $ Latin_Name: chr  &quot;Acer rubrum&quot; &quot;Amelanchier&quot; &quot;Andromeda polifolia&quot; &quot;Arethusa bulbosa&quot; ...
@@ -1205,7 +1209,9 @@ str(wetdat) #Ave_Cov is now numeric</code></pre>
 ##  $ PctFreq   : int  NA 20 80 40 100 60 100 60 100 100 ...
 ##  $ Ave_Cov   : num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...
 ##  $ Invasive  : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-##  $ Protected : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...</code></pre>
+##  $ Protected : logi  FALSE FALSE FALSE TRUE FALSE FALSE ...
+##  $ X_Coord   : num  574855 574855 574855 574855 574855 ...
+##  $ Y_Coord   : num  4911909 4911909 4911909 4911909 4911909 ...</code></pre>
 <pre class="r"><code>table(complete.cases(wetdat$Ave_Cov)) #checks that there aren&#39;t any more NAs. </code></pre>
 <pre><code>## 
 ## TRUE 
@@ -1224,8 +1230,8 @@ str(wetdat) #Ave_Cov is now numeric</code></pre>
 <pre class="r"><code>wetdat[wetdat$Ave_Cov &gt; 100, ] # If Ave_Cov is still a chr, this filter won&#39;t work</code></pre>
 <pre><code>##    Site_Name Site_Type       Latin_Name         Common Year PctFreq Ave_Cov
 ## 36    SEN-02  Sentinel Arethusa bulbosa dragon&#39;s mouth 2011      20     110
-##    Invasive Protected
-## 36    FALSE      TRUE</code></pre>
+##    Invasive Protected X_Coord Y_Coord
+## 36    FALSE      TRUE  556242 4914369</code></pre>
 <p>There’s only 1 row, row 36, which has an Ave_Cov &gt; 100 for Arethusa bulbosa in SEN-01. For our purposes, pretend that we went back to the datasheet, and found that there was a data transcription error, and the correct value should be 11, not 110. The next line of code fixes the data for that specific record.</p>
 <pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov &gt; 100] &lt;- 11
 range(wetdat$Ave_Cov) </code></pre>
@@ -1299,7 +1305,7 @@ sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a co
 <p><summary class="drop">Checking your work</summary> If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you’ve still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn’t get an error or warning, doesn’t mean the code you ran worked the way you intended it to!</p>
 <p>In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird (hence the sort(unique()) line).</p>
 <pre class="r"><code>dim(wetdat) # reports # rows then # cols</code></pre>
-<pre><code>## [1] 508   9</code></pre>
+<pre><code>## [1] 508  11</code></pre>
 <pre class="r"><code>nrow(wetdat) # reports # rows only</code></pre>
 <pre><code>## [1] 508</code></pre>
 <pre class="r"><code>length(unique(wetdat$Site_Name)) # number of unique values in Site_Name</code></pre>
@@ -1482,13 +1488,13 @@ head(wetdat)</code></pre>
 ## 4    SEN-01  Sentinel    Arethusa bulbosa   dragon&#39;s mouth 2011      40    0.04
 ## 5    SEN-01  Sentinel  Aronia melanocarpa black chokeberry 2011     100    2.64
 ## 6    SEN-01  Sentinel        Carex exilis    coastal sedge 2011      60    6.60
-##   Invasive Protected
-## 1    FALSE     FALSE
-## 2    FALSE     FALSE
-## 3    FALSE     FALSE
-## 4    FALSE      TRUE
-## 5    FALSE     FALSE
-## 6    FALSE     FALSE</code></pre>
+##   Invasive Protected  X_Coord Y_Coord
+## 1    FALSE     FALSE 574855.5 4911909
+## 2    FALSE     FALSE 574855.5 4911909
+## 3    FALSE     FALSE 574855.5 4911909
+## 4    FALSE      TRUE 574855.5 4911909
+## 5    FALSE     FALSE 574855.5 4911909
+## 6    FALSE     FALSE 574855.5 4911909</code></pre>
 <p>In the code above, we added a column named “present” using mutate, and we set present to 1 if a species has an Ave_Cov &gt; 0 and isn’t NA. In case you’ve never seen if/then or if/else statements, these are conditional statements that run a different set of commands depending on whether an expression is true or false. They’re foundational to most programming, can be done in Excel, Access, R, and most programming languages. In the code above, the ifelse statement takes the statement to check for true/false (Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov). )</p>
 <p>We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.</p>
 A couple of things to note:
@@ -1754,13 +1760,13 @@ head(wetdat)</code></pre>
 ## 4    SEN-01  Sentinel    Arethusa bulbosa   dragon&#39;s mouth 2011      40    0.04
 ## 5    SEN-01  Sentinel  Aronia melanocarpa black chokeberry 2011     100    2.64
 ## 6    SEN-01  Sentinel        Carex exilis    coastal sedge 2011      60    6.60
-##   Invasive Protected
-## 1    FALSE     FALSE
-## 2    FALSE     FALSE
-## 3    FALSE     FALSE
-## 4    FALSE      TRUE
-## 5    FALSE     FALSE
-## 6    FALSE     FALSE</code></pre>
+##   Invasive Protected  X_Coord Y_Coord
+## 1    FALSE     FALSE 574855.5 4911909
+## 2    FALSE     FALSE 574855.5 4911909
+## 3    FALSE     FALSE 574855.5 4911909
+## 4    FALSE      TRUE 574855.5 4911909
+## 5    FALSE     FALSE 574855.5 4911909
+## 6    FALSE     FALSE 574855.5 4911909</code></pre>
 <pre class="r"><code># Prepare data for pivot
 wetdat_prep &lt;- wetdat %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin_Name, 1), 1, 3),
                                                           substr(word(Latin_Name, 2), 1, 3))),
@@ -1831,114 +1837,14 @@ wetdat_sum &lt;- wetdat_long_inv %&gt;% group_by(sppcode) %&gt;%
 <p class="ques">
 Question 2: How would you create a wide matrix with all protected species as columns, sites and years sampled as rows, and percent cover as the value?
 </p>
-</div>
-<div id="saving-data-to-shapefile" class="section level4">
-<h4>Saving data to Shapefile</h4>
-<pre class="r"><code>library(tidyverse)
-library(forestNETN)
-library(rgdal)
-importCSV(&quot;./data/NETN_forest_csvs&quot;)</code></pre>
-<pre><code>## 
-  |                                                                            
-  |                                                                      |   0%
-  |                                                                            
-  |===                                                                   |   4%
-  |                                                                            
-  |======                                                                |   9%
-  |                                                                            
-  |=========                                                             |  13%
-  |                                                                            
-  |============                                                          |  17%
-  |                                                                            
-  |===============                                                       |  22%
-  |                                                                            
-  |==================                                                    |  26%
-  |                                                                            
-  |=====================                                                 |  30%
-  |                                                                            
-  |========================                                              |  35%
-  |                                                                            
-  |===========================                                           |  39%
-  |                                                                            
-  |==============================                                        |  43%
-  |                                                                            
-  |=================================                                     |  48%
-  |                                                                            
-  |=====================================                                 |  52%
-  |                                                                            
-  |========================================                              |  57%
-  |                                                                            
-  |===========================================                           |  61%
-  |                                                                            
-  |==============================================                        |  65%
-  |                                                                            
-  |=================================================                     |  70%
-  |                                                                            
-  |====================================================                  |  74%
-  |                                                                            
-  |=======================================================               |  78%
-  |                                                                            
-  |==========================================================            |  83%
-  |                                                                            
-  |=============================================================         |  87%
-  |                                                                            
-  |================================================================      |  91%
-  |                                                                            
-  |===================================================================   |  96%
-  |                                                                            
-  |======================================================================| 100%</code></pre>
-<pre><code>## [1] data import complete</code></pre>
-<p>Many of the metrics we’re going to summarize will be saved as shapefiles to map in QGIS. The process is relatively straightforward. The keys are to have the X, Y Coordinates included in your final summary (may have to do some table joining to get them back), and to know which Coordinate Reference System to specify (abbreviated CRS). NETN covers 2 UTM Zones, which can be extra tricky. The datum and projection for each park are listed below.</p>
-<ul>
-<li>
-<b>NAD83 UTM Zone 18N:</b> MABI, MORR, ROVA, SAGA, SARA, WEFA
-</li>
-<li>
-<b>NAD83 UTM Zone 19N:</b> ACAD, MIMA
-</li>
-</ul>
-<p>Most of the major coordinate systems have a registered EPSG Code assigned to it, including ours. Using the EPSG code is the fastest way to assign the coordinate system for our shapefile. For ACAD and MIMA, the EPSG Code is 26918. For the other parks it’s 26918 (notice the last digit is the only difference, and matches the UTM Zone above).</p>
-<p>To start out, let’s use acad_exo_wide from the previous section to create our first shapefile. The first thing we need to do is add the X, Y Coordinates back into the dataset.</p>
-<pre class="r"><code>acad_exo &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, speciesType = &#39;exotic&#39;) %&gt;% 
-            mutate(present = ifelse(!is.na(Latin_Name), 1, 0))
-
-acad_exo_wide &lt;- acad_exo %&gt;% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, present) %&gt;% 
-                              pivot_wider(names_from = &quot;Latin_Name&quot;, values_from = &quot;present&quot;, 
-                                          values_fill = 0)</code></pre>
-<p>Now that our dataframe has the GPS Coordinates, we need to tell R that these columns are X Y coordinates, and then tell R what the projection and datum are. The rgdal package has the functions to do this.</p>
-<pre class="r"><code>head(acad_exo_wide)
-
-# Step 1: Create spatial object by specifying the coordinates
-coordinates(acad_exo_wide) &lt;- ~X_Coord + Y_Coord
-
-plot(acad_exo_wide) # These points now plot in space
-# Step 2: Define the coordinate system 
-proj4string(acad_exo_wide) &lt;- CRS(&quot;+init=epsg:26919&quot;)
-# Step 3: Write the spatial object to a shapefile
-writeOGR(acad_exo_wide, dsn = &quot;../shapefiles&quot;, layer = &quot;ACAD_exo_2019&quot;, driver = &quot;ESRI Shapefile&quot;)</code></pre>
-A lot of this may be unfamiliar to you, especially since ArcGIS does a lot of this work behind the scenes.
-<ul>
-<li>
-First notice that after you assign the coordinates in Step 1, the X_Coord and Y_Coord columns disappear from your dataframe. If you try to run that line of code again, you’ll get an error because those columns aren’t in the dataframe anymore. No need to fret. You’ve just created a spatial object, and the coordinates are stored in a different slot than the data.
-</li>
-<li>
-In the second step, we’re telling R that the datum and projection (in proj4 format) for our spatial dataset is the EPSG Code 26918 (code for NAD83, UTM Zone 18N).
-</li>
-<li>
-Finally, we’re using the writeOGR command to output to a shapefile. The dsn is the location you’re saving the shapefile too.
-</li>
-<li>
-Notice that we’re using ./shapefiles, which is a folder within the project we created on day 1. Note that the layer name is what the shapefile will be called. Column names usually end up acading abbreviated (don’t worry if you get a warning message).
-</li>
-<li>
-Finally, writeOGR by default will not allow you to overwrite an existing file. While it’s safe to have that as a default, sometimes you want to overwrite shapefiles. To do that, add overwrite_layer=TRUE to the function.
-</li>
-</ul>
+</details>
 </div>
 <div id="plotting-with-ggplot2" class="section level4 tabset">
 <h4>Plotting with ggplot2</h4>
 <p>To get started with ggplot2, we need to make a dataset to plot. Instead of making up a simple dataset, let’s use what we’ve learned to make a real dataset from NETN forest data. Let’s start with a plot of the mean regeneration density by size class for the most recent 4-years at ACAD. Let’s also only include species that make it into the canopy (e.g., no pawpaw). We specify this by using canopyForm = “canopy”.</p>
-<pre class="r"><code>acad_regen &lt;- joinRegenData(park = &quot;ACAD&quot;, from = 2016, to = 2019, canopyForm = &quot;canopy&quot;)
+<pre class="r"><code>library(forestNETN)
+importCSV(&quot;./data/NETN_forest_csvs&quot;)
+acad_regen &lt;- joinRegenData(park = &quot;ACAD&quot;, from = 2016, to = 2019, canopyForm = &quot;canopy&quot;)
 
 head(acad_regen) # this dataframe includes species, so there are multiple rows per plot. 
 
@@ -2024,6 +1930,180 @@ acad_final</code></pre>
 <p class="ques">
 Question 11: Take the acad_final graph and make 2 more changes to it. For example, make the line width on the error bars bigger, change the font size of the axis text bigger, tilt the x-axis labels (eg seed15_30) 45 degrees, rename x-axis labels, etc.
 </p>
+</div>
+<div id="working-with-shapefiles" class="section level4">
+<h4>Working with Shapefiles</h4>
+<details open>
+<p><summary class="drop">Creating a Shapefile in R </summary> Often times I want to map the final output of summaries I do in R. While you can save tables in R, then join them to existing shapefiles in ArcGIS, I prefer to save my output as a shapefile in R. In case this is helpful to you, I’ll show you the easiest way I’ve found to do this.</p>
+<p>The keys are to have the X, Y Coordinates included in your final summary, and to know which Coordinate Reference System to specify (abbreviated CRS). For example, parks in NETN cover 2 UTM Zones, and you have to specify the correct zone. The datum and projection for each park are listed below.</p>
+<ul>
+<li>
+<b>NAD83 UTM Zone 19N:</b> ACAD, MIMA
+</li>
+<li>
+<b>NAD83 UTM Zone 18N:</b> MABI, MORR, ROVA, SAGA, SARA, WEFA
+</li>
+</ul>
+<p>Most of the major coordinate systems have a registered EPSG Code assigned to it, including ours. EPSG stands for European Petroleum Survey Group, which seems pretty random, but is a useful set of universally unique codes for datum and protections that most GIS software can recognize. Using the EPSG code is the fastest way I’ve found to assign the coordinate system for our shapefile. For ACAD and MIMA, the EPSG Code is 26919. For the other parks it’s 26918 (notice the last digit is the only difference, and matches the UTM Zone above).</p>
+<p>To start out, let’s load our wetland dataset again. Let’s say we want to create a shapefile for the most recent sample of each site and a column with the number of species found at each site.</p>
+<pre class="r"><code>library(tidyverse)
+library(rgdal) # for GIS functions
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
+table(wetdat$Site_Name, wetdat$Year) # SEN most recent is 2011, RAM is 2017
+wetdat_rich &lt;- wetdat %&gt;% filter(Year %in% c(2011, 2017)) %&gt;% 
+                          mutate(present = ifelse(!is.na(Ave_Cov) &amp; Ave_Cov &gt; 0, 1, 0)) %&gt;% 
+                          group_by(Site_Name, Year, Site_Type, X_Coord, Y_Coord) %&gt;% 
+                          summarize(numspp = sum(present), 
+                                    .groups = &#39;drop&#39;)
+head(wetdat_rich)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##   Site_Name  Year Site_Type X_Coord  Y_Coord numspp
+##   &lt;chr&gt;     &lt;int&gt; &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+## 1 RAM-05     2017 RAM       553186. 4899764.     54
+## 2 RAM-41     2017 RAM       549667. 4903243.     40
+## 3 RAM-44     2017 RAM       530882. 4877460.     45
+## 4 RAM-53     2017 RAM       549032. 4909911.     50
+## 5 RAM-62     2017 RAM       556731. 4908125.     26
+## 6 SEN-01     2011 Sentinel  574855. 4911909.     34</code></pre>
+<p>Now we’re ready to save to shapefile.</p>
+<pre class="r"><code># Step 1: Create spatial object by specifying the coordinates
+coordinates(wetdat_rich) &lt;- ~X_Coord + Y_Coord
+head(wetdat_rich)
+plot(wetdat_rich) # These points now plot in space (bottom left point is on IAH)
+
+# Step 2: Define the coordinate system 
+proj4string(wetdat_rich) &lt;- CRS(&quot;+init=epsg:26919&quot;)
+
+# Step 3: Write the spatial object to a shapefile
+writeOGR(wetdat_rich, dsn = &quot;./shapefiles&quot;, layer = &quot;wetdat_rich&quot;, driver = &quot;ESRI Shapefile&quot;, 
+         overwrite_layer = TRUE) # overwrite is in case you need to update your shapefile.</code></pre>
+A lot of this may be unfamiliar to you, especially since ArcGIS does a lot of this work behind the scenes.
+<ul>
+<li>
+First notice that after you assign the coordinates in Step 1, the X_Coord and Y_Coord columns disappear from your dataframe. That’s because you’ve just created a spatial object from a data frame, and the coordinates are now stored in a different slot than the data.
+</li>
+<li>
+In the second step, we’re telling R that the datum and projection (in proj4 format) for our spatial dataset is the EPSG Code 26919 (code for NAD83, UTM Zone 19N).
+</li>
+<li>
+Finally, we’re using the writeOGR command to output to a shapefile. The dsn is the location you’re saving the shapefile to. The layer name is the name you want the shapefile to be.
+</li>
+<li>
+Notice that we’re using ./shapefiles, which is a folder within the project we created on day 1. During this step column names usually end up getting abbreviated (don’t worry if you get a warning message).
+</li>
+<li>
+Finally, writeOGR by default will not allow you to overwrite an existing file. While it’s safe to have that as a default, sometimes you want to overwrite shapefile, which is what overwrite_layer = TRUE does.
+</li>
+</ul>
+</details>
+<p><br></p>
+<details open>
+<p><summary class="drop">GIS Mapping in R</summary> I only have time to scratch the surface on this topic, but I think it’s useful to know that anything you can do in ArcGIS with vector and raster data, you can do in R. GIS in R requires more understanding about what’s happening under the hood, and sometimes it isn’t worth the effort in R. It depends on what you need to do, how involved the process is, and whether you need to document the process and/or repeat it over and over. For example, I’ve found the raster package in R to be relatively easy to use and faster at processing large files (e.g. NLCD rasters), and I almost always use R when I’m working with rasters. In contrast, making nice maps that need a lot of tweaking (eg moving plot labels to prevent overlap, multiple legends, etc), I tend to use ArcGIS. But, to give you an idea of the things you can do in R,</p>
+<p>I’ll show you two ways to plot data spatially in R. First is using ggplot, and second is using leaflet.</p>
+<p>Let’s load the wetland shapefile we just created, along with a layer that plots wetlands in the vegetation map and the park fee boundary.</p>
+<pre class="r"><code>install.packages(&#39;ggspatial&#39;)</code></pre>
+<pre class="r"><code># Load packages
+library(rgdal) # for readOGR
+library(ggplot2) #for ggplot functions
+library(ggspatial) #to make ggplot functions spatial
+
+# Load shapefiles
+bounds &lt;- readOGR(&quot;./data/example_data/ParkBndCARTO_Fee_2020.shp&quot;, layer = &quot;ParkBndCARTO_Fee_2020&quot;,
+                  GDAL1_integer64_policy = TRUE) # Don&#39;t ask me why this is here. All I know is it works.
+head(bounds@data) # How you view the attribute table of a shapefile in R
+
+wetmap &lt;- readOGR(&quot;./data/example_data/ACAD_vegmap_wetlands.shp&quot;, layer = &quot;ACAD_vegmap_wetlands&quot;,
+                  GDAL1_integer64_policy = TRUE)
+
+wet_rich_shp &lt;- readOGR(&quot;./shapefiles/wetdat_rich.shp&quot;, layer = &quot;wetdat_rich&quot;,
+                        GDAL1_integer64_policy = TRUE)
+head(wet_rich_shp@data)
+head(wet_rich_shp@coords) # Where the coordinates are stored</code></pre>
+<pre class="r"><code>plot(bounds)</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAB2HAAAdhwGP5fFlAAAgAElEQVR4nO3diXarSIJFUfz/P12VzxZiJrgSEMDeq1c/WyPJcCoYJDc/AESasycA4KoEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQElEuxwlIT6yMX0jRWWGpifeRCGgWlKlZHrkRBqYq1kQtpmm0FtXqzL2sYF/L/eP4FtGTFNVplb9YwLuRvBPr3/woefMhU8VzWMK6k6Vp81M/GvX0IWMO4lPcYdGEI2nQeBTuygnEp73HlQh3bAepaQK3+fMYaxKW02Vzfh/9ZO41kgMqnrEFcSlEau8PU8V3Dl4KYNYiLWT+H9NOL5OjZ3Rf6/uTxKNYgrmb1avruvcNDoQLKN1mDuKCV8rV3/zayaSaHpALKx6xB3ND7RH0zGLFO/wgZaxA39D7T1PzWVEDZhTWIO+oMQftHQZcDanNgG2sMdzQ+Ctr7ffjj+wYbBFtYX7ijURpLniKgbGV94ZZ6KSzoYvM+XnoEob4Jy5Fb6g0mC3K1/gH7LzLSvQ3LkZvqfmh++WtHOo8+ZC/eoYL7sBy5qeGJ+MmHvL/4bnjbjtOln/dhQXJT6wFtL3HqP6Jz7dMOqXOu6lYsSG6qt2u+8Iif15HPpndXx3en6sBTVezOkuSmNgT077dxQb8+Ch1clcrVWZLc1Hs3fPEB3V8Hv79v/1byBh+L4vIsSu6q+3n4+fu7v09fO/q9PflmfVTMtViU3NX7XNDc/ePH936beK1Pp2j8ylyaRcldrZ0FWg7o+NOgH3evPajw4etQD8uSu1o7i74toJ8XVD9vyMLkrtaKN4rrcB9+/PgPJ+fzF6Eylia3tdaq4Qi1F9CJ0n0a0OlX5cosTp5sfid/MqAfbC7tVaX5S1Afi5Onmwto4QOL32X6Rbk0C5THWw3oq5xFBZ150L/Bp4DejQXK063uwbd7+SUBnT3v//3P1XM+C5SnWwtop3xzBWy6jV248NTmdjeWKA83O158/9QN6NSppc7pfDvqz2JR83ArAf0tYvebRYaP6+3f21F/Fouah1sP6NLlob272id8exqplUXNw80FtPPj8GtFxr8aeD6UZc6zlV9HP/34/iFQHsZC59lm0jffw+mA7jBlXIAFz+NtC2htJ9kNgM9krvN4v0cxh7cVjkBPJ6BnMtd5vNfXfAxODs0+uq6Npr2K6uwJeSRzncdrA7r0fcqdOyrbaJq/6T97Oh7JXOfx3gEdX9U5/fi6NpvfS/3PnopnMtt5us4F8FcMaPM3Aj17Op7JbOfpel8bMvHj1OP2n6pik4dA62r8jZnNPF7hZUzdrxfZeYq2mPoEqbPyRzGXebyN14Fu+LT7ER17f5dJ9ztP6hol35e5zONNB3TrM6YedchIsPfFe+1NAnoIc5nH2/7nj4rq9PqakXCqivX/+Mjrn7ale7/9s5m9PN5kQJefUBrQA/fhuz+/AupY6N7MXR5va0ALo3TUJyxHp4/6V7baxPdk7vJ4E183vxLQ4hc+ZPtq+jvxf8NPAT2CucvTjJIyDuhydmpr0tQX7LU/nTJFz2H+8jDjqlw8oKP/oNcN+rk/M5hnmdit7V5J2btl9iX2mrjA1F766/x/TdN5U2Yxj/I6NT44btje179l7jX2mrrAwjeJGIHuzwzmSaY+tjNVxMX0VJWlhRNFTiHtz/zlCca75oNPPg4fvxzQmrq0eKq9pgm9JfOXB3gPPPs3zh/yvE5AfxZz/7qg6cjJeRIzlvt7jdEmj3z+PWCwKVznIOh/lgLqatA9ma/cXtOeaOmmZHT5+WB4uvh6lW03KwGtMPl3Yb5yd692dn75+Rk2pR/Q5UQ2dQ3rVvpY06Tej/nKzbXHP1+//gx+eD1qcIJpceNYKujB29RKIKtq/f2Yr9xb0w49fzr/9vflfyYCWnL4cOreo2u1NpHSuStzl1sb7bK/c9m7JHR4fr57z79f5l69e3zg/Xpf/++Y1ax8Z56A7src5dZGV8v3B5fNK0ATG0J3zDqXqDagTef3IwO6dorIzvu+zF3urDc0/Punex6+ZOd3KaDDCy2btaB922ogBXRX5i53Ng5oPyklO79lAe2e5D94F/6j+/mIucudrQV07pbOrStjylFAjz8G+tH9fMTc5caaiYBOnziffPLM40dP7p1tEtAnMXe5sV7KBtcz9R61cBJpLYeDgh48BF1/KwXdk5nLnXVbthzQ8ZbQXuZU8i7tP4cH9PNHkDNzubXeSffuP/0HTe/Yzzx84c3673gAI9BzmbncW1lAJ6pXPgDtP+XYgK73UUD3ZOZyb8Nd+Im8zfRz8wD0lFYJ6KnMXO5tcB5++mDn7AD0BgFV0D2Zt9zbKKDbnrcxoMfHqiSgErobc5Z76wV0Q0sKL2IaPOdvv7/8KR8T0FOZs9zbhwHdPATtNLf9d8MrbFYyfQK6G3OWe5v8cGVBSpOANk371U69jyZtnORNyi9TZQfmLDc3CGj/g5dLzxr8UPROr2tK+x9NSie97E3Xp0pAd2PO8gDN0M9aedKA9r5b5ICArr66fO7KvOUBBu38u235Ge+nbnuX/g3bpnO75bcw+tybucsDTF/9ufyMsscN36bp/1781JiAnsrc5aHWyjP66ctv8R1rI9DdJ+DhzGAeanXo1v60z1t8x+LkGX7uzgzmoQpPIn1SwbN34fVzd+YwD1V4HegHFTpkACigpzKHqd8+JSq+jil+fQG9PXOYupVc9T7zxNXXXbm/6HXyd/iKlWOgu7//05nDVO2vnptTsFKvgigLKOvMYeoWjkCXn1LyesnXMW2YhG9ZehMB3Z05TN12CGjZ630c0PPPIgno7sxh6tXGMyjRx10RUNaZw9SqW8+vpmhLQD9644OOgi69/79/dp+G5zJvqdN7Pzs9Db/w0uWP+ux9Tw5o+91Qu0/EY5m1VKlbzW8XoPDlvvBddOcHtBHQXZm1VKl36PPLDSgP6MdvfMgX2i2/vYDuyaylYn8b/1kB7XwgPn6rkwNqF35fZi01e23936xA8St1vxO03oL6OqYzmb/U7V3Q771iOhHRm+28iS3+T4uA7s38pXJfDWj8ufoPCho+sfj1Xwc6J95IQPdm/lK59kTSV14rvCIqLughB0FnP63l+OfezF4q1+7Df++1oiemAc3ecNt7vE4WjaZSQHdm9lK7LwY0fpWqA/r7PtPDUAHdl9lL5b45Ar1rQNt2jqZTQPdl9lK3734c6c4BndyJF9B9mb3U7B2EcwMaF/SY0zhLp5H2f/cnM3up2TeuZZ95wa3PywN6xOfhBfQcZi9V++4A9LOAJk89JqDzF7gK6L7MXqr27a8T2fJVdoObPmhv9sRP3mWXb2FhxOylbt/7LPzsbu7kI2cmJHvf8Jn5uyxcXM83mb/U7XsfRNoW0C9uGUcVtPeOAnoI85d6dRLwrYAWPvKrxw6POhHf/fl1XdPh0/Ew5ijVanoB/cKqumtAF78UaeuLbdf5b+tcEzoclu4/HQ9jjlKtwaDqGy9Y/LiNb7e8u3zcB+LbtxsH1A79HsxR6tVJwqGX0Tdb/xDGyvHGwy5kev0wHVDXNH2fOUq9OheBHrkH3w7hNrzyz8IzDhr59Q4Xvyrau1dAv84cpV5fD2jp45rOP8XPWAho6et8pulW8/fH4RQeMyEPYo5SicE+Z/8E0hcCWv4a725vfe3JZxx36LF/1m18DFlAv84cpQ7NhPau77zBlknZ+L51BLQ7Vh/+j874qia+wBylDr3d9dH1N4MHZW9Q+uTX218woP23HX026YzpuDezlCr87mLO3teepclX2G0nhTYFtLvfvHDvsYbvKqB7MEupwmjYObq3KKCLV7Nvuy5pW0D//pl8Rh3pqmMq7sYspQrvgE5mciVRnRdZuG/b5GwK6PRbvA+mVrCdCegezFLqMTp91LvrZ3UMujKI3TYpUUCb/s3B6ajdCOgezFLq8WlAuw+buGvbpGy88H7iPdoIV5EuAd2DWUptZg8klgV0rsHbA7rhyvvuRPZu3no6fz8CugezlNpMb+j/tv/SgE41a+eAjvfVX8mvYwBayTj4bsxSqjN/LrtwF/6nNxRtb9k8DZ8GtJ2QLe+8m0om417MU6ozs6UXFPR9ZzMq6NaAbjgI2h5d6D7hfQbeRnZfli3VmQ/oz0qQZnb+J+8rGMpuD2jnVYXzCSxjqrNwKdLPcpgm75u+lGj9YEDR4PE97vytZzega8/l+ixkqjOXnoKLKheGoJsDWnL0svOo8Qh05bncgIVMdaKAzp18/1kI6NLaX3bssn/MszsF9uAfwUKmOovHQKfvfo0EtwR0uXFlARwGtHPKyqb1BJYy1Vm4kr73Q+++5nUUcu71xgH9xl72+LT/7ERyQ5Yy1ZkLaPvDVEB/ZgPanr0fvdx3A9rd69fPh7CYqc5afMZ1ai86mnjqzJHTonNEBTrX6Qvo81jMVKcgoFPXdE6PKeeOnH6pn93X7+3Bf+GlqZ/lTHWKrr4cP2MyoPNJ+9YgsXsVk1NIT2M5U52PAjr3eaP9kvaOZjM33OWuLGhqsvZRo/ZxMwGd2FNvfwjW9bJLQV8j0B8j0MexnKlH/0qgtUcOf5m8ELT7yaDNK3vpp5FeL9/9VNLW9+KSLGfqsT2gw2svJ450dp+TTc7y015XADQ/3YBueyeuyoKmKqUnx9+Dzv7FQ8sBbSbvmJ6Iph1TLk5PdxLan4xAn8JypjZl8WmmTrovBrR4ONodeRbswPdPHr2PJvAAFjO1KYxP2UeJRgHt7O7//rD8nNUh6HBY6yDoo1jMVKd0J75sfDj4tbOz/TMzVBxEd8Nwsmm/oURAn8Fipj6F55GKPrM0/L17eHOcx/FZo60B/RHQJ7GYqVDpELTkBPnEje05804wm67Rw0snu72WX0CfwWKmQnsG9Kd34eiwndMPbso2lM4peAF9BouZCh0S0HcxFweZ82mdnKSf0tNb3IHFTIW+FNC/weDk7cVZXH3s8Nqo9gAr92cxU5/S0/Crj1tIX/GRzfcR09nh7PvHzpsWvTgXZzFTn+JL6UsL+uHULJ9Yf79+wQEB7sWCpj7FY8Piff3PpqZzcmj6/sEPPIYlTn22BLTsKOaHkzP4eFF/WNu5+aO34YIscupTfs67aG/5iwHtHuR877g3vX95EIucCm35NPzKRzHLX27hfYYB7b3oO6AfvQtXZJlTodLT8OOT4+3gsHPzp2VrOjvp72aPDn0K6ANZ5tSo9DqmwUPfl2z2D1J+OjHd0WYzE0x78E9kmVOjTQHtns5p3hEd7WN/MDX9t5iYRpcuPZOFTo2KrwSdGGp2BqHtw75zEHT87suP4PYsdWq09VL6fjHfd/+0//fZ1Mx9mGniR57EYqdGGz5m+fp34gNAnb35j1b0+YD+O4Zg/Plcljs12hSk12n3qQua9g/o5y/PdVnw1GhLkZYC1r+AM5+a+U9xyuejWfTUaEOTSvq1zzHQH18c8ngWPhXaUqUDAqaSzLBeUKEvD0BhJ1Y+KlTXABTmWPuoUHkVDUA5k7WPyix9d/H4wfrJmax+VKX9FObqmjn6JhE4nPWPmrQXVpYE1B+/5GzWP2rSDj+LAqqfnMwKSE1eAV1P48SXKcPRrIDUpHl9xedqP+c+/g4HsgJSlcGfy5h/mCOgVMAaSFXKAtru6R8yTTDHGkhVyo6BGn9SB+sgVSn8Ak+n4KmCdZCqtF3cUlAt5SRWPOpUdCL+/fc8vvOW33gVnsQqQ6UKP835+rsaX3lDmwPbWGOoTvO6GnT9cT/tKPRrbwvlrDFUp/APwXUf9ZX0CShbWWOoz4aAvn/efapgxGpHfd7HNlce1nR+3neSYIrVjvoE40lDUM5graNCvRqWraMCygmsddQnuLLTCJQzWOuoT+Fp+P5T9pscmGO1o04bG2oEyhmsddRrS0IFlBNY66hap6GLMTUC5QzWOipXEFBfbsdJrHVU7/eT8fMBlU/OYr2jer2/HzdeY9WT01j1qF43oONaGn5yHqse1fv7O0nTVzbZf+dEVj2q9+pmG9Cmf2/7oFOmjiezzlG/7ieTRn+P8+9WAeUE1jku4v3Vyf09+fa77wSUw1nnuI73PnynoN2xKRzLOsd1NN2RZvfb6AWUc1jnuI5mMPIc3nv8FPFw1jkuoz/QnLig6fhJ4uGsc1xHe8L99Wv/bLyVmaNZ57iO13n47tHPwZ1wJCsdlzH+NKeAci4rHRfxGm72dtUH14PCsax0XMX70Gf3tsMCalNhzFrBVUwF9PeTSRM3f//NbSqMWSu4jOEV9L+/HHMdvYAyxVrBZbQfhu/e1BZU4TielY7LGI80m3dABxeFHj1tPJMVjesYfWld57x87+p6O9wcw3rGhYwD2r2ovn2ELwflIFYzrmx0GVPni+ut2+zOSsa1tcdFm85PP/7EB4ewjnFtryHnz3DYKaDszzrGtfXOw4/P0J83YTyBFYxra/om7jhv2rg9axcXN9PP932nTBXPYO3i2noHQCdWZwVlR1Yurq39JPx8QQ+fJh7DysW19f+6sYByKCsXNzF3vFNA2Y+Vi5uYC6WDoOzHusVNzIZSQNmNdYubGAa0eR8dPXYyjnw3TmZpcxfDP/Ux/KKmgyZCQZ/EwuYu5kagR36o05X7D2Nhcxfjj3J27ziga+01/bu/E7WwrLmNxUrun9DXOyjog1jU3MlKQXcdiR72F+qph0XNnSy2a/eAnnLanzNZ1NzKarx2HYFO/OF6bs2i5lZWR5iH7MLbrJ7CkuZeVuJ1zDFQm9VTWNLcy2pAD3hnAX0MS5p7WR7+7Tk47JxEslk9hSXNzSzma9e0Nb+nkfTzQSxqbmbxW5n2Dqg/Y/cwljW3M12wI+Kmn09jYXM7M19ML258nRWK+5noZNM4Osn3WaG4n8mAnjAd3J7VivsRUA5iteJ+JnbVBZQ9WK24IQHlGFYrbmbibPveF4DyWFYrbmZ8NbsLmNiL1Yqb+ZfKXjH1k71Yr7iZNqDvr/aQT3ZizeJm3gF9/Yk3BWUvVizu5u8zR3/Z/P1Dw9ZzdmHF4mYaAeUwVixupO1m94ezJ4obs3ZxF8Prlxz9ZHdWL25icN7dtxtzAKsXN9H9o5htPPWTXVm/uInRn3QTT3ZnHeMm3td9nj0lPIeVjbtw0JPDWdu4CwHlcNY2gJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoAAhAQUICShASEABQgIKEBJQgJCAAoQEFCAkoHyT9YlHscLzLc0/Z08FHMj6znc0L2dPCBzH6s53/JZTQHkUqzvf0bwKevaEwHGs7nzJb0EFlCexuvMtjoHyOFZ3vkY/eRrrO0BIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgF9NYYlANm+PFNI2EQi1sjFejoFAN2+L1KChUwqZ4QQahUAcb4hUpKFTBdnhNCgoVsBleUmMMChWwFV7S/+spoXA62+AV/UungsLZbIIX9CqngMK5bILX0448BRTOZRO8HP2EWtgGL6ftpoDCyWyDV/POpoDCyWyDF9N0A2rpwalsghfTjaYLmeBcNsBr6RdTQeFUtr9rGQZTQeFENr9LGffSIBTOY+O7lIlYKiicxrZ3KZOt/JdQCxKOZ7u7lOnRZuPb7eAUNrtLmQulgsIZbHUXM9tJAYXD2eouRkChHra6i1kIqGUJB7PRXcx8Jh0GhaPZ5C5mIZICCgezyV3MQiUFFA5mk7uUxcuV9BMOZpu7kGb5inkBhYPZ5q7jXzsFFOphm7uM5u+vwS884LiJAX4E9EJWzxEJKBzMNncdAgqVsc1dxfr3hQgoHMw2dw0rJ+D/HnPQxAC/bHOXUHKNvOvo4Wi2uUsoaaN+wtFsdFdQNLgUUDiaja5+RV8377uY4Hg2uvoVHgAVUDiaje4CigJ6wHQAfba7CxBQqJPtrn5FR0CPmBCgz4ZXPwNQqJQNr3pl55AOmBBgwIZXO/2EatnyaiegUC1bXu3KrqI/YkqAAVte9XwNE9TKple9pln7LjsBhXPY9C5graACCuew6VWvWRuC6iecxLZXu79wTlZydece2JNtr3ZLedRPOJWNr3KLfdROOJUtsHICCvWyBVZOQKFetsC6LR/hFFA4lS2waitniAQUTmULrNr6KfjCBwM7sM1VbfHjR92Aup4JTmCbq9p0FP/dOBx9CigczjZXtdnPHw3u++8WAYWj2eZqNtnE12Cze+fEmBTYnU2uZksB7e6yNwIKZ7DJ1WxUxP8GnhNfz/T3k4LCsWxxNRsW8R1OAYUK2OJqNjyzPvftS6+bBBQOZYurW9mVngIKp7DFVe7dxvWA2oWHY9niKte847j2V+X0Ew5mk6tdZwi6/BgfRYKj2eRqVzoClU84nI2udiW7578X1h80QcCLra52RR8y8lUicAZbXeVGH3tfeBhwLJtd5QoDCpzAhlm7v4KePRnAmA2zer4rGWplw6zc4ieQgFPZMisnoFAvW2btBBSqZcusnb92BNWyZdbOCBSqZcusnX5CtWyaACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBf/keg4AAAAiSURBVAgJKEBIQAFCAgoQElCAkIAChAQUICSgACEBBQj9D2t8lMkxdmuaAAAAAElFTkSuQmCC" width="672" /> To prepare the shapefile polygons for plotting in ggplot, we have to fortify them to make them into a spatial data frame.</p>
+<pre class="r"><code># Prepare shapefiles for plotting
+bounds2 &lt;- fortify(bounds) # </code></pre>
+<pre><code>## Regions defined for each Polygons</code></pre>
+<pre class="r"><code>str(bounds2) # note the data frame structure that describes the boundary data</code></pre>
+<pre><code>## &#39;data.frame&#39;:    18428 obs. of  7 variables:
+##  $ long : num  527540 527546 527564 527586 527586 ...
+##  $ lat  : num  4872637 4872634 4872642 4872628 4872627 ...
+##  $ order: int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ hole : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ piece: Factor w/ 23 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ id   : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ group: Factor w/ 84 levels &quot;0.1&quot;,&quot;1.1&quot;,&quot;2.1&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code>wetmap2 &lt;- fortify(wetmap)</code></pre>
+<pre><code>## Regions defined for each Polygons</code></pre>
+<pre class="r"><code>str(wetmap2)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    56468 obs. of  7 variables:
+##  $ long : num  551159 551159 551161 551161 551162 ...
+##  $ lat  : num  4919261 4919259 4919255 4919254 4919252 ...
+##  $ order: int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ hole : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ piece: Factor w/ 3 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ id   : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ group: Factor w/ 413 levels &quot;0.1&quot;,&quot;1.1&quot;,&quot;2.1&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code># Turn the wetland richness shapefile back into a dataset
+  # One reason to do this is R is because you never had to make this a shapefile to plot
+wet_rich_df &lt;- cbind(as.data.frame(wet_rich_shp@data), 
+                     long = wet_rich_shp@coords[,1],
+                     lat = wet_rich_shp@coords[,2])</code></pre>
+<p>Now to map the different shapefiles using spatial geoms from ggspatial.</p>
+<pre class="r"><code>ggmap &lt;- ggplot()+
+         coord_sf(crs = 26919)+  # set coordinate system to NAD83 UTM Zone 19N      
+         geom_polypath(data = bounds2, aes(x = long, y = lat, group = group),
+                       fill = &quot;grey&quot;, alpha = 0.4)+
+         geom_polypath(data = wetmap2, aes(x = long, y = lat, group = group),
+                       fill = &quot;#80A8D1&quot;)+
+         geom_point(data = wet_rich_df, 
+                           aes(x = long, 
+                               y = lat, 
+                               color = Site_Type),
+                            shape = 17)+
+         theme_void() # because I don&#39;t like ggplot&#39;s grids in default grid
+
+ggmap</code></pre>
+<p><img src="data:image/png;base64,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33/39kPpJFLx4eL0Agq8gBEBPf757057kH/1Hy4RvR3RX0t5fn/0fGxfCujj4eL0Agrk7/19TEG//OGc0Ldf/XQ6J389k/Sn7z4i+eOljudIlgJ6f7g0vYAC+RsX0JN/OV1M/5G/y3udt3c4r6eV6gG9P1yaXkCB7L2/jy/ox6H89+ej8HEBLU0voMCmFK7+PF0RWr4YdEhAC9MLKLApH8fgP1x/PAW08OtxSEBL0wsosC2f7teBns8Nfbp+MOn8AaX+gJamF1BgW07Xgf79T6cPFL2djsY/fj19NP5ykWc5oKdS1gJanF5AgY25XAd6+/DR8fP15kynm9cVS3n6xNE3P9UCWpxeQIGt+fKHf/0RwF/cPo50+Wz7P55+LJXy//+uMaCF6QUUIEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAA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" width="672" /></p>
+<p>You can add north arrows, scale bars and legends using other packages, including sf. For more information about this, check out <a href="https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html">r-spatial’s site</a>.</p>
+<p>Finally, I’ll show how to use leaflet to map data with park tiles as the base layer. The leaflet package is native to javascript, but the main functions have been made into an R package. The great thing about leaflet is you can add interactive maps that allow you to zoom/pan to different views. We use these a lot for our data visualizers.</p>
+<p>To use leaflet, you have to have all of your spatial data in WGS84 instead of NAD83 UTM Zone 19N. The first step is to reproject the wetland points to WGS84.</p>
+<pre class="r"><code>wet_rich_dd &lt;- spTransform(wet_rich_shp, CRS=&quot;+proj=longlat +datum=WGS84&quot;)
+plot(wet_rich_dd) #check that they still plot spatially</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABUAAAAPACAMAAADDuCPrAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAB2HAAAdhwGP5fFlAAAOeElEQVR4nO3dS4osRxQFwdL+N62BNFFRPFIekPEzW0ESnOujpuvzFwDJZ/YHAOxKQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUC71sX2GGRGXElDGGRGXElDGGRGXElDGGRGXElDGGRGXElDGGRGXElDGGRGXElDGGRGXElDGGRGX+fww+5vYlelwl1/9dAVEpsOlZJNxRsSlBJRxRsSlBJRxRsSlBJRxRsSlBJRxRsSlBJRxRsSlBJRxRsSlBJRxRsSlBJRxRsSlBJRxRsSlBJRxRgQQCShAJKAAkYACRAIKEAkoQCSgAJGAAkQCChAJKEAkoACRgAJEAgoQCShAJKAAkYACRAIKEAkoQCSgAJGAAl/8XtRTHgr4IqBPeSjgi4A+5aGALwL6lIcCvgjoUx4K+CKgT3ko4IuAPuWhgC8C+pSHAr4I6FMeCvjX54fZ37Q2zwP841c/FeKPPA/wRTaf8lDAFwF9ykMBXwT0KQ8FfBHQpzwU8EVAn/JQwBcBfcpDAV8E9CkPBXwR0Kc8FPBFQJ/yUMAXAX3KQwFEAgoQCShAJKAAkYACRAIKEAkoq/C3M2zHZlmFgLIdm2UVAsp2bJZVCCjbsVlWIaBsx2ZZhYCyHZtlFQLKdmyWVQgo27FZViGgbMdmme3zy+yPgicMlcl+9tMu2YKhsgrVZDs2yyoElO3YLKsQULZjs6xCQNmOzbIKAWU7NssqBJTt2CyrEFC2Y7OsQkDZjs2yCgFlOzbLKgSU7dgsQCSgAJGAAkQCChAJKEAkoACRgAJEAsrd/PUpA6yHuwkoA6yHuwkoA6yHuwkoA6yHuwkoA6yHuwkoA6yHuwkoA6yHuwkoA6yHuwkoA6yHK31+mf1RbMdmuNHPfjoG/i+b4W6yyQDr4W4CygDr4W4CygDr4W4CygDr4W4CygDr4W4CygDr4W4CygDr4W4CygDr4W4CygDr4W4CygDrAYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBJTlfKySTZgqyxFQdmGqLEdA2YWpshwBZRemynIElF2YKssRUHZhqixHQNmFqbIcAWUXpspyBJRdmCrL+Pww+5vgTwyUVfzqp32yNANlObLJLkyV5QgouzBVliOg7MJUWY6AsgtTZTkCyi5MleUIKLswVZYjoOzCVFmOgLILU2U5AsouTJXlCCi7MFWASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUM7wMWXeZ3WcQUCZwOo4g4AygdVxBgFlAqvjDALKBFbHGQSUCayOMwgoE1gdZxBQJrA6ziCgTGB17O3zy+yP4hamxtZ+9tOqeYmpcQbVZAKr4wwCygRWxxkElAmsjjMIKBNYHWcQUCawOs4goExgdZxBQJnA6jiDgDKB1XGG/wRUTXmHoXEGAWUCQ+MMAsoEhsaBBJR3GBoHElDeYWgcSEB5h6FxIAHlHYbGgQSUdxgaBxJQ3mFonMN/p+dl5sUx/LwHbzMvDiSbvMPQOJCA8g5D40ACyjsMjQMJKO8wNA4koLzD0DiQgPIOQ+NAAso7DI0DCSjvMDQOJKC8w9A4kIDyDkMDiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEAn+Hh1OIJTnkBA4QxOeQIBhTM45QkEFM7glCcQUDiDU55AQOEMTnkCAYUzOOUJBBTO4JQnEFA4g1N+0eeH2d8EdA74Pb/66f1hYw54AtmEMzjlCQQUzuCUJxBQOINTnkBA4QxOeQIBhTM45QkEFM7glCcQUDiDU55AQOEMTnkCAYUzOOUJBBTO4JQBIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgEhAASIBBYgEFCASUIBIQAEiAQWIBBQgElCASEABIgEFiAQUIBJQgOhvRSuumgf7Q28AAAAASUVORK5CYII=" width="672" /></p>
+<pre class="r"><code>install.packages(&#39;leaflet&#39;)</code></pre>
+<pre class="r"><code>library(leaflet)
+
+park_tile_basic = &quot;https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg&quot;
+
+leaflet() %&gt;% 
+ setView(lng = -68.312,
+         lat = 44.25,
+         zoom = 10) %&gt;% 
+ addTiles(urlTemplate = park_tile_basic) %&gt;% 
+ addCircleMarkers(data = wet_rich_dd,
+                  radius = 4, 
+                  lng = wet_rich_dd@coords[,1],
+                  lat = wet_rich_dd@coords[,2],
+                  label = wet_rich_dd@data$Site_Name,
+                  labelOptions = labelOptions(noHide=T, textOnly = TRUE, 
+                                              direction = &#39;bottom&#39;, textsize = &quot;12px&quot;),
+                  fillColor = &quot;#4C9B4F&quot;,
+                  fillOpacity = 1,
+                  stroke = FALSE) %&gt;% 
+ addScaleBar(position=&#39;bottomright&#39;) %&gt;% 
+ scaleBarOptions(maxWidth=10, metric=TRUE) </code></pre>
+<pre><code>## $maxWidth
+## [1] 10
+## 
+## $metric
+## [1] TRUE
+## 
+## $imperial
+## 
+## $updateWhenIdle
+## [1] TRUE</code></pre>
+</details>
 </div>
 <div id="assignments-2" class="section level4">
 <h4>Assignments</h4>
@@ -2149,7 +2229,14 @@ head(wetdat_sort)</code></pre>
 ## 425                         long sedge 2017      50      63    FALSE     FALSE
 ## 220                    low rough aster 2012      50      63    FALSE     FALSE
 ## 506               northern wild raisin 2012     100      63    FALSE     FALSE
-## 305 threeleaf false lily of the valley 2012     100      51    FALSE     FALSE</code></pre>
+## 305 threeleaf false lily of the valley 2012     100      51    FALSE     FALSE
+##      X_Coord Y_Coord
+## 286 556731.5 4908125
+## 328 556731.5 4908125
+## 425 553186.0 4899764
+## 220 549032.1 4909911
+## 506 553186.0 4899764
+## 305 556731.5 4908125</code></pre>
 <pre class="r"><code>wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(-Ave_Cov, Latin_Name) #tidyverse
 head(wetdat_sort_tidy)</code></pre>
 <pre><code>##   Site_Name Site_Type                      Latin_Name
@@ -2165,7 +2252,14 @@ head(wetdat_sort_tidy)</code></pre>
 ## 3                         long sedge 2017      50      63    FALSE     FALSE
 ## 4                    low rough aster 2012      50      63    FALSE     FALSE
 ## 5               northern wild raisin 2012     100      63    FALSE     FALSE
-## 6 threeleaf false lily of the valley 2012     100      51    FALSE     FALSE</code></pre>
+## 6 threeleaf false lily of the valley 2012     100      51    FALSE     FALSE
+##    X_Coord Y_Coord
+## 1 556731.5 4908125
+## 2 556731.5 4908125
+## 3 553186.0 4899764
+## 4 549032.1 4909911
+## 5 553186.0 4899764
+## 6 556731.5 4908125</code></pre>
 </details>
 <br>
 </details>
@@ -2231,13 +2325,13 @@ locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;) #tidyv
 ## 4    SEN-01  Sentinel    Arethusa bulbosa   dragon&#39;s mouth 2011      40    0.04
 ## 5    SEN-01  Sentinel  Aronia melanocarpa black chokeberry 2011     100    2.64
 ## 6    SEN-01  Sentinel        Carex exilis    coastal sedge 2011      60    6.60
-##   Invasive Protected
-## 1    FALSE     FALSE
-## 2    FALSE     FALSE
-## 3    FALSE     FALSE
-## 4    FALSE      TRUE
-## 5    FALSE     FALSE
-## 6    FALSE     FALSE</code></pre>
+##   Invasive Protected  X_Coord Y_Coord
+## 1    FALSE     FALSE 574855.5 4911909
+## 2    FALSE     FALSE 574855.5 4911909
+## 3    FALSE     FALSE 574855.5 4911909
+## 4    FALSE      TRUE 574855.5 4911909
+## 5    FALSE     FALSE 574855.5 4911909
+## 6    FALSE     FALSE 574855.5 4911909</code></pre>
 <pre class="r"><code>wetmin_max &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt;0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
                          group_by(Site_Name, Year) %&gt;% 
                          summarize(numspp = sum(present)) %&gt;% 
@@ -2873,28 +2967,8 @@ wetdat_sum &lt;- wetdat_long_inv %&gt;% group_by(sppcode) %&gt;%
                                   summarize(pct_sites = sum(present)/n()*100, 
                                            .groups = &#39;keep&#39;)
 wetdat_sum
-library(tidyverse)
 library(forestNETN)
-library(rgdal)
 importCSV(&quot;./data/NETN_forest_csvs&quot;)
-
-acad_exo &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, speciesType = &#39;exotic&#39;) %&gt;% 
-            mutate(present = ifelse(!is.na(Latin_Name), 1, 0))
-
-acad_exo_wide &lt;- acad_exo %&gt;% select(Plot_Name, X_Coord, Y_Coord, Latin_Name, present) %&gt;% 
-                              pivot_wider(names_from = &quot;Latin_Name&quot;, values_from = &quot;present&quot;, 
-                                          values_fill = 0)
-head(acad_exo_wide)
-
-# Step 1: Create spatial object by specifying the coordinates
-coordinates(acad_exo_wide) &lt;- ~X_Coord + Y_Coord
-
-plot(acad_exo_wide) # These points now plot in space
-# Step 2: Define the coordinate system 
-proj4string(acad_exo_wide) &lt;- CRS(&quot;+init=epsg:26919&quot;)
-# Step 3: Write the spatial object to a shapefile
-writeOGR(acad_exo_wide, dsn = &quot;../shapefiles&quot;, layer = &quot;ACAD_exo_2019&quot;, driver = &quot;ESRI Shapefile&quot;)
-
 acad_regen &lt;- joinRegenData(park = &quot;ACAD&quot;, from = 2016, to = 2019, canopyForm = &quot;canopy&quot;)
 
 head(acad_regen) # this dataframe includes species, so there are multiple rows per plot. 
@@ -2951,6 +3025,101 @@ acad_final &lt;- ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_den
               theme_FHM()
 
 acad_final
+library(tidyverse)
+library(rgdal) # for GIS functions
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
+table(wetdat$Site_Name, wetdat$Year) # SEN most recent is 2011, RAM is 2017
+wetdat_rich &lt;- wetdat %&gt;% filter(Year %in% c(2011, 2017)) %&gt;% 
+                          mutate(present = ifelse(!is.na(Ave_Cov) &amp; Ave_Cov &gt; 0, 1, 0)) %&gt;% 
+                          group_by(Site_Name, Year, Site_Type, X_Coord, Y_Coord) %&gt;% 
+                          summarize(numspp = sum(present), 
+                                    .groups = &#39;drop&#39;)
+head(wetdat_rich)
+head(wetdat_rich)  
+# Step 1: Create spatial object by specifying the coordinates
+coordinates(wetdat_rich) &lt;- ~X_Coord + Y_Coord
+head(wetdat_rich)
+plot(wetdat_rich) # These points now plot in space (bottom left point is on IAH)
+
+# Step 2: Define the coordinate system 
+proj4string(wetdat_rich) &lt;- CRS(&quot;+init=epsg:26919&quot;)
+
+# Step 3: Write the spatial object to a shapefile
+writeOGR(wetdat_rich, dsn = &quot;./shapefiles&quot;, layer = &quot;wetdat_rich&quot;, driver = &quot;ESRI Shapefile&quot;, 
+         overwrite_layer = TRUE) # overwrite is in case you need to update your shapefile.
+
+install.packages(&#39;ggspatial&#39;)
+# Load packages
+library(rgdal) # for readOGR
+library(ggplot2) #for ggplot functions
+library(ggspatial) #to make ggplot functions spatial
+
+# Load shapefiles
+bounds &lt;- readOGR(&quot;./data/example_data/ParkBndCARTO_Fee_2020.shp&quot;, layer = &quot;ParkBndCARTO_Fee_2020&quot;,
+                  GDAL1_integer64_policy = TRUE) # Don&#39;t ask me why this is here. All I know is it works.
+head(bounds@data) # How you view the attribute table of a shapefile in R
+
+wetmap &lt;- readOGR(&quot;./data/example_data/ACAD_vegmap_wetlands.shp&quot;, layer = &quot;ACAD_vegmap_wetlands&quot;,
+                  GDAL1_integer64_policy = TRUE)
+
+wet_rich_shp &lt;- readOGR(&quot;./shapefiles/wetdat_rich.shp&quot;, layer = &quot;wetdat_rich&quot;,
+                        GDAL1_integer64_policy = TRUE)
+head(wet_rich_shp@data)
+head(wet_rich_shp@coords) # Where the coordinates are stored
+plot(bounds)
+# Prepare shapefiles for plotting
+bounds2 &lt;- fortify(bounds) # 
+str(bounds2) # note the data frame structure that describes the boundary data
+
+wetmap2 &lt;- fortify(wetmap)
+str(wetmap2)
+
+# Turn the wetland richness shapefile back into a dataset
+  # One reason to do this is R is because you never had to make this a shapefile to plot
+wet_rich_df &lt;- cbind(as.data.frame(wet_rich_shp@data), 
+                     long = wet_rich_shp@coords[,1],
+                     lat = wet_rich_shp@coords[,2])
+ggmap &lt;- ggplot()+
+         coord_sf(crs = 26919)+  # set coordinate system to NAD83 UTM Zone 19N      
+         geom_polypath(data = bounds2, aes(x = long, y = lat, group = group),
+                       fill = &quot;grey&quot;, alpha = 0.4)+
+         geom_polypath(data = wetmap2, aes(x = long, y = lat, group = group),
+                       fill = &quot;#80A8D1&quot;)+
+         geom_point(data = wet_rich_df, 
+                           aes(x = long, 
+                               y = lat, 
+                               color = Site_Type),
+                            shape = 17)+
+         theme_void() # because I don&#39;t like ggplot&#39;s grids in default grid
+
+ggmap
+
+wet_rich_dd &lt;- spTransform(wet_rich_shp, CRS=&quot;+proj=longlat +datum=WGS84&quot;)
+plot(wet_rich_dd) #check that they still plot spatially
+install.packages(&#39;leaflet&#39;)
+library(leaflet)
+
+park_tile_basic = &quot;https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg&quot;
+
+leaflet() %&gt;% 
+ setView(lng = -68.312,
+         lat = 44.25,
+         zoom = 10) %&gt;% 
+ addTiles(urlTemplate = park_tile_basic) %&gt;% 
+ addCircleMarkers(data = wet_rich_dd,
+                  radius = 4, 
+                  lng = wet_rich_dd@coords[,1],
+                  lat = wet_rich_dd@coords[,2],
+                  label = wet_rich_dd@data$Site_Name,
+                  labelOptions = labelOptions(noHide=T, textOnly = TRUE, 
+                                              direction = &#39;bottom&#39;, textsize = &quot;12px&quot;),
+                  fillColor = &quot;#4C9B4F&quot;,
+                  fillOpacity = 1,
+                  stroke = FALSE) %&gt;% 
+ addScaleBar(position=&#39;bottomright&#39;) %&gt;% 
+ scaleBarOptions(maxWidth=10, metric=TRUE) 
+
+
 df[3, c(&quot;domSpp&quot;)] # option 1
 df[3, 4] # option 2
 df$numtrees &lt;- as.integer(df$numtrees)

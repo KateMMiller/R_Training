@@ -73,11 +73,11 @@ ACAD R Training {.tabset .tabset-pills}
 
 ```
 
-```{r Saving_to_shapefile, child = "D3_M2_Saving_to_shapefile.Rmd"}
+```{r Plotting_with_ggplot2, child = "D3_M2_Plotting_with_ggplot2.Rmd"}
 
 ```
 
-```{r Plotting_with_ggplot2, child = "D3_M3_Plotting_with_ggplot2.Rmd"}
+```{r Saving_to_shapefile, child = "D3_M3_Saving_to_shapefile.Rmd"}
 
 ```
 

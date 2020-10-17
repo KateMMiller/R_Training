@@ -140,3 +140,4 @@ wetdat_sum
 Note the use of n() in the summarize() for wetdat_sum. That function counts the number of rows in each group. It's handy, but be careful. It count's every row, including rows with NAs. If you want that, n() is great. If you don't, you need to use another approach.
 
 <p class='ques'>Question 2: How would you create a wide matrix with all protected species as columns, sites and years sampled as rows, and percent cover as the value?</p>
+</details>

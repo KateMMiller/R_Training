@@ -1,0 +1,166 @@
+#### Working with Shapefiles
+<details open><summary class='drop'>Creating a Shapefile in R </summary>
+Often times I want to map the final output of summaries I do in R. While you can save tables in R, then join them to existing shapefiles in ArcGIS, I prefer to save my output as a shapefile in R. In case this is helpful to you, I'll show you the easiest way I've found to do this. 
+
+The keys are to have the X, Y Coordinates included in your final summary, and to know which Coordinate Reference System to specify (abbreviated CRS). For example, parks in NETN cover 2 UTM Zones, and you have to specify the correct zone. The datum and projection for each park are listed below. 
+
+<ul>
+<li><b>NAD83 UTM Zone 19N:</b> ACAD, MIMA</li>
+<li><b>NAD83 UTM Zone 18N:</b> MABI, MORR, ROVA, SAGA, SARA, WEFA</li>
+</ul>
+
+Most of the major coordinate systems have a registered EPSG Code assigned to it, including ours. EPSG stands for European Petroleum Survey Group, which seems pretty random, but is a useful set of universally unique codes for datum and protections that most GIS software can recognize. Using the EPSG code is the fastest way I've found to assign the coordinate system for our shapefile. For ACAD and MIMA, the EPSG Code is 26919. For the other parks it's 26918 (notice the last digit is the only difference, and matches the UTM Zone above). 
+
+To start out, let's load our wetland dataset again. Let's say we want to create a shapefile for the most recent sample of each site and a column with the number of species found at each site.
+```{r, c63c, echo=T, results = 'hide'}
+library(tidyverse)
+library(rgdal) # for GIS functions
+wetdat <- read.csv("./data/example_data/ACAD_wetland_data_clean.csv")
+table(wetdat$Site_Name, wetdat$Year) # SEN most recent is 2011, RAM is 2017
+wetdat_rich <- wetdat %>% filter(Year %in% c(2011, 2017)) %>% 
+                          mutate(present = ifelse(!is.na(Ave_Cov) & Ave_Cov > 0, 1, 0)) %>% 
+                          group_by(Site_Name, Year, Site_Type, X_Coord, Y_Coord) %>% 
+                          summarize(numspp = sum(present), 
+                                    .groups = 'drop')
+head(wetdat_rich)
+```
+```{r, c63d, echo=F, results='show'}
+head(wetdat_rich)  
+```
+Now we're ready to save to shapefile. 
+
+```{r, c64, echo=T, results="hide", message=FALSE, eval=F}
+# Step 1: Create spatial object by specifying the coordinates
+coordinates(wetdat_rich) <- ~X_Coord + Y_Coord
+head(wetdat_rich)
+plot(wetdat_rich) # These points now plot in space (bottom left point is on IAH)
+
+# Step 2: Define the coordinate system 
+proj4string(wetdat_rich) <- CRS("+init=epsg:26919")
+
+# Step 3: Write the spatial object to a shapefile
+writeOGR(wetdat_rich, dsn = "./shapefiles", layer = "wetdat_rich", driver = "ESRI Shapefile", 
+         overwrite_layer = TRUE) # overwrite is in case you need to update your shapefile.
+
+```
+A lot of this may be unfamiliar to you, especially since ArcGIS does a lot of this work behind the scenes. 
+<ul><li>First notice that after you assign the coordinates in Step 1, the X_Coord and Y_Coord columns disappear from your dataframe. That's because you've just created a spatial object from a data frame, and the coordinates are now stored in a different slot than the data. </li>
+<li>In the second step, we're telling R that the datum and projection (in proj4 format) for our spatial dataset is the EPSG Code 26919 (code for NAD83, UTM Zone 19N).</li> 
+<li>Finally, we're using the writeOGR command to output to a shapefile. The dsn is the location you're saving the shapefile to. The layer name is the name you want the shapefile to be.</li>
+<li>Notice that we're using ./shapefiles, which is a folder within the project we created on day 1. During this step column names usually end up getting abbreviated (don't worry if you get a warning message). </li>
+<li>Finally, writeOGR by default will not allow you to overwrite an existing file. While it's safe to have that as a default, sometimes you want to overwrite shapefile, which is what overwrite_layer = TRUE does.</li></ul>
+</details>
+<br>
+
+<details open><summary class='drop'>GIS Mapping in R</summary>
+I only have time to scratch the surface on this topic, but I think it's useful to know that anything you can do in ArcGIS with vector and raster data, you can do in R. GIS in R requires more understanding about what's happening under the hood, and sometimes it isn't worth the effort in R. It depends on what you need to do, how involved the process is, and whether you need to document the process and/or repeat it over and over. For example, I've found the raster package in R to be relatively easy to use and faster at processing large files (e.g. NLCD rasters), and I almost always use R when I'm working with rasters. In contrast, making nice maps that need a lot of tweaking (eg moving plot labels to prevent overlap, multiple legends, etc), I tend to use ArcGIS. But, to give you an idea of the things you can do in R, 
+
+I'll show you two ways to plot data spatially in R. First is using ggplot, and second is using leaflet.
+
+Let's load the wetland shapefile we just created, along with a layer that plots wetlands in the vegetation map and the park fee boundary.
+```{r d1, echo=T, eval=FALSE}
+install.packages('ggspatial')
+```
+```{r, d1b, echo=T, results = 'hide'}
+# Load packages
+library(rgdal) # for readOGR
+library(ggplot2) #for ggplot functions
+library(ggspatial) #to make ggplot functions spatial
+
+# Load shapefiles
+bounds <- readOGR("./data/example_data/ParkBndCARTO_Fee_2020.shp", layer = "ParkBndCARTO_Fee_2020",
+                  GDAL1_integer64_policy = TRUE) # Don't ask me why this is here. All I know is it works.
+head(bounds@data) # How you view the attribute table of a shapefile in R
+
+wetmap <- readOGR("./data/example_data/ACAD_vegmap_wetlands.shp", layer = "ACAD_vegmap_wetlands",
+                  GDAL1_integer64_policy = TRUE)
+
+wet_rich_shp <- readOGR("./shapefiles/wetdat_rich.shp", layer = "wetdat_rich",
+                        GDAL1_integer64_policy = TRUE)
+head(wet_rich_shp@data)
+head(wet_rich_shp@coords) # Where the coordinates are stored
+```
+```{r, d1c, echo=T}
+plot(bounds)
+```
+To prepare the shapefile polygons for plotting in ggplot, we have to fortify them to make them into a spatial data frame. 
+```{r d2, echo=T}
+# Prepare shapefiles for plotting
+bounds2 <- fortify(bounds) # 
+str(bounds2) # note the data frame structure that describes the boundary data
+
+wetmap2 <- fortify(wetmap)
+str(wetmap2)
+
+# Turn the wetland richness shapefile back into a dataset
+  # One reason to do this is R is because you never had to make this a shapefile to plot
+wet_rich_df <- cbind(as.data.frame(wet_rich_shp@data), 
+                     long = wet_rich_shp@coords[,1],
+                     lat = wet_rich_shp@coords[,2])
+```
+
+Now to map the different shapefiles using spatial geoms from ggspatial.
+
+```{r, d3, echo=T}
+ggmap <- ggplot()+
+         coord_sf(crs = 26919)+  # set coordinate system to NAD83 UTM Zone 19N      
+         geom_polypath(data = bounds2, aes(x = long, y = lat, group = group),
+                       fill = "grey", alpha = 0.4)+
+         geom_polypath(data = wetmap2, aes(x = long, y = lat, group = group),
+                       fill = "#80A8D1")+
+         geom_point(data = wet_rich_df, 
+                           aes(x = long, 
+                               y = lat, 
+                               color = Site_Type),
+                            shape = 17)+
+         theme_void() # because I don't like ggplot's grids in default grid
+
+ggmap
+
+```
+
+You can add north arrows, scale bars and legends using other packages, including sf. For more information about this, check out <a href="https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html">r-spatial's site</a>. 
+
+Finally, I'll show how to use leaflet to map data with park tiles as the base layer. The leaflet package is native to javascript, but the main functions have been made into an R package. The great thing about leaflet is you can add interactive maps that allow you to zoom/pan to different views. We use these a lot for our data visualizers.
+
+To use leaflet, you have to have all of your spatial data in WGS84 instead of NAD83 UTM Zone 19N. The first step is to reproject the wetland points to WGS84.
+
+```{r, d3b, echo=T, results = 'hide'}
+wet_rich_dd <- spTransform(wet_rich_shp, CRS="+proj=longlat +datum=WGS84")
+plot(wet_rich_dd) #check that they still plot spatially
+```
+
+```{r, d4, echo=T, eval=FALSE}
+install.packages('leaflet')
+```
+```{r, d4b, echo=F, results='hide'}
+#devtools::install_github('rstudio/leaflet')
+```
+
+```{r, d5, echo=T, results='hide'}
+library(leaflet)
+
+park_tile_basic = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+
+map_leaf <- leaflet() %>% 
+ setView(lng = -68.312,
+         lat = 44.25,
+         zoom = 10) %>% 
+ addTiles(urlTemplate = park_tile_basic) %>% 
+ addCircleMarkers(data = wet_rich_dd,
+                  radius = 4, 
+                  lng = wet_rich_dd@coords[,1],
+                  lat = wet_rich_dd@coords[,2],
+                  label = wet_rich_dd@data$Site_Name,
+                  labelOptions = labelOptions(noHide=T, textOnly = TRUE, 
+                                              direction = 'bottom', textsize = "12px"),
+                  fillColor = "#4C9B4F",
+                  fillOpacity = 1,
+                  stroke = FALSE) %>% 
+ addScaleBar(position='bottomright') %>% 
+ scaleBarOptions(maxWidth=10, metric=TRUE) 
+
+map_leaf
+```
+
+</details>

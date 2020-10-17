@@ -1,7 +1,8 @@
 #### Plotting with ggplot2{.tabset}
 To get started with ggplot2, we need to make a dataset to plot. Instead of making up a simple dataset, let's use what we've learned to make a real dataset from NETN forest data. Let's start with a plot of the mean regeneration density by size class for the most recent 4-years at ACAD. Let's also only include species that make it into the canopy (e.g., no pawpaw). We specify this by using canopyForm = "canopy".
 ```{r, c66, echo=T, results='hide'}
-
+library(forestNETN)
+importCSV("./data/NETN_forest_csvs")
 acad_regen <- joinRegenData(park = "ACAD", from = 2016, to = 2019, canopyForm = "canopy")
 
 head(acad_regen) # this dataframe includes species, so there are multiple rows per plot. 
