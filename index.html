@@ -594,6 +594,8 @@ library(rgdal)
 library(forestNETN)
 library(NCRNWater)
 library(NCRNbirds)</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.0.3</code></pre>
+<pre><code>## Warning: package &#39;rgdal&#39; was built under R version 4.0.3</code></pre>
 <p>If you get an error that says there is no package called “x”, it means that package didn’t install properly, and you should try installing the package again.</p>
 If you run into issues installing from GitHub (eg using install_github function), here are a couple of tips for troubleshooting:
 <ol>
@@ -1221,7 +1223,7 @@ str(wetdat) #Ave_Cov is now numeric</code></pre>
 <p>Note also the <b>na.rm = TRUE</b>. That tells R that if there are any blanks in the data, remove them for the range calculation, and only return numbers. If you didn’t include na.rm = TRUE, range would return NA NA if there’s a blank in the column (more on this in the next section).</p>
 <pre class="r"><code>wetdat[wetdat$Ave_Cov &gt; 100, ] # If Ave_Cov is still a chr, this filter won&#39;t work</code></pre>
 <pre><code>##    Site_Name Site_Type       Latin_Name         Common Year PctFreq Ave_Cov
-## 36    SEN-01  Sentinel Arethusa bulbosa dragon&#39;s mouth 2011      20     110
+## 36    SEN-02  Sentinel Arethusa bulbosa dragon&#39;s mouth 2011      20     110
 ##    Invasive Protected
 ## 36    FALSE      TRUE</code></pre>
 <p>There’s only 1 row, row 36, which has an Ave_Cov &gt; 100 for Arethusa bulbosa in SEN-01. For our purposes, pretend that we went back to the datasheet, and found that there was a data transcription error, and the correct value should be 11, not 110. The next line of code fixes the data for that specific record.</p>
@@ -1265,8 +1267,8 @@ Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller b
 <p><summary class="drop">Check and fix character columns</summary> A common issue with text/character fields is inconsistent naming conventions, especially if data are being stored in a spreadsheet instead of a database with standardized look up fields. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let’s check to see if all of the Site_Name records follow that. Since we don’t have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.</p>
 <pre class="r"><code>table(wetdat$Site_Name)</code></pre>
 <pre><code>## 
-## RAM-05 RAM-41 RAM-44 RAM-53 RAM-62  RAM44 SEN-01 SEN-03  SEN-3 
-##     98     73     34     98     52     45     75     32      1</code></pre>
+## RAM-05 RAM-41 RAM-44 RAM-53 RAM-62  RAM44 SEN-01 SEN-02 SEN-03  SEN-3 
+##     98     73     34     98     52     45     34     41     32      1</code></pre>
 <p>A couple of issues show up here. First, we see that there’s a site named RAM44 that’s missing a dash. We also see that there’s one SEN-3, which should be SEN-03.</p>
 <p>Another way to do this, if you had a large dataset, would be to check if there are any Site_Name records that are not length 6 (eg RAM-01 is 6 digits) using the nchar() function, which counts the number of characters in a record.</p>
 <pre class="r"><code>wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)] #</code></pre>
@@ -1301,7 +1303,7 @@ sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a co
 <pre class="r"><code>nrow(wetdat) # reports # rows only</code></pre>
 <pre><code>## [1] 508</code></pre>
 <pre class="r"><code>length(unique(wetdat$Site_Name)) # number of unique values in Site_Name</code></pre>
-<pre><code>## [1] 7</code></pre>
+<pre><code>## [1] 8</code></pre>
 <pre class="r"><code>length(unique(wetdat$Year)) # number of unique years</code></pre>
 <pre><code>## [1] 3</code></pre>
 <pre class="r"><code>table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years</code></pre>
@@ -1312,7 +1314,8 @@ sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a co
 ##   RAM-44    0   34   45
 ##   RAM-53    0   48   50
 ##   RAM-62    0   26   26
-##   SEN-01   75    0    0
+##   SEN-01   34    0    0
+##   SEN-02   41    0    0
 ##   SEN-03   33    0    0</code></pre>
 <pre class="r"><code>sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset</code></pre>
 <pre><code>##  [1] &quot;American mountain ash&quot; &quot;apple&quot;                 &quot;Asian bittersweet&quot;    
@@ -1588,10 +1591,8 @@ Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgD
 <h3>Day 3</h3>
 <div id="data-wrangling-ii" class="section level4">
 <h4>Data Wrangling II</h4>
-<h2>
-Reshaping Data
-</h2>
-<p>Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which is the structure database tables often take, consists of each row being an observation (ie if there are 3 visits to a site, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, number of critters, % plant cover, etc). In summary tables, we often want to reshape the data to be wide, so that there’s only one row per plot, a column for each visit, or species, and the abundance of that species as the value in the cell.</p>
+<details open>
+<p><summary class="drop">Reshaping Data I</summary> Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which is the structure database tables often take, consists of each row being an observation (ie if there are 3 visits to a site, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, number of critters, % plant cover, etc). In summary tables, we often want to reshape the data to be wide, so that there’s only one row per plot, a column for each visit, or species, and the abundance of that species as the value in the cell.</p>
 <p>We’re going to work with a fake bat dataset to see how this works. To get started, load the dataset and packages, as shown below.</p>
 <pre class="r"><code>library(tidyverse)
 bat_long &lt;- read.csv(&quot;./data/example_data/fake_bats.csv&quot;)
@@ -1621,9 +1622,10 @@ head(bat_long_sum)</code></pre>
 ## 4 BrownMtnCR  2016 LASCIN         1
 ## 5 BrownMtnCR  2016 MYOLEI         2
 ## 6 BrownMtnCR  2016 MYOLUC         1</code></pre>
-<p>In case you don’t follow what I just did, there are 3 main steps that happened above. First, we used the word() function to pull out the genus (word(Latin, 1)) and species (word(Latin, 2)). The substr() function is taking the first through third characters of each genus and species. The paste0 function is pasting the first three characters of genus and species together. The toupper is making them all capitalized. Note that the 0 after paste means not to separate the elements of the paste. If you wanted to separate the elements by a underscore, you’d use paste instead of paste0, like paste(element1, element2, sep = &quot;_&quot;).</p>
+<p>If you didn’t follow what I just did, there are 3 main steps that happened above. First, we used the word() function to pull out the genus (word(Latin, 1)) and species (word(Latin, 2)). The substr() function is taking the first through third characters of each genus and species. The paste0 function is pasting the first three characters of genus and species together. The toupper is making them all capitalized. Note that the 0 after paste means not to separate the elements of the paste. If you wanted to separate the elements by a underscore, you’d use paste instead of paste0, like paste(element1, element2, sep = &quot;_&quot;).</p>
 <p>To make this wide, we’re essentially going to make a pivot table using functions in tidyr. There are two functions you can use. The spread() function was original to tidyr, is what I know the best, and still performs faster on larger datasets than pivot_wider(), the replacement for spread. I show both options, so you can use whichever function makes the most sense to you.</p>
 <pre class="r"><code>bat_wide &lt;- bat_long_sum %&gt;% spread(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;) #retired spread function
+bat_wide2 &lt;- bat_long_sum %&gt;% pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;numindiv&quot;) #replacement in tidyr
 bat_wide</code></pre>
 <pre><code>## # A tibble: 21 x 6
 ##    Site        Year LASCIN MYOLEI MYOLUC MYOSEP
@@ -1638,22 +1640,6 @@ bat_wide</code></pre>
 ##  8 BrownMtnGH  2013     NA     NA     NA      1
 ##  9 BrownMtnGH  2014     NA      2      1     NA
 ## 10 BrownMtnGH  2015      1     NA     NA      1
-## # ... with 11 more rows</code></pre>
-<pre class="r"><code>bat_wide2 &lt;- bat_long_sum %&gt;% pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;numindiv&quot;) #replacement in tidyr
-bat_wide2</code></pre>
-<pre><code>## # A tibble: 21 x 6
-##    Site        Year MYOLEI MYOLUC LASCIN MYOSEP
-##    &lt;chr&gt;      &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
-##  1 BrownMtnCR  2013      1     NA     NA     NA
-##  2 BrownMtnCR  2014     NA      2     NA     NA
-##  3 BrownMtnCR  2015      2     NA     NA     NA
-##  4 BrownMtnCR  2016      2      1      1     NA
-##  5 BrownMtnCR  2017      1      1     NA     NA
-##  6 BrownMtnCR  2018      1     NA     NA      1
-##  7 BrownMtnCR  2019     NA     NA      1     NA
-##  8 BrownMtnGH  2013     NA     NA     NA      1
-##  9 BrownMtnGH  2014      2      1     NA     NA
-## 10 BrownMtnGH  2015     NA     NA      1      1
 ## # ... with 11 more rows</code></pre>
 <p>Note the NAs for the various species. That’s because original dataset didn’t have a data point for that combination of site/species/year. The tidyr package will assign NA when reshaping for combinations not represented in the original dataset. If there are sites that weren’t sampled in a certain year, NA makes sense. However, if all sites were sampled and there just weren’t any individuals found, then filling those with 0 makes sense, and you can tell tidyr to fill blanks with 0 when you rehape the data. This is a handy feature, but it’s not to be abused. <b>You should always think carefully before automatically filling blanks with 0s.</b></p>
 <p>Here’s the same reshape code from before, but now we fill NAs with 0.</p>
@@ -1702,7 +1688,63 @@ head(bat_long2b)</code></pre>
 <pre class="r"><code>nrow(bat_long2) # dataset that has every species represented for every year and every site</code></pre>
 <pre><code>## [1] 84</code></pre>
 <p>Both functions above are keeping a Site and Year column. In the gather function, we’re telling R which ones not to make long. In the pivot_longer, we’re telling R which columns to gather, rather than which columns to ignore. I show both the old and new approach, because the pivot_### functions are still relatively new, slower with big datasets, and I find more examples online of the old approaches. But, personally I find the pivot_### functions to be more intuitive than gather/spread, so I’ve started using them more.</p>
-<p>This may seem like a lot of work for something you could do by hand in Excel. But, if you have a huge dataset that only stores records of species that were present, this can really come in handy. For example, say we want a list of all all invasive species found in ACAD wetland sites in 2017 and we want to calculate the proportion of plots invasive species occurred in. If we don’t find an invasive in a plot, there’s no record of the data. Let’s load the wetland dataset from before and work through that example.</p>
+<p>Another way to do this, since there’s almost always more than one way to do something in R, is to use expand() and joins to get all combinations of factors in your data. There’s an added step of having to replace NAs from the join with 0.</p>
+<pre class="r"><code>#First figure out how many levels you expect
+with(bat_long, length(unique(Site)) * length(unique(Year)) * length(unique(sppcode))) #84
+bat_all_comb &lt;- bat_long_sum %&gt;% expand(Site, Year, sppcode)
+nrow(bat_all_comb) #84
+
+bat_long_comb &lt;- left_join(bat_all_comb, bat_long_sum, by = c(&quot;Site&quot;, &quot;Year&quot;, &quot;sppcode&quot;))
+bat_long_comb$numindiv[is.na(bat_long_comb$numindiv)] &lt;- 0 # replace NA with 0
+nrow(bat_long2) == nrow(bat_long_comb) #TRUE</code></pre>
+A couple of things to note in the above code:
+<ul>
+<li>
+Note the use of with(). This is a base R way of only having to specify a data frame once, and is handy if you have to reference multiple columns from the same data frame in a line of code.
+</li>
+<li>
+The expand() function is also introduced here. Expand is a way to create a data frame of all combinations of the factors listed, including any combinations not found in the existing data frame. For example, if no bats were found in site BubPdS in 2018, and so 2018 wasn’t in the data for BubPdS, expand will add it, if 2018 was listed for any other site.
+</li>
+<li>
+If you only want site/year combinations that were in the original dataset (so no 2018 in BubPdS), use distinct() instead of expand().
+</li>
+<li>
+When you use a left join that doesn’t have data in the right-hand dataset, R assigns NAs for the numindiv column with those cases. The 2nd to last line above identifies the NAs and replaces them with 0. There are tidyverse ways of doing this with replace_na() or replace(), but I find the code above more intuitive (this may be because I’ve used this for years pre-tidyverse)
+</li>
+</ul>
+<p class="ques">
+Question 1: How would you create a dataset that has a column for every sample year (ie 2013-2019), a row for every site, and the number of northern long-eared bats found as the value?
+</p>
+<p>You can also pivot on 2 columns using pivot_wider. To demonstrate, let’s pivot on sppcode and Year.</p>
+<pre class="r"><code>head(bat_long_sum)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   Site        Year sppcode numindiv
+##   &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;      &lt;int&gt;
+## 1 BrownMtnCR  2013 MYOLEI         1
+## 2 BrownMtnCR  2014 MYOLUC         2
+## 3 BrownMtnCR  2015 MYOLEI         2
+## 4 BrownMtnCR  2016 LASCIN         1
+## 5 BrownMtnCR  2016 MYOLEI         2
+## 6 BrownMtnCR  2016 MYOLUC         1</code></pre>
+<pre class="r"><code>bat_wide2 &lt;- bat_long_sum %&gt;% pivot_wider(names_from = c(sppcode, Year), 
+                                          values_from = numindiv,
+                                          values_fill = 0)
+head(bat_wide2)</code></pre>
+<pre><code>## # A tibble: 3 x 21
+##   Site  MYOLEI_2013 MYOLUC_2014 MYOLEI_2015 LASCIN_2016 MYOLEI_2016 MYOLUC_2016
+##   &lt;chr&gt;       &lt;int&gt;       &lt;int&gt;       &lt;int&gt;       &lt;int&gt;       &lt;int&gt;       &lt;int&gt;
+## 1 Brow~           1           2           2           1           2           1
+## 2 Brow~           0           1           0           0           0           1
+## 3 BubP~           1           1           1           0           2           0
+## # ... with 14 more variables: MYOLEI_2017 &lt;int&gt;, MYOLUC_2017 &lt;int&gt;,
+## #   MYOLEI_2018 &lt;int&gt;, MYOSEP_2018 &lt;int&gt;, LASCIN_2019 &lt;int&gt;, MYOSEP_2013 &lt;int&gt;,
+## #   MYOLEI_2014 &lt;int&gt;, LASCIN_2015 &lt;int&gt;, MYOSEP_2015 &lt;int&gt;, LASCIN_2017 &lt;int&gt;,
+## #   MYOLEI_2019 &lt;int&gt;, MYOLUC_2015 &lt;int&gt;, MYOLUC_2018 &lt;int&gt;, MYOLUC_2019 &lt;int&gt;</code></pre>
+The above steps may seem like a lot of work for something you could do by hand in Excel. But, if you have a huge dataset that only stores records of species that were present, this can really come in handy. It’s also repeatable and transparent. So, if you realized you did something wrong, you can fix the code and rerun everything, rather than having to redo all of the work in R by hand.
+</details>
+<p><br></p>
+<details open>
+<p><summary class="drop">Reshaping Data II</summary> Let’s work with a larger dataset to demonstrate these concepts again. Say we want a list of all invasive species found in ACAD wetland sites in 2017 and we want to calculate the proportion of plots invasive species occurred in. If we don’t find an invasive in a plot, there’s no record of the data. Let’s load the wetland dataset from before and work through that example.</p>
 <pre class="r"><code>wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
 head(wetdat)</code></pre>
 <pre><code>##   Site_Name Site_Type          Latin_Name           Common Year PctFreq Ave_Cov
@@ -1776,8 +1818,18 @@ wetdat_long_inv &lt;- wetdat_long %&gt;% filter(sppcode %in% inv_list)
 wetdat_sum &lt;- wetdat_long_inv %&gt;% group_by(sppcode) %&gt;% 
                                   summarize(pct_sites = sum(present)/n()*100, 
                                            .groups = &#39;keep&#39;)</code></pre>
+<pre class="r"><code>wetdat_sum</code></pre>
+<pre><code>## # A tibble: 4 x 2
+## # Groups:   sppcode [4]
+##   sppcode pct_sites
+##   &lt;chr&gt;       &lt;dbl&gt;
+## 1 BERTHU         40
+## 2 CELORB         20
+## 3 LON-           20
+## 4 RHAFRA         40</code></pre>
+<p>Note the use of n() in the summarize() for wetdat_sum. That function counts the number of rows in each group. It’s handy, but be careful. It count’s every row, including rows with NAs. If you want that, n() is great. If you don’t, you need to use another approach.</p>
 <p class="ques">
-Question 1: How would you create a wide matrix for FRSP plots in 2019 that has plots for rows, and exotic species as columns?
+Question 2: How would you create a wide matrix with all protected species as columns, sites and years sampled as rows, and percent cover as the value?
 </p>
 </div>
 <div id="saving-data-to-shapefile" class="section level4">
@@ -2073,11 +2125,11 @@ wetinv_tidy &lt;- wetdat %&gt;% filter(Invasive == TRUE) # tidyverse solution</c
 <pre class="r"><code># Base R solution
 wetspp &lt;- wetdat[wetdat$Latin_Name %in% c(&quot;Arethusa bulbosa&quot;, &quot;Carex exilis&quot;),]
 sort(unique(wetspp$Site_Name))</code></pre>
-<pre><code>## [1] &quot;RAM-05&quot; &quot;SEN-01&quot;</code></pre>
+<pre><code>## [1] &quot;RAM-05&quot; &quot;SEN-01&quot; &quot;SEN-02&quot;</code></pre>
 <pre class="r"><code># Tidyverse solution
 wetspp_tidy &lt;- wetdat %&gt;% filter(Latin_Name %in% c(&quot;Arethusa bulbosa&quot;, &quot;Carex exilis&quot;)) 
 sort(unique(wetspp_tidy$Site_Name)) # RAM-05 and SEN-01 have both species present</code></pre>
-<pre><code>## [1] &quot;RAM-05&quot; &quot;SEN-01&quot;</code></pre>
+<pre><code>## [1] &quot;RAM-05&quot; &quot;SEN-01&quot; &quot;SEN-02&quot;</code></pre>
 </details>
 <p><br></p>
 <details>
@@ -2198,7 +2250,7 @@ locev_stand_tidy &lt;- full_join(locev, stand, by = &quot;Event_ID&quot;) #tidyv
 <pre><code>## # A tibble: 3 x 3
 ##    Year minspp maxspp
 ##   &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1  2011     33     75
+## 1  2011     33     41
 ## 2  2012     26     48
 ## 3  2017     26     54</code></pre>
 Note that first I had to sum up the number of species within a site (hence group_by(Site_Name, Year)). After I calculate that, I grouped by Year only, then found the min and max number of species recorded within a year.
@@ -2243,58 +2295,56 @@ wetinv #40 % of plots both years</code></pre>
 </details>
 <br>
 <details>
-<p><summary class="ques2">Question 1: How many plots were sampled in ACAD in 2018?</summary></p>
-<pre class="r"><code>acad &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2018, to = 2018)
-length(unique(acad$Plot_Number))</code></pre>
-<pre><code>## [1] 44</code></pre>
+<p><summary class="ques2">Question 1: How would you create a dataset that has a column for every sample year (ie 2013-2019), a row for every site, and the number of northern long-eared bats found as the value? </summary></p>
+<pre class="r"><code># In case you&#39;re starting from scratch
+library(tidyverse)
+bat_long &lt;- read.csv(&quot;./data/example_data/fake_bats.csv&quot;)
+bat_long &lt;- bat_long %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin, 1), 1, 3),
+                                                         substr(word(Latin, 2), 1, 3))))
+
+MYOSEP_sum &lt;- bat_long %&gt;% filter(sppcode == &quot;MYOSEP&quot;) %&gt;% 
+                           group_by(Site, Year) %&gt;% 
+                           summarize(num_bats = sum(ifelse(!is.na(Latin), 1, 0)), 
+                                     .groups = &#39;drop&#39;) 
+
+head(MYOSEP_sum) # Note only the site and years where MYOSEP was found are listed. Next lines add those back before pivot</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   Site        Year num_bats
+##   &lt;chr&gt;      &lt;int&gt;    &lt;dbl&gt;
+## 1 BrownMtnCR  2018        1
+## 2 BrownMtnGH  2013        1
+## 3 BrownMtnGH  2015        1</code></pre>
+<pre class="r"><code>bat_site_year &lt;- bat_long %&gt;% expand(Site, Year)
+
+MYOSEP_comp &lt;- bat_site_year %&gt;% left_join(., MYOSEP_sum, by = c(&quot;Site&quot;, &quot;Year&quot;)) 
+MYOSEP_comp$num_bats[is.na(MYOSEP_comp$num_bats)] &lt;- 0 # Replace all the NAs created by left join with 0
+
+MYOSEP_wide &lt;- MYOSEP_comp %&gt;% arrange(Site, Year) %&gt;% 
+                               pivot_wider(names_from = Year, values_from = num_bats, values_fill = 0)
+head(MYOSEP_wide)</code></pre>
+<pre><code>## # A tibble: 3 x 8
+##   Site       `2013` `2014` `2015` `2016` `2017` `2018` `2019`
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 BrownMtnCR      0      0      0      0      0      1      0
+## 2 BrownMtnGH      1      0      1      0      0      0      0
+## 3 BubPdS          0      0      0      0      0      0      0</code></pre>
 </details>
 <p><br></p>
 <details>
-<p><summary class="ques2">Question 2: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary></p>
-<pre class="r"><code>acad_tree_dist &lt;- sumTreeDBHDist(park = &quot;ACAD&quot;, status = &#39;live&#39;)
+<p><summary class="ques2">Question 2: How would you create a wide matrix with all protected species as columns, sites and years sampled as rows, and percent cover as the value?</summary></p>
+<pre class="r"><code># If you&#39;re starting from scratch
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
+wetdat_prep &lt;- wetdat %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin_Name, 1), 1, 3),
+                                                          substr(word(Latin_Name, 2), 1, 3)))) 
 
-acad_tree_max70 &lt;- acad_tree_dist %&gt;% arrange(desc(d70_79.9))
-head(acad_tree_max70) # ACAD-124</code></pre>
-<pre><code>##                            Location_ID                             Event_ID
-## 1 26B66305-8314-4B38-97CF-070486A3CA1D 12312B7A-8BE0-4595-98DE-C831973E4D0D
-## 2 26B66305-8314-4B38-97CF-070486A3CA1D 8ED9FC01-01E2-42F0-B436-EFDFD118C6A4
-## 3 26B66305-8314-4B38-97CF-070486A3CA1D ED4BA7CF-75A4-441E-8F76-EF5ED79B2FDF
-## 4 BC146F51-F581-47F5-8835-78FBA8ABAF18 7005E5BA-521D-49C7-B402-890AA208C542
-## 5 BC146F51-F581-47F5-8835-78FBA8ABAF18 9EAF2A05-B06A-45C9-B7AE-3CA2A1C15F43
-## 6 BC146F51-F581-47F5-8835-78FBA8ABAF18 6F849CD9-ABF5-4782-9250-D545EE9E5886
-##   Plot_Name Unit_Code Plot_Number X_Coord Y_Coord Panel Year Event_QAQC cycle
-## 1  ACAD-124      ACAD         124  558459 4906733     3 2008      FALSE     1
-## 2  ACAD-124      ACAD         124  558459 4906733     3 2012      FALSE     2
-## 3  ACAD-124      ACAD         124  558459 4906733     3 2016      FALSE     3
-## 4  ACAD-001      ACAD         001  574066 4913328     1 2006      FALSE     1
-## 5  ACAD-001      ACAD         001  574066 4913328     1 2010      FALSE     2
-## 6  ACAD-001      ACAD         001  574066 4913328     1 2014      FALSE     3
-##   d10_19.9  d20_29.9 d30_39.9 d40_49.9 d50_59.9 d60_69.9 d70_79.9 d80_89.9
-## 1 355.5556  44.44444 88.88889 44.44444 44.44444        0 44.44444        0
-## 2 266.6667  44.44444 44.44444 44.44444 88.88889        0 44.44444        0
-## 3 266.6667  88.88889 44.44444 44.44444 88.88889        0 44.44444        0
-## 4 488.8889 444.44444  0.00000  0.00000  0.00000        0  0.00000        0
-## 5 311.1111 355.55556 44.44444  0.00000  0.00000        0  0.00000        0
-## 6 222.2222 355.55556 44.44444  0.00000  0.00000        0  0.00000        0
-##   d90_99.9 d100p unknown
-## 1        0     0       0
-## 2        0     0       0
-## 3        0     0       0
-## 4        0     0       0
-## 5        0     0       0
-## 6        0     0       0</code></pre>
-<pre class="r"><code># If you wanted to pull out the top record for that size class, you can also do one of the two options below
-acad_top_70 &lt;- acad_tree_dist[which.max(acad_tree_dist$d70_79.9),] #The ugly base R approach 
-acad_top_70_tidy &lt;- acad_tree_dist %&gt;% arrange(desc(d70_79.9)) %&gt;% slice(1) #The tidyverse approach
-head(acad_top_70)</code></pre>
-<pre><code>##                              Location_ID                             Event_ID
-## 449 26B66305-8314-4B38-97CF-070486A3CA1D 12312B7A-8BE0-4595-98DE-C831973E4D0D
-##     Plot_Name Unit_Code Plot_Number X_Coord Y_Coord Panel Year Event_QAQC cycle
-## 449  ACAD-124      ACAD         124  558459 4906733     3 2008      FALSE     1
-##     d10_19.9 d20_29.9 d30_39.9 d40_49.9 d50_59.9 d60_69.9 d70_79.9 d80_89.9
-## 449 355.5556 44.44444 88.88889 44.44444 44.44444        0 44.44444        0
-##     d90_99.9 d100p unknown
-## 449        0     0       0</code></pre>
+wetdat_dist &lt;- wetdat_prep %&gt;% distinct(Site_Name, Year) # makes tibble of all site, year combinations, but doesn&#39;t add any like expand
+
+wetdat_wide &lt;- wetdat_prep %&gt;% filter(Protected == TRUE) %&gt;% 
+                               select(Site_Name, Year, sppcode, Ave_Cov) %&gt;% 
+                               pivot_wider(names_from = sppcode, values_from = Ave_Cov, values_fill = 0) %&gt;% 
+                               left_join(wetdat_dist, ., by = c(&quot;Site_Name&quot;, &quot;Year&quot;)) 
+wetdat_wide[, c(&quot;AREBUL&quot;, &quot;POGOPH&quot;, &quot;CALTUB&quot;)][is.na(wetdat_wide[, c(&quot;AREBUL&quot;, &quot;POGOPH&quot;, &quot;CALTUB&quot;)])] &lt;- 0</code></pre>
+<p>Note that I used distinct() instead of expand() because not every site is sampled every year. I used distinct to add site/year combinations that were sampled but where protected species weren’t found. Expand would have added a record for every year in the data to every site.</p>
 </details>
 <br>
 <details>
@@ -2757,9 +2807,8 @@ bat_long_sum &lt;- bat_long %&gt;% group_by(Site, Year, sppcode) %&gt;%
 
 head(bat_long_sum)
 bat_wide &lt;- bat_long_sum %&gt;% spread(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;) #retired spread function
-bat_wide
 bat_wide2 &lt;- bat_long_sum %&gt;% pivot_wider(names_from = &quot;sppcode&quot;, values_from = &quot;numindiv&quot;) #replacement in tidyr
-bat_wide2
+bat_wide
 
 bat_wide_fill &lt;- bat_long_sum %&gt;% spread(key = &quot;sppcode&quot;, value = &quot;numindiv&quot;, fill = 0) #retired spread function
 head(bat_wide_fill)
@@ -2776,6 +2825,20 @@ bat_long2b &lt;- bat_wide_fill %&gt;% pivot_longer(cols=c(LASCIN, MYOLEI, MYOLUC
 head(bat_long2b)
 nrow(bat_long_sum) # dataset before made wide, then long
 nrow(bat_long2) # dataset that has every species represented for every year and every site
+#First figure out how many levels you expect
+with(bat_long, length(unique(Site)) * length(unique(Year)) * length(unique(sppcode))) #84
+bat_all_comb &lt;- bat_long_sum %&gt;% expand(Site, Year, sppcode)
+nrow(bat_all_comb) #84
+
+bat_long_comb &lt;- left_join(bat_all_comb, bat_long_sum, by = c(&quot;Site&quot;, &quot;Year&quot;, &quot;sppcode&quot;))
+bat_long_comb$numindiv[is.na(bat_long_comb$numindiv)] &lt;- 0 # replace NA with 0
+nrow(bat_long2) == nrow(bat_long_comb) #TRUE
+
+head(bat_long_sum)
+bat_wide2 &lt;- bat_long_sum %&gt;% pivot_wider(names_from = c(sppcode, Year), 
+                                          values_from = numindiv,
+                                          values_fill = 0)
+head(bat_wide2)
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
 head(wetdat)
 
@@ -2809,8 +2872,7 @@ wetdat_long_inv &lt;- wetdat_long %&gt;% filter(sppcode %in% inv_list)
 wetdat_sum &lt;- wetdat_long_inv %&gt;% group_by(sppcode) %&gt;% 
                                   summarize(pct_sites = sum(present)/n()*100, 
                                            .groups = &#39;keep&#39;)
-
-
+wetdat_sum
 library(tidyverse)
 library(forestNETN)
 library(rgdal)
@@ -2969,17 +3031,39 @@ wetinv &lt;- wetinv1 %&gt;% group_by(Year) %&gt;%
 
 wetinv #40 % of plots both years
 
-acad &lt;- joinLocEvent(park = &quot;ACAD&quot;, from = 2018, to = 2018)
-length(unique(acad$Plot_Number))
-acad_tree_dist &lt;- sumTreeDBHDist(park = &quot;ACAD&quot;, status = &#39;live&#39;)
+# In case you&#39;re starting from scratch
+library(tidyverse)
+bat_long &lt;- read.csv(&quot;./data/example_data/fake_bats.csv&quot;)
+bat_long &lt;- bat_long %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin, 1), 1, 3),
+                                                         substr(word(Latin, 2), 1, 3))))
 
-acad_tree_max70 &lt;- acad_tree_dist %&gt;% arrange(desc(d70_79.9))
-head(acad_tree_max70) # ACAD-124
+MYOSEP_sum &lt;- bat_long %&gt;% filter(sppcode == &quot;MYOSEP&quot;) %&gt;% 
+                           group_by(Site, Year) %&gt;% 
+                           summarize(num_bats = sum(ifelse(!is.na(Latin), 1, 0)), 
+                                     .groups = &#39;drop&#39;) 
 
-# If you wanted to pull out the top record for that size class, you can also do one of the two options below
-acad_top_70 &lt;- acad_tree_dist[which.max(acad_tree_dist$d70_79.9),] #The ugly base R approach 
-acad_top_70_tidy &lt;- acad_tree_dist %&gt;% arrange(desc(d70_79.9)) %&gt;% slice(1) #The tidyverse approach
-head(acad_top_70)
+head(MYOSEP_sum) # Note only the site and years where MYOSEP was found are listed. Next lines add those back before pivot
+bat_site_year &lt;- bat_long %&gt;% expand(Site, Year)
+
+MYOSEP_comp &lt;- bat_site_year %&gt;% left_join(., MYOSEP_sum, by = c(&quot;Site&quot;, &quot;Year&quot;)) 
+MYOSEP_comp$num_bats[is.na(MYOSEP_comp$num_bats)] &lt;- 0 # Replace all the NAs created by left join with 0
+
+MYOSEP_wide &lt;- MYOSEP_comp %&gt;% arrange(Site, Year) %&gt;% 
+                               pivot_wider(names_from = Year, values_from = num_bats, values_fill = 0)
+head(MYOSEP_wide)
+# If you&#39;re starting from scratch
+wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
+wetdat_prep &lt;- wetdat %&gt;% mutate(sppcode = toupper(paste0(substr(word(Latin_Name, 1), 1, 3),
+                                                          substr(word(Latin_Name, 2), 1, 3)))) 
+
+wetdat_dist &lt;- wetdat_prep %&gt;% distinct(Site_Name, Year) # makes tibble of all site, year combinations, but doesn&#39;t add any like expand
+
+wetdat_wide &lt;- wetdat_prep %&gt;% filter(Protected == TRUE) %&gt;% 
+                               select(Site_Name, Year, sppcode, Ave_Cov) %&gt;% 
+                               pivot_wider(names_from = sppcode, values_from = Ave_Cov, values_fill = 0) %&gt;% 
+                               left_join(wetdat_dist, ., by = c(&quot;Site_Name&quot;, &quot;Year&quot;)) 
+wetdat_wide[, c(&quot;AREBUL&quot;, &quot;POGOPH&quot;, &quot;CALTUB&quot;)][is.na(wetdat_wide[, c(&quot;AREBUL&quot;, &quot;POGOPH&quot;, &quot;CALTUB&quot;)])] &lt;- 0
+
 acad_exo &lt;- makeSppList(park = &quot;ACAD&quot;, from = 2019, to = 2019, speciesType = &quot;exotic&quot;) 
 acad_exo &lt;- acad_exo %&gt;% mutate(present = ifelse(Exotic == TRUE &amp; !is.na(Exotic), 1, 0))
 head(acad_exo)

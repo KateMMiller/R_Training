@@ -1,6 +1,6 @@
 #### Data Wrangling II
 
-<h2>Reshaping Data</h2>
+<details open><summary class='drop'>Reshaping Data I</summary>
 Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which is the structure database tables often take, consists of each row being an observation (ie if there are 3 visits to a site, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, number of critters, % plant cover, etc). In summary tables, we often want to reshape the data to be wide, so that there's only one row per plot, a column for each visit, or species, and the abundance of that species as the value in the cell. 
 
 We're going to work with a fake bat dataset to see how this works. To get started, load the dataset and packages, as shown below.
@@ -23,14 +23,13 @@ bat_long_sum <- bat_long %>% group_by(Site, Year, sppcode) %>%
 
 head(bat_long_sum)
 ```
-In case you don't follow what I just did, there are 3 main steps that happened above. First, we used the word() function to pull out the genus (word(Latin, 1)) and species (word(Latin, 2)). The substr() function is taking the first through third characters of each genus and species. The paste0 function is pasting the first three characters of genus and species together. The toupper is making them all capitalized. Note that the 0 after paste means not to separate the elements of the paste. If you wanted to separate the elements by a underscore, you'd use paste instead of paste0, like paste(element1, element2, sep = "_").
+If you didn't follow what I just did, there are 3 main steps that happened above. First, we used the word() function to pull out the genus (word(Latin, 1)) and species (word(Latin, 2)). The substr() function is taking the first through third characters of each genus and species. The paste0 function is pasting the first three characters of genus and species together. The toupper is making them all capitalized. Note that the 0 after paste means not to separate the elements of the paste. If you wanted to separate the elements by a underscore, you'd use paste instead of paste0, like paste(element1, element2, sep = "_").
 
 To make this wide, we're essentially going to make a pivot table using functions in tidyr. There are two functions you can use. The spread() function was original to tidyr, is what I know the best, and still performs faster on larger datasets than pivot_wider(), the replacement for spread. I show both options, so you can use whichever function makes the most sense to you. 
 ```{r,c59, echo=T}
 bat_wide <- bat_long_sum %>% spread(key = "sppcode", value = "numindiv") #retired spread function
-bat_wide
 bat_wide2 <- bat_long_sum %>% pivot_wider(names_from = "sppcode", values_from = "numindiv") #replacement in tidyr
-bat_wide2
+bat_wide
 
 ```
 Note the NAs for the various species. That's because original dataset didn't have a data point for that combination of site/species/year. The tidyr package will assign NA when reshaping for combinations not represented in the original dataset. If there are sites that weren't sampled in a certain year, NA makes sense. However, if all sites were sampled and there just weren't any individuals found, then filling those with 0 makes sense, and you can tell tidyr to fill blanks with 0 when you rehape the data. This is a handy feature, but it's not to be abused. <b>You should always think carefully before automatically filling blanks with 0s.</b>
@@ -60,7 +59,45 @@ nrow(bat_long2) # dataset that has every species represented for every year and 
 ```
 Both functions above are keeping a Site and Year column. In the gather function, we're telling R which ones not to make long. In the pivot_longer, we're telling R which columns to gather, rather than which columns to ignore. I show both the old and new approach, because the pivot_### functions are still relatively new, slower with big datasets, and I find more examples online of the old approaches. But, personally I find the pivot_### functions to be more intuitive than gather/spread, so I've started using them more.
 
-This may seem like a lot of work for something you could do by hand in Excel. But, if you have a huge dataset that only stores records of species that were present, this can really come in handy. For example, say we want a list of all all invasive species found in ACAD wetland sites in 2017 and we want to calculate the proportion of plots invasive species occurred in. If we don't find an invasive in a plot, there's no record of the data. Let's load the wetland dataset from before and work through that example. 
+Another way to do this, since there's almost always more than one way to do something in R, is to use expand() and joins to get all combinations of factors in your data. There's an added step of having to replace NAs from the join with 0.
+
+```{r, c61e, echo=T, results = 'hide'}
+#First figure out how many levels you expect
+with(bat_long, length(unique(Site)) * length(unique(Year)) * length(unique(sppcode))) #84
+bat_all_comb <- bat_long_sum %>% expand(Site, Year, sppcode)
+nrow(bat_all_comb) #84
+
+bat_long_comb <- left_join(bat_all_comb, bat_long_sum, by = c("Site", "Year", "sppcode"))
+bat_long_comb$numindiv[is.na(bat_long_comb$numindiv)] <- 0 # replace NA with 0
+nrow(bat_long2) == nrow(bat_long_comb) #TRUE
+
+```
+A couple of things to note in the above code:
+<ul>
+<li>Note the use of with(). This is a base R way of only having to specify a data frame once, and is handy if you have to reference multiple columns from the same data frame in a line of code.</li>
+<li>The expand() function is also introduced here. Expand is a way to create a data frame of all combinations of the factors listed, including any combinations not found in the existing data frame. For example, if no bats were found in site BubPdS in 2018, and so 2018 wasn't in the data for BubPdS, expand will add it, if 2018 was listed for any other site.</li>
+<li>If you only want site/year combinations that were in the original dataset (so no 2018 in BubPdS), use distinct() instead of expand().</li>
+<li>When you use a left join that doesn't have data in the right-hand dataset, R assigns NAs for the numindiv column with those cases. The 2nd to last line above identifies the NAs and replaces them with 0. There are tidyverse ways of doing this with replace_na() or replace(), but I find the code above more intuitive (this may be because I've used this for years pre-tidyverse)</li>
+</ul>
+
+
+<p class='ques'>Question 1: How would you create a dataset that has a column for every sample year (ie 2013-2019), a row for every site, and the number of northern long-eared bats found as the value?</p>
+
+You can also pivot on 2 columns using pivot_wider. To demonstrate, let's pivot on sppcode and Year. 
+```{r, c61d, echo=T}
+head(bat_long_sum)
+bat_wide2 <- bat_long_sum %>% pivot_wider(names_from = c(sppcode, Year), 
+                                          values_from = numindiv,
+                                          values_fill = 0)
+head(bat_wide2)
+```
+
+The above steps may seem like a lot of work for something you could do by hand in Excel. But, if you have a huge dataset that only stores records of species that were present, this can really come in handy. It's also repeatable and transparent. So, if you realized you did something wrong, you can fix the code and rerun everything, rather than having to redo all of the work in R by hand. 
+</details>
+<br>
+
+<details open><summary class='drop'>Reshaping Data II</summary>
+Let's work with a larger dataset to demonstrate these concepts again. Say we want a list of all invasive species found in ACAD wetland sites in 2017 and we want to calculate the proportion of plots invasive species occurred in. If we don't find an invasive in a plot, there's no record of the data. Let's load the wetland dataset from before and work through that example. 
 
 ```{r, c61b, echo=T}
 wetdat <- read.csv("./data/example_data/ACAD_wetland_data_clean.csv")
@@ -96,8 +133,10 @@ wetdat_long_inv <- wetdat_long %>% filter(sppcode %in% inv_list)
 wetdat_sum <- wetdat_long_inv %>% group_by(sppcode) %>% 
                                   summarize(pct_sites = sum(present)/n()*100, 
                                            .groups = 'keep')
-
-
 ```
+```{r, c61c, echo=T}
+wetdat_sum
+```
+Note the use of n() in the summarize() for wetdat_sum. That function counts the number of rows in each group. It's handy, but be careful. It count's every row, including rows with NAs. If you want that, n() is great. If you don't, you need to use another approach.
 
-<p class='ques'>Question 1: How would you create a wide matrix for FRSP plots in 2019 that has plots for rows, and exotic species as columns?</p>
+<p class='ques'>Question 2: How would you create a wide matrix with all protected species as columns, sites and years sampled as rows, and percent cover as the value?</p>

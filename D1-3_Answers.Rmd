@@ -174,26 +174,50 @@ Note that logical fields (ie TRUE/FALSE) are interpreted as numbers in R when yo
 <hr>
 <details open><summary class='drop'>Day 3</details>
 <br>
-<details><summary class='ques2'>Question 1: How many plots were sampled in ACAD in 2018?</summary>
-```{r, c112,echo=T}
-acad <- joinLocEvent(park = "ACAD", from = 2018, to = 2018)
-length(unique(acad$Plot_Number))
+<details><summary class='ques2'>Question 1: How would you create a dataset that has a column for every sample year (ie 2013-2019), a row for every site, and the number of northern long-eared bats found as the value? </summary>
+```{r, c112, echo=T}
+# In case you're starting from scratch
+library(tidyverse)
+bat_long <- read.csv("./data/example_data/fake_bats.csv")
+bat_long <- bat_long %>% mutate(sppcode = toupper(paste0(substr(word(Latin, 1), 1, 3),
+                                                         substr(word(Latin, 2), 1, 3))))
+
+MYOSEP_sum <- bat_long %>% filter(sppcode == "MYOSEP") %>% 
+                           group_by(Site, Year) %>% 
+                           summarize(num_bats = sum(ifelse(!is.na(Latin), 1, 0)), 
+                                     .groups = 'drop') 
+
+head(MYOSEP_sum) # Note only the site and years where MYOSEP was found are listed. Next lines add those back before pivot
+bat_site_year <- bat_long %>% expand(Site, Year)
+
+MYOSEP_comp <- bat_site_year %>% left_join(., MYOSEP_sum, by = c("Site", "Year")) 
+MYOSEP_comp$num_bats[is.na(MYOSEP_comp$num_bats)] <- 0 # Replace all the NAs created by left join with 0
+
+MYOSEP_wide <- MYOSEP_comp %>% arrange(Site, Year) %>% 
+                               pivot_wider(names_from = Year, values_from = num_bats, values_fill = 0)
+head(MYOSEP_wide)
 ```
 </details>
 <br>
 
-<details><summary class='ques2'>Question 2: Which plot in ACAD has the highest density of live trees in the 90-99.9cm size class for any year?</summary>
+<details><summary class='ques2'>Question 2: How would you create a wide matrix with all protected species as columns, sites and years sampled as rows, and percent cover as the value?</summary>
 ```{r, c113,echo=T}
-acad_tree_dist <- sumTreeDBHDist(park = "ACAD", status = 'live')
+# If you're starting from scratch
+wetdat <- read.csv("./data/example_data/ACAD_wetland_data_clean.csv")
+wetdat_prep <- wetdat %>% mutate(sppcode = toupper(paste0(substr(word(Latin_Name, 1), 1, 3),
+                                                          substr(word(Latin_Name, 2), 1, 3)))) 
 
-acad_tree_max70 <- acad_tree_dist %>% arrange(desc(d70_79.9))
-head(acad_tree_max70) # ACAD-124
+wetdat_dist <- wetdat_prep %>% distinct(Site_Name, Year) # makes tibble of all site, year combinations, but doesn't add any like expand
 
-# If you wanted to pull out the top record for that size class, you can also do one of the two options below
-acad_top_70 <- acad_tree_dist[which.max(acad_tree_dist$d70_79.9),] #The ugly base R approach 
-acad_top_70_tidy <- acad_tree_dist %>% arrange(desc(d70_79.9)) %>% slice(1) #The tidyverse approach
-head(acad_top_70)
+wetdat_wide <- wetdat_prep %>% filter(Protected == TRUE) %>% 
+                               select(Site_Name, Year, sppcode, Ave_Cov) %>% 
+                               pivot_wider(names_from = sppcode, values_from = Ave_Cov, values_fill = 0) %>% 
+                               left_join(wetdat_dist, ., by = c("Site_Name", "Year")) 
+wetdat_wide[, c("AREBUL", "POGOPH", "CALTUB")][is.na(wetdat_wide[, c("AREBUL", "POGOPH", "CALTUB")])] <- 0
+
 ```
+Note that I used distinct() instead of expand() because not every site is sampled every year. I used distinct to add site/year combinations that were sampled but where protected species weren't found. Expand would have added a record for every year in the data to every site. 
+
 </details>
 <br>
 <details><summary class='ques2'>Question 3: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary>
