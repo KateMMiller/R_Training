@@ -265,5 +265,24 @@ You may have chosen other things to do than I did. Here are a couple of changes 
 Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars. lwd is the weight of the line. 
 </details>
 <br>
+
+<details><summary class='ques2'>Question 5: Filter the acad_ph_final data frame to only include 2019 data and create a plot with months as the X axis, and includes points, a loess smooth with span = 1, and a facet on site.</summary>
+```{r, c115b, echo=T}
+head(acad_ph_final)
+acad_ph_2019 <- acad_ph_final %>% filter(year == 2019) %>% mutate(mon_abr = format(Date, "%b"))
+
+plot19 <- ggplot(acad_ph_2019, aes(x = Date, y = Value))+
+             geom_point()+
+             labs(y = "pH")+
+             geom_smooth(method = 'loess', span = 1, se = FALSE)+
+             scale_x_date(date_breaks = "1 month",
+                          date_labels = "%b")+ #%b is months names abbreviated
+             facet_wrap(~fullname, ncol = 4)+
+             theme_bw()
+
+plot19
+```
+
+
 </details>
 <hr>

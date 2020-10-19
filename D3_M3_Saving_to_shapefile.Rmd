@@ -159,4 +159,6 @@ map_leaf
 
 </details>
 <br>
+
+That's the end of Day 3! Please see the assignments tab for further reading, complete the feedback form, and keep on coding!
 <hr>
