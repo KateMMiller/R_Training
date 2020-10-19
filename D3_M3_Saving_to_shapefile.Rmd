@@ -58,9 +58,6 @@ I only have time to scratch the surface on this topic, but I think it's useful t
 I'll show you two ways to plot data spatially in R. First is using ggplot, and second is using leaflet.
 
 Let's load the wetland shapefile we just created, along with a layer that plots wetlands in the vegetation map and the park fee boundary.
-```{r d1, echo=T, eval=FALSE}
-install.packages('ggspatial')
-```
 ```{r, d1b, echo=T, results = 'hide'}
 # Load packages
 library(rgdal) # for readOGR

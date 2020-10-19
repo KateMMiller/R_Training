@@ -386,17 +386,19 @@ Installing required software
 <p><br></p>
 <details open>
 <p><summary class="drop">Install important libraries</summary> One of the great things about R is that users can build and share their own packages (AKA libraries) to add functionality to R. It’s a similar idea as extensions in ArcGIS. To use other libraries, you need to first download/install them, and then you need to turn them on in your R session. Some of the packages take awhile to download. To save time during training, please try to install these prior to the first day. You can do that by opening RStudio, and in the window on the left (the console) paste the code below and press enter.</p>
-<pre class="r"><code>install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;))
+<pre class="r"><code>install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;, &quot;ggspatial&quot;, &quot;leaflet&quot;))
 devtools::install_github(&quot;katemmiller/forestNETN&quot;)
-devtools::install_github(&quot;NCRN/NCRNWater&quot;)
-devtools::install_github(&quot;NCRN/NCRNbirds&quot;)</code></pre>
-<p>Next check that this worked by pasting the code below:</p>
+devtools::install_github(&quot;NCRN/NCRNWater&quot;)</code></pre>
+<p>Next check that this worked by pasting and running the code below:</p>
 <pre class="r"><code>library(tidyverse)
-library(devtools)
 library(forestNETN)
-library(NCRNWater)
-library(NCRNbirds)</code></pre>
+library(NCRNWater)</code></pre>
 If you run into any problems, we can troubleshoot the first day. We’ll also discuss what the code above means the first day.
+</details>
+<p><br></p>
+<details open>
+<p><summary class="drop">Join MS Team and download data</summary> I set up a MS Team called ACAD_R_Training_Info to serve up the data and for us to use to post questions/info throughout the training. The link to the team is <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">here</a>. Please make sure you can join this team before training starts, and let me know if you have problems.</p>
+We’ll be using several example datasets throughout the training. It will help if you can download the data prior to the first day, especially if your connection is slow. Unfortunately there’s a firewall between Sharepoint/Teams and R, so we can’t download the data directly in R. To download the data, click on this <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> link (also posted in the files channel). We’ll set up file structure and unzip the data files on the first day.
 </details>
 <p><br></p>
 <details open>
@@ -642,7 +644,8 @@ Now run the code chunk below to set up the same file structure.
 invisible(lapply(subfolders, function(x){
   if(!dir.exists(x)){dir.create(paste(getwd(), x, sep = &#39;/&#39;))}
   }))</code></pre>
-<p>Now we want to download the data to work with throughout the training. Unfortunately there’s a firewall between Sharepoint/Teams and R, so we can’t download the data directly in R. To download the NETN data, go to the <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">ACAD_R_Training_Info Team</a> and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the <b>data</b> folder you created in the previous step. Then run the code below.</p>
+<p>Now, copy the data.zip file that you downloaded before we started into the <b>data</b> folder you created in the previous step. Then run the code chunk below.</p>
+<p>If you haven’t downloaded the example data yet, please do so by going to ACAD_R_Training_Info Team and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> in the files channel.</p>
 <pre class="r"><code>list.files(&quot;./data&quot;) # check that you have data.zip in your data folder</code></pre>
 <pre><code>## [1] &quot;data.zip&quot;</code></pre>
 <pre class="r"><code>unzip(&quot;./data/data.zip&quot;, exdir = &quot;./data&quot;)
@@ -2001,7 +2004,6 @@ Finally, writeOGR by default will not allow you to overwrite an existing file. W
 <p><summary class="drop">GIS Mapping in R</summary> I only have time to scratch the surface on this topic, but I think it’s useful to know that anything you can do in ArcGIS with vector and raster data, you can do in R. GIS in R requires more understanding about what’s happening under the hood, and sometimes it isn’t worth the effort in R. It depends on what you need to do, how involved the process is, and whether you need to document the process and/or repeat it over and over. For example, I’ve found the raster package in R to be relatively easy to use and faster at processing large files (e.g. NLCD rasters), and I almost always use R when I’m working with rasters. In contrast, making nice maps that need a lot of tweaking (eg moving plot labels to prevent overlap, multiple legends, etc), I tend to use ArcGIS. But, to give you an idea of the things you can do in R,</p>
 <p>I’ll show you two ways to plot data spatially in R. First is using ggplot, and second is using leaflet.</p>
 <p>Let’s load the wetland shapefile we just created, along with a layer that plots wetlands in the vegetation map and the park fee boundary.</p>
-<pre class="r"><code>install.packages(&#39;ggspatial&#39;)</code></pre>
 <pre class="r"><code># Load packages
 library(rgdal) # for readOGR
 library(ggplot2) #for ggplot functions
@@ -2076,7 +2078,7 @@ plot(wet_rich_dd) #check that they still plot spatially</code></pre>
 
 park_tile_basic = &quot;https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg&quot;
 
-leaflet() %&gt;% 
+map_leaf &lt;- leaflet() %&gt;% 
  setView(lng = -68.312,
          lat = 44.25,
          zoom = 10) %&gt;% 
@@ -2092,17 +2094,9 @@ leaflet() %&gt;%
                   fillOpacity = 1,
                   stroke = FALSE) %&gt;% 
  addScaleBar(position=&#39;bottomright&#39;) %&gt;% 
- scaleBarOptions(maxWidth=10, metric=TRUE) </code></pre>
-<pre><code>## $maxWidth
-## [1] 10
-## 
-## $metric
-## [1] TRUE
-## 
-## $imperial
-## 
-## $updateWhenIdle
-## [1] TRUE</code></pre>
+ scaleBarOptions(maxWidth=10, metric=TRUE) 
+
+map_leaf</code></pre>
 </details>
 </div>
 <div id="assignments-2" class="section level4">
@@ -2553,15 +2547,12 @@ Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars.
 
 
 
-install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;))
+install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;, &quot;ggspatial&quot;, &quot;leaflet&quot;))
 devtools::install_github(&quot;katemmiller/forestNETN&quot;)
 devtools::install_github(&quot;NCRN/NCRNWater&quot;)
-devtools::install_github(&quot;NCRN/NCRNbirds&quot;)
 library(tidyverse)
-library(devtools)
 library(forestNETN)
 library(NCRNWater)
-library(NCRNbirds)
 install.packages(c(&quot;tidyverse&quot;, &quot;rgdal&quot;, &quot;devtools&quot;))
 devtools::install_github(&quot;katemmiller/forestNETN&quot;)
 devtools::install_github(&quot;NCRN/NCRNWater&quot;)
@@ -3048,7 +3039,6 @@ proj4string(wetdat_rich) &lt;- CRS(&quot;+init=epsg:26919&quot;)
 writeOGR(wetdat_rich, dsn = &quot;./shapefiles&quot;, layer = &quot;wetdat_rich&quot;, driver = &quot;ESRI Shapefile&quot;, 
          overwrite_layer = TRUE) # overwrite is in case you need to update your shapefile.
 
-install.packages(&#39;ggspatial&#39;)
 # Load packages
 library(rgdal) # for readOGR
 library(ggplot2) #for ggplot functions
@@ -3097,11 +3087,12 @@ ggmap
 wet_rich_dd &lt;- spTransform(wet_rich_shp, CRS=&quot;+proj=longlat +datum=WGS84&quot;)
 plot(wet_rich_dd) #check that they still plot spatially
 install.packages(&#39;leaflet&#39;)
+#devtools::install_github(&#39;rstudio/leaflet&#39;)
 library(leaflet)
 
 park_tile_basic = &quot;https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg&quot;
 
-leaflet() %&gt;% 
+map_leaf &lt;- leaflet() %&gt;% 
  setView(lng = -68.312,
          lat = 44.25,
          zoom = 10) %&gt;% 
@@ -3119,7 +3110,7 @@ leaflet() %&gt;%
  addScaleBar(position=&#39;bottomright&#39;) %&gt;% 
  scaleBarOptions(maxWidth=10, metric=TRUE) 
 
-
+map_leaf
 df[3, c(&quot;domSpp&quot;)] # option 1
 df[3, 4] # option 2
 df$numtrees &lt;- as.integer(df$numtrees)

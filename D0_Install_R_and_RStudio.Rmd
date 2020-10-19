@@ -23,22 +23,26 @@ The installer for RStudio for PCs can be downloaded <a href="https://download1.r
 One of the great things about R is that users can build and share their own packages (AKA libraries) to add functionality to R. It's a similar idea as extensions in ArcGIS. To use other libraries, you need to first download/install them, and then you need to turn them on in your R session. Some of the packages take awhile to download. To save time during training, please try to install these prior to the first day. You can do that by opening RStudio, and in the window on the left (the console) paste the code below and press enter.
 
 ```{r install_packages, echo=T, eval=F}
-install.packages(c("tidyverse", "devtools", "rgdal"))
+install.packages(c("tidyverse", "devtools", "rgdal", "ggspatial", "leaflet"))
 devtools::install_github("katemmiller/forestNETN")
 devtools::install_github("NCRN/NCRNWater")
-devtools::install_github("NCRN/NCRNbirds")
 ```
 
-Next check that this worked by pasting the code below:
+Next check that this worked by pasting and running the code below:
 ```{r check_install, echo=T, results='hide', eval=FALSE}
 library(tidyverse)
-library(devtools)
 library(forestNETN)
 library(NCRNWater)
-library(NCRNbirds)
 ```
 
 If you run into any problems, we can troubleshoot the first day. We'll also discuss what the code above means the first day.
+</details>
+<br>
+
+<details open><summary class='drop'>Join MS Team and download data</summary>
+I set up a MS Team called ACAD_R_Training_Info to serve up the data and for us to use to post questions/info throughout the training. The link to the team is <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">here</a>. Please make sure you can join this team before training starts, and let me know if you have problems. 
+
+We'll be using several example datasets throughout the training. It will help if you can download the data prior to the first day, especially if your connection is slow. Unfortunately there's a firewall between Sharepoint/Teams and R, so we can't download the data directly in R. To download the data, click on this <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> link (also posted in the files channel). We'll set up file structure and unzip the data files on the first day. 
 </details>
 <br>
 

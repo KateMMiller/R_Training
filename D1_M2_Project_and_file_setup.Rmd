@@ -14,7 +14,9 @@ invisible(lapply(subfolders, function(x){
 
 ```
 
-Now we want to download the data to work with throughout the training. Unfortunately there's a firewall between Sharepoint/Teams and R, so we can't download the data directly in R. To download the NETN data, go to the <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">ACAD_R_Training_Info Team</a> and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data/data.zip">data.zip</a> in the files channel. Copy the data.zip file to the <b>data</b> folder you created in the previous step. Then run the code below. 
+Now, copy the data.zip file that you downloaded before we started into the <b>data</b> folder you created in the previous step. Then run the code chunk below. 
+
+If you haven't downloaded the example data yet, please do so by going to ACAD_R_Training_Info Team and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> in the files channel. 
 
 ```{r c3pre, echo=FALSE, results='hide'}
 zips <- c("./data/example_data", "./data/NETN_forest_csvs", "./data/NETN_water_data", "./data/NETN_bird_data")
