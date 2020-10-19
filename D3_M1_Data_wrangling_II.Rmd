@@ -141,3 +141,4 @@ Note the use of n() in the summarize() for wetdat_sum. That function counts the 
 
 <p class='ques'>Question 2: How would you create a wide matrix with all protected species as columns, sites and years sampled as rows, and percent cover as the value?</p>
 </details>
+<hr>

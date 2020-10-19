@@ -80,8 +80,10 @@ head(wet_rich_shp@coords) # Where the coordinates are stored
 ```{r, d1c, echo=T}
 plot(bounds)
 ```
-To prepare the shapefile polygons for plotting in ggplot, we have to fortify them to make them into a spatial data frame. 
-```{r d2, echo=T}
+
+To prepare the shapefile polygons for plotting in ggplot, we first have to fortify them to make them into a spatial data frame. 
+
+```{r d2, echo=T, results = 'hide'}
 # Prepare shapefiles for plotting
 bounds2 <- fortify(bounds) # 
 str(bounds2) # note the data frame structure that describes the boundary data
@@ -100,7 +102,7 @@ Now to map the different shapefiles using spatial geoms from ggspatial.
 
 ```{r, d3, echo=T}
 ggmap <- ggplot()+
-         coord_sf(crs = 26919)+  # set coordinate system to NAD83 UTM Zone 19N      
+         coord_sf(crs = 26919)+  # set coordinate system to NAD83 UTM Zone 19N using EPSG code      
          geom_polypath(data = bounds2, aes(x = long, y = lat, group = group),
                        fill = "grey", alpha = 0.4)+
          geom_polypath(data = wetmap2, aes(x = long, y = lat, group = group),
@@ -110,7 +112,7 @@ ggmap <- ggplot()+
                                y = lat, 
                                color = Site_Type),
                             shape = 17)+
-         theme_void() # because I don't like ggplot's grids in default grid
+         theme_minimal() # because I don't like ggplot's grids in default grid
 
 ggmap
 
@@ -124,14 +126,9 @@ To use leaflet, you have to have all of your spatial data in WGS84 instead of NA
 
 ```{r, d3b, echo=T, results = 'hide'}
 wet_rich_dd <- spTransform(wet_rich_shp, CRS="+proj=longlat +datum=WGS84")
+```
+```{r, d3c, echo=T, eval=F}
 plot(wet_rich_dd) #check that they still plot spatially
-```
-
-```{r, d4, echo=T, eval=FALSE}
-install.packages('leaflet')
-```
-```{r, d4b, echo=F, results='hide'}
-#devtools::install_github('rstudio/leaflet')
 ```
 
 ```{r, d5, echo=T, results='hide'}
@@ -161,3 +158,5 @@ map_leaf
 ```
 
 </details>
+<br>
+<hr>

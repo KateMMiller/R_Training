@@ -175,7 +175,7 @@ Note that logical fields (ie TRUE/FALSE) are interpreted as numbers in R when yo
 <details open><summary class='drop'>Day 3</details>
 <br>
 <details><summary class='ques2'>Question 1: How would you create a dataset that has a column for every sample year (ie 2013-2019), a row for every site, and the number of northern long-eared bats found as the value? </summary>
-```{r, c112, echo=T}
+```{r, c112, echo=T, results = 'hide'}
 # In case you're starting from scratch
 library(tidyverse)
 bat_long <- read.csv("./data/example_data/fake_bats.csv")
@@ -195,8 +195,11 @@ MYOSEP_comp$num_bats[is.na(MYOSEP_comp$num_bats)] <- 0 # Replace all the NAs cre
 
 MYOSEP_wide <- MYOSEP_comp %>% arrange(Site, Year) %>% 
                                pivot_wider(names_from = Year, values_from = num_bats, values_fill = 0)
-head(MYOSEP_wide)
 ```
+```{r, c112b, echo=T}
+MYOSEP_wide
+```
+
 </details>
 <br>
 

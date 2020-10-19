@@ -150,7 +150,6 @@ head(wetdat_rev_tidy)
 
 </details>
 </br>
-
 That's the end of Day 1! Be sure to save your Day 1 R script, try to answer the questions from today, and complete the tasks in the Assignments tab as you have time. Answers to the questions are in the Answers tab. Note that I provide one or a few solutions to get the answer to the questions, and it's fine if you come up with your own. That's how coding in R works!
 
 Lastly, don't worry if you don't understand everything. The key here was to expose you to the many different ways to work with and view data in R. Learning R requires repetition, determination, and patience. Just stick with it!
