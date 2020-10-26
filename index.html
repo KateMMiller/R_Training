@@ -1141,7 +1141,7 @@ summary(wetdat) # summarize each field based on data type</code></pre>
 <details open>
 <p><summary class="drop">Check and fix numeric fields that R reads as a character</summary> Both the summary and str functions show an issue with the Avg_Cov column: R classified this as a character, but we want it to be numeric. If R classified this as a character, it means that at least one record within this column contains something that isn’t a number. If your data frame isn’t huge, you can just run View(wetdat) to see the data and scroll/sort until you find the culprit. Strings will typically sort to the top or bottom of an otherwise numeric column.</p>
 <pre class="r"><code>View(wetdat)</code></pre>
-<p>Just by sorting Ave_Cov in the view above, you can see that there are 2 records with &lt;0.1 instead of 0.1. Also, note the row numbers to far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code, the row numbers are updated.</p>
+<p>Just by sorting Ave_Cov in the view above, you can see that there are 2 records with &lt;0.1 instead of 0.1. Also, note the row numbers to the far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code, the row numbers are updated.</p>
 <p>Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I’m going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn’t the slickest approach because I’m pretending that I don’t know which record and which symbols are causing the problems. First, I’m going to create a temporary field called Ave_Cov_num that’s a numeric version of Ave_Cov.</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create new field that converts Ave_Cov to numeric</code></pre>
 <pre><code>## Warning: NAs introduced by coercion</code></pre>
@@ -1327,12 +1327,11 @@ sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a co
 ##   SEN-01   34    0    0
 ##   SEN-02   41    0    0
 ##   SEN-03   33    0    0</code></pre>
-<pre class="r"><code>sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset</code></pre>
+<pre class="r"><code>sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset (truncated for printing here).</code></pre>
 <pre><code>##  [1] &quot;American mountain ash&quot; &quot;apple&quot;                 &quot;Asian bittersweet&quot;    
 ##  [4] &quot;bigleaf aster&quot;         &quot;bigtooth aspen&quot;        &quot;bird vetch&quot;           
 ##  [7] &quot;black chokeberry&quot;      &quot;black crowberry&quot;       &quot;black huckleberry&quot;    
 ## [10] &quot;black spruce&quot;</code></pre>
-<pre class="r"><code># I truncated to first 10 just to keep the output short.</code></pre>
 <p class="ques">
 Question 1: There’s a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?
 </p>
@@ -2959,8 +2958,8 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset
-# I truncated to first 10 just to keep the output short.
+sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset (truncated for printing here).
+
 tree &lt;- data.frame(plot = c(&quot;p1&quot;,&quot;p1&quot;,&quot;p1&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p4&quot;), 
                   treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
                   species = c(&quot;ACERUB&quot; ,&quot;PINSTR&quot;, &quot;PINSTR&quot;, &quot;QUERUB&quot;, &quot;PICRUB&quot;, 

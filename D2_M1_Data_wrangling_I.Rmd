@@ -38,7 +38,7 @@ Both the summary and str functions show an issue with the Avg_Cov column: R clas
 ```{r, c20b, echo=T, eval=FALSE}
 View(wetdat)
 ```
-Just by sorting Ave_Cov in the view above, you can see that there are 2 records with <0.1 instead of 0.1. Also, note the row numbers to far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code, the row numbers are updated. 
+Just by sorting Ave_Cov in the view above, you can see that there are 2 records with <0.1 instead of 0.1. Also, note the row numbers to the far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code, the row numbers are updated. 
 
 Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I'm going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn't the slickest approach because I'm pretending that I don't know which record and which symbols are causing the problems. First, I'm going to create a temporary field called Ave_Cov_num that's a numeric version of Ave_Cov.
 
@@ -195,8 +195,8 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset
-# I truncated to first 10 just to keep the output short.
+sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset (truncated for printing here).
+
 ```
 
 <p class='ques'>Question 1: There's a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</p>
