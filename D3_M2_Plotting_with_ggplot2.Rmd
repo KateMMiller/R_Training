@@ -7,6 +7,13 @@ To get started with ggplot2, we need to make a dataset to plot. Instead of start
 Note this is also a demonstration of how building packages for your own programs can really save you time performing tasks that you're likely to do over and over.
 
 First you need to load the forestNETN package and import the data.
+
+```{r orgD3M2, echo=F, eval=F, include=F}
+#--------------------
+#    Day 3 Mod 2
+#--------------------
+```
+
 ```{r, c66, echo=T, results='hide'}
 library(forestNETN)
 library(tidyverse)

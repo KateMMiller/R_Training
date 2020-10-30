@@ -6,6 +6,13 @@ On the first day, we talked about summarizing data for the entire dataset by usi
 The summarize() function that we're going to use is similar to the mutate() function we saw earlier. The main difference is that mutate() creates a new field that always has the exact number of rows as the original dataset. The summarize() function will return only as many rows are there are unique combinations of groups in your group_by(). For example, if your grouping variables are stream and years, and say you have 3 streams and 2 years, summarize will return 6 rows (3 streams X 2 years).   
 
 To demonstrate how this works, let's load a cleaned version of the wetland dataset from before. Let's start by counting the number of species found in each site by year.
+
+```{r orgD2M4, echo=F, eval=F, include=F}
+#--------------------
+#    Day 2 Mod 4
+#--------------------
+```
+
 ```{r, c27, echo=T, results='hide'}
 wetdat <- read.csv('./data/example_data/ACAD_wetland_data_clean.csv')
 head(wetdat)

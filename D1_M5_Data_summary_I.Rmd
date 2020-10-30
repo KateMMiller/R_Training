@@ -3,6 +3,12 @@
 <h2>Data Summary I</h2>
 Using the df we created in the previous section, let's perform some basic summary statistics. Base R has a number of summary statistics built into it that are really useful, including mean, min, and max. These will come in handy when we start summarizing the data for our parks. 
 
+```{r orgD1M5, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Mod 5
+#--------------------
+```
+
 ```{r, c15, echo=T, results='show'}
 min(df$numtrees)
 max(df$numtrees)

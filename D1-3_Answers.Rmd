@@ -1,7 +1,13 @@
 <details open><summary class='drop'>Day 1</summary>
 <br>
 <details><summary class='ques2'>Question 1: How do you find the value of the 3rd row of domSpp?</summary>
-```{r, c105,echo=T, results='show'}
+```{r orgD1Ans, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Answers
+#--------------------
+```
+
+```{r, c105, echo=T, results='show'}
 df[3, c("domSpp")] # option 1
 df[3, 4] # option 2
 ```
@@ -84,6 +90,12 @@ head(wetdat_sort_tidy)
 <details open><summary class='drop'>Day 2</summary>
 <br>
 <details><summary class='ques2'>Question 1: There's a Latin name that needs to be fixed (hint look for non-letter symbols). How would you find that record?</summary>
+
+```{r orgD2Ans, echo=F, eval=F, include=F}
+#--------------------
+#    Day 2 Answers
+#--------------------
+```
 
 ```{r, c110, echo=T, results='show'}
 sort(unique(wetdat$Latin_Name))[1:10] # Low-tech way: use your eyes to spot the "Alnus incana++". I truncated to first 10.
@@ -175,6 +187,14 @@ Note that logical fields (ie TRUE/FALSE) are interpreted as numbers in R when yo
 <details open><summary class='drop'>Day 3</details>
 <br>
 <details><summary class='ques2'>Question 1: How would you create a dataset that has a column for every sample year (ie 2013-2019), a row for every site, and the number of northern long-eared bats found as the value? </summary>
+
+```{r orgD3Ans, echo=F, eval=F, include=F}
+#--------------------
+#    Day 3 Answers
+#--------------------
+```
+
+
 ```{r, c112, echo=T, results = 'hide'}
 # In case you're starting from scratch
 library(tidyverse)

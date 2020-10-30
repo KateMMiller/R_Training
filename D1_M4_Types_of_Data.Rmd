@@ -3,6 +3,13 @@
 Now we're going to start coding. The best way to work through these lessons will be to take the code from this website and transfer it to an R Script in your R_training.Rprj. To start that, go to <b>File > New File > R Script</b> (the <img src="./images/new_script.jpg" alt="new script" width="30px"> icon will do the same), and name the script Day_1.R, and save it to your rscripts subfolder. As you get more comfortable coding in R, try pushing yourself to type the commands, rather than copying and pasting. You'll learn to code faster by typing, even if you're just mimicking what you see in the training document. 
 
 Before we go too far, let's make sure you have the tidyverse package loaded by running the code chunk below. This is the only dependency we'll need for today's code.
+
+```{r orgD1M4, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Mod 4
+#--------------------
+```
+
 ```{r, c5b, echo=T, eval=F}
 library(tidyverse)
 ```

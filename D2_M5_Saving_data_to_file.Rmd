@@ -2,6 +2,13 @@
 
 The last thing today is how to write the data you're working on to a file in your computer.
 <p class='code'>The following code saves the wetland data you cleaned up to file:</p>
+
+```{r orgD2M5, echo=F, eval=F, include=F}
+#--------------------
+#    Day 2 Mod 5
+#--------------------
+```
+
 ```{r,c30, echo=T, results='hide'}
 write.csv(wetdat, "./data/ACAD_wetland_data_clean.csv")
 ```

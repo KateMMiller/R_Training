@@ -2,6 +2,12 @@
 <details open><summary class='drop'>Loading csv files</summary>
 For the training modules that follow, we're going to work with a larger dataset that contains some wetland plant data. First we need to load the wetland dataset, using the code below.
 
+```{r orgD1M6, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Mod 6
+#--------------------
+```
+
 ```{r, c19, echo=T, results='hide'}
 wetdat <- read.csv("./data/example_data/ACAD_wetland_data_example.csv")
 ```

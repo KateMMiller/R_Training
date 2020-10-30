@@ -7,6 +7,13 @@ We already did a bit of data wrangling with the df and wetdat data frames yester
 For this training module, we're going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100. 
 
 Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script. Then, load the tidyverse package and the wetland dataset we used yesterday.
+
+```{r orgD2M1, echo=F, eval=F, include=F}
+#--------------------
+#    Day 2 Mod 1
+#--------------------
+```
+
 ```{r, c18, echo=T, eval=F}
 library(tidyverse)
 wetdat <- read.csv("./data/example_data/ACAD_wetland_data_example.csv")

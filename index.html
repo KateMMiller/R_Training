@@ -415,8 +415,8 @@ summary {
 </div>
 
 
-<div id="acad-r-training" class="section level2 tabset tabset-pills">
-<h2>ACAD R Training</h2>
+<div id="acad-r-training-november-3---5-2020" class="section level2 tabset tabset-pills">
+<h2>ACAD R Training: November 3 - 5, 2020</h2>
 <div id="prep-for-training" class="section level3 tabset">
 <h3>Prep for Training</h3>
 <h2>
@@ -646,12 +646,6 @@ library(rgdal)
 library(forestNETN)
 library(NCRNWater)
 library(NCRNbirds)</code></pre>
-<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 4.0.3</code></pre>
-<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.0.3</code></pre>
-<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.0.3</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.0.3</code></pre>
-<pre><code>## Warning: package &#39;rgdal&#39; was built under R version 4.0.3</code></pre>
-<pre><code>## Warning: package &#39;sp&#39; was built under R version 4.0.3</code></pre>
 <p>If you get an error that says there is no package called “x”, it means that package didn’t install properly, and you should try installing the package again.</p>
 If you run into issues installing from GitHub (eg using install_github function), here are a couple of tips for troubleshooting:
 <ol>
@@ -894,6 +888,7 @@ df[7, c(1, 4)] &lt;- c(7, &quot;white_spruce&quot;) #Takes the 7th row and the f
 <pre class="r"><code>df[is.na(&quot;domSpp&quot;)] &lt;- &quot;white_oak&quot;</code></pre>
 <p>Here R is looking for a value in the domSpp column that is NA (R’s way of calling it a blank value). Since there’s only 1, this works. If there were more than 1 NA, we’d need better logic to assign the proper value to each blank. We’ll go into more detail about this later.</p>
 <p>And now, here’s the tidyverse way to replace the blank in df’s domSpp column with “white_oak”:</p>
+<pre class="r"><code>df$domSpp &lt;- df$domSpp %&gt;% replace_na(&quot;white_oak&quot;)</code></pre>
 <p>We’ll talk more about pipes (%&gt;%) later, but for now, just know that it’s taking the data on the left of the %&gt;% and doing the thing on the right to it.</p>
 <p>Finally, check whether plot is now reading in as numeric or still chr.</p>
 <pre class="r"><code>str(df) #still a char</code></pre>
@@ -2752,32 +2747,18 @@ plot19</code></pre>
 <div id="code-printout" class="section level3 tabset">
 <h3>Code printout</h3>
 <p>This tab prints all of the code chunks in this file in one long file.</p>
-<pre class="r"><code>knitr::opts_chunk$set(echo = FALSE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<pre class="r"><code>#--------------------
+#       Prep
+#--------------------
 install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;, &quot;ggspatial&quot;, &quot;leaflet&quot;))
 devtools::install_github(&quot;katemmiller/forestNETN&quot;)
 devtools::install_github(&quot;NCRN/NCRNWater&quot;)
 library(tidyverse)
 library(forestNETN)
 library(NCRNWater)
+#--------------------
+#    Day 1 Mod 1
+#--------------------
 install.packages(c(&quot;tidyverse&quot;, &quot;rgdal&quot;, &quot;devtools&quot;))
 devtools::install_github(&quot;katemmiller/forestNETN&quot;)
 devtools::install_github(&quot;NCRN/NCRNWater&quot;)
@@ -2790,6 +2771,9 @@ library(NCRNWater)
 library(NCRNbirds)
 library(tidyverse)
 library(rgdal)
+#--------------------
+#    Day 1 Mod 2
+#--------------------
 subfolders&lt;-c(&quot;data&quot;, &quot;figures&quot;, &quot;tables&quot;, &quot;rscripts&quot;, &quot;shapefiles&quot;)
 
 invisible(lapply(subfolders, function(x){
@@ -2802,9 +2786,15 @@ list.files(&quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that you have data.zip in your data folder
 unzip(&quot;./data/data.zip&quot;, exdir = &quot;./data&quot;)
 list.files(&quot;./data&quot;) # check that the unzip worked. There should be multiple folders with datasets in each.
+#--------------------
+#    Day 1 Mod 3
+#--------------------
 ?plot
 ?dplyr::filter
 help(package=dplyr)
+#--------------------
+#    Day 1 Mod 4
+#--------------------
 library(tidyverse)
 # Vector of numbers
 vec_num &lt;- c(1, 2, 3, 4, 5)
@@ -2864,6 +2854,9 @@ df$domSpp &lt;- df$domSpp %&gt;% replace_na(&quot;white_oak&quot;)
 str(df) #still a char
 df$plot &lt;- as.numeric(df$plot)
 str(df)
+#--------------------
+#    Day 1 Mod 5
+#--------------------
 min(df$numtrees)
 max(df$numtrees)
 mean(df$numtrees)
@@ -2871,6 +2864,9 @@ range(df$numtrees) #gives min and max
 summary(df)
 df$numdead &lt;- df$numtrees - df$numLive # base R version
 df &lt;- df %&gt;% mutate(numdead = numtrees - numLive) # tidyverse version. 
+#--------------------
+#    Day 1 Mod 6
+#--------------------
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
 install.packages(&quot;readxl&quot;) #only need to run once. 
 library(readxl)
@@ -2949,6 +2945,9 @@ head(wetdat_sort_tidy)
 # Tidyverse reverse sort
 wetdat_rev_tidy &lt;- wetdat %&gt;% arrange(desc(Latin_Name), desc(Site_Name))
 head(wetdat_rev_tidy)
+#--------------------
+#    Day 2 Mod 1
+#--------------------
 library(tidyverse)
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
 head(wetdat) # shows the first 6 lines of the data frame, including the names of the columns
@@ -3012,6 +3011,9 @@ length(unique(wetdat$Year)) # number of unique years
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
 sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset (truncated for printing here).
 
+#--------------------
+#    Day 2 Mod 3
+#--------------------
 tree &lt;- data.frame(plot = c(&quot;p1&quot;,&quot;p1&quot;,&quot;p1&quot;,&quot;p2&quot;,&quot;p2&quot;,&quot;p3&quot;,&quot;p4&quot;,&quot;p4&quot;), 
                   treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
                   species = c(&quot;ACERUB&quot; ,&quot;PINSTR&quot;, &quot;PINSTR&quot;, &quot;QUERUB&quot;, &quot;PICRUB&quot;, 
@@ -3074,6 +3076,9 @@ nrow(locev)
 nrow(locev_tidy)
 View(locev)
 View(locev_tidy)
+#--------------------
+#    Day 2 Mod 4
+#--------------------
 wetdat &lt;- read.csv(&#39;./data/example_data/ACAD_wetland_data_clean.csv&#39;)
 head(wetdat)
 wetsum &lt;- wetdat %&gt;% mutate(present = ifelse(Ave_Cov &gt; 0 &amp; !is.na(Ave_Cov), 1, 0)) %&gt;% 
@@ -3102,8 +3107,14 @@ wetsum_yr &lt;- wetsum_pre %&gt;% group_by(Year) %&gt;%
                                       se_numspp = sd(numspp)/sqrt(numplots), 
                                       .groups = &#39;drop&#39;)
 wetsum_yr
+#--------------------
+#    Day 2 Mod 5
+#--------------------
 write.csv(wetdat, &quot;./data/ACAD_wetland_data_clean.csv&quot;)
 file.remove(&quot;./data/ACAD_wetland_data_clean.csv&quot;)
+#--------------------
+#    Day 3 Mod 1
+#--------------------
 library(tidyverse)
 bat_long &lt;- read.csv(&quot;./data/example_data/fake_bats.csv&quot;)
 head(bat_long)
@@ -3183,6 +3194,9 @@ wetdat_sum &lt;- wetdat_long_inv %&gt;% group_by(sppcode) %&gt;%
                                   summarize(pct_sites = sum(present)/n()*100, 
                                            .groups = &#39;keep&#39;)
 wetdat_sum
+#--------------------
+#    Day 3 Mod 2
+#--------------------
 library(forestNETN)
 library(tidyverse)
 importCSV(&quot;./data/NETN_forest_csvs&quot;)
@@ -3308,6 +3322,9 @@ ph_plot_site2 &lt;- ph_plot_site + scale_x_date(date_breaks = &quot;2 years&quot
                                 theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ph_plot_site2
+#--------------------
+#    Day 3 Mod 3
+#--------------------
 library(tidyverse)
 library(rgdal) # for GIS functions
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_clean.csv&quot;)
@@ -3401,6 +3418,9 @@ map_leaf &lt;- leaflet() %&gt;%
  scaleBarOptions(maxWidth=10, metric=TRUE) 
 
 map_leaf
+#--------------------
+#    Day 1 Answers
+#--------------------
 df[3, c(&quot;domSpp&quot;)] # option 1
 df[3, 4] # option 2
 df$numtrees &lt;- as.integer(df$numtrees)
@@ -3434,6 +3454,9 @@ wetdat_sort &lt;- wetdat[order(-wetdat$Ave_Cov, wetdat$Latin_Name), ] # base R
 head(wetdat_sort)
 wetdat_sort_tidy &lt;- wetdat %&gt;% arrange(-Ave_Cov, Latin_Name) #tidyverse
 head(wetdat_sort_tidy)
+#--------------------
+#    Day 2 Answers
+#--------------------
 sort(unique(wetdat$Latin_Name))[1:10] # Low-tech way: use your eyes to spot the &quot;Alnus incana++&quot;. I truncated to first 10.
 
 # The regular expression way to find non-alphabetical symbols (now you know why I didn&#39;t cover this).
@@ -3481,6 +3504,9 @@ wetinv &lt;- wetinv1 %&gt;% group_by(Year) %&gt;%
 
 wetinv #40 % of plots both years
 
+#--------------------
+#    Day 3 Answers
+#--------------------
 # In case you&#39;re starting from scratch
 library(tidyverse)
 bat_long &lt;- read.csv(&quot;./data/example_data/fake_bats.csv&quot;)

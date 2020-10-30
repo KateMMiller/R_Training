@@ -4,6 +4,13 @@
 Another important concept in data wrangling is reshaping data. Datasets are usually described as long, or wide. The long form, which is the structure database tables often take, consists of each row being an observation (ie if there are 3 visits to a site, there are 3 rows in the data), and each column being a variable (eg. plot, cycle, number of critters, % plant cover, etc). In summary tables, we often want to reshape the data to be wide, so that there's only one row per plot, a column for each visit, or species, and the abundance of that species as the value in the cell. 
 
 We're going to work with a fake bat dataset to see how this works. To get started, load the dataset and packages, as shown below.
+
+```{r orgD3M1, echo=F, eval=F, include=F}
+#--------------------
+#    Day 3 Mod 1
+#--------------------
+```
+
 ```{r, c58, echo=T}
 library(tidyverse)
 bat_long <- read.csv("./data/example_data/fake_bats.csv")

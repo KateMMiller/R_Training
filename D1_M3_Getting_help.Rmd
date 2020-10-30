@@ -2,6 +2,12 @@
 <h2>Getting Help</h2>
 There are a number of options to get help with R. If you're trying to figure out how to use a function, you can type ?function_name. For example <i>?plot</i> will show the R documentation for that function in the Help panel. <i>?dplyr::filter</i> works too, if you need to connect the package to the function (eg filter is also a function in stats, which is loaded as part of base R). 
 
+```{r orgD1M3, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Mod 3
+#--------------------
+```
+
 ```{r, c4, echo=T, eval=F}
 ?plot
 ?dplyr::filter

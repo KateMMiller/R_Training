@@ -12,6 +12,13 @@ The keys are to have the X, Y Coordinates included in your final summary, and to
 Most of the major coordinate systems have a registered EPSG Code assigned to it, including ours. EPSG stands for European Petroleum Survey Group, which seems pretty random, but is a useful set of universally unique codes for datum and protections that most GIS software can recognize. Using the EPSG code is the fastest way I've found to assign the coordinate system for our shapefile. For ACAD and MIMA, the EPSG Code is 26919. For the other parks it's 26918 (notice the last digit is the only difference, and matches the UTM Zone above). 
 
 To start out, let's load our wetland dataset again. Let's say we want to create a shapefile for the most recent sample of each site and a column with the number of species found at each site.
+
+```{r orgD3M3, echo=F, eval=F, include=F}
+#--------------------
+#    Day 3 Mod 3
+#--------------------
+```
+
 ```{r, c63c, echo=T, results = 'hide'}
 library(tidyverse)
 library(rgdal) # for GIS functions

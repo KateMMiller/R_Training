@@ -96,6 +96,13 @@ There are a number of packages NETN or collaborators have built to work with the
 <p class='code'>If you haven't already installed these packages (directions are also in the Prep for Training tap), run the code chunk below:</p>
 
 </ul>
+
+```{r orgD1M1, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Mod 1
+#--------------------
+```
+
 ```{r, c1, echo=T, eval=FALSE}
 install.packages(c("tidyverse", "rgdal", "devtools"))
 devtools::install_github("katemmiller/forestNETN")

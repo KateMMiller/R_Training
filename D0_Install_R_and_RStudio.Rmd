@@ -24,6 +24,12 @@ The installer for RStudio for PCs can be downloaded <a href="https://download1.r
 <details open><summary class='drop'>Install important libraries</summary>
 One of the great things about R is that users can build and share their own packages (AKA libraries) to add functionality to R. It's a similar idea as extensions in ArcGIS. To use other libraries, you need to first download/install them, and then you need to turn them on in your R session. Some of the packages take awhile to download. To save time during training, please try to install these prior to the first day. You can do that by opening RStudio, and in the window on the left (the console) paste the code below and press enter.
 
+```{r orgPrep, echo=F, eval=F, include=F}
+#--------------------
+#       Prep
+#--------------------
+```
+
 ```{r install_packages, echo=T, eval=F}
 install.packages(c("tidyverse", "devtools", "rgdal", "ggspatial", "leaflet"))
 devtools::install_github("katemmiller/forestNETN")

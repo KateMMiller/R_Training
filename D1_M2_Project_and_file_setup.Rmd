@@ -5,6 +5,12 @@ Find the directory you're going to work from (other than avoiding saving to your
 
 <p class='code'>Now run the code chunk below to set up the same file structure.</p> 
 
+```{r orgD2M2, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Mod 2
+#--------------------
+```
+
 ```{r, c3, echo=TRUE}
 subfolders<-c("data", "figures", "tables", "rscripts", "shapefiles")
 

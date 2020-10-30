@@ -17,6 +17,13 @@ There are different flavors of joining tables. The main joins we use are:
 </ul>
 
 In practice, I use left and full joins the most often, so I'll focus mostly on those in the rest of this module. We'll try this out on simple datasets first, then we'll build up to more complex examples with our forest data. Another great example with visuals can be found <a href="https://mgimond.github.io/ES218/Week03c.html">here</a>.
+
+```{r orgD2M3, echo=F, eval=F, include=F}
+#--------------------
+#    Day 2 Mod 3
+#--------------------
+```
+
 ```{r, c34a, echo=T, results ='hide'}
 tree <- data.frame(plot = c("p1","p1","p1","p2","p2","p3","p4","p4"), 
                   treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
