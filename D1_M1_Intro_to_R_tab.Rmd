@@ -133,8 +133,8 @@ If you run into issues installing from GitHub (eg using install_github function)
 <li>Install Rtools for Windows 64-bit. The download page is <a href="https://cran.r-project.org/bin/windows/Rtools/">here.</a></li> 
 <li>If the error you're getting is mentioning the package backports, try doing the following:</li> 
   <ol style="list-style-type:upper-alpha">
-  <li>Download the <a href="https://cran.r-project.org/bin/windows/contrib/4.0/backports_1.1.7.zip">Windows Binaries</a> for backports.</li>
-  <li>Install backports from file in RStudio by going to <i>Tools> Install Packages> Install From:</i> Change the Install From option to "Package Archive File" and select backports_1.1.17.zip.</li></ol>
+  <li>Download the <a href="https://cran.r-project.org/bin/windows/contrib/4.0/backports_1.1.10.zip">Windows Binaries</a> for backports.</li>
+  <li>Install backports from file in RStudio by going to <i>Tools> Install Packages> Install From:</i> Change the Install From option to "Package Archive File" and select backports_1.1.10.zip.</li></ol>
   <li>Now try installing devtools and forestNETN (install.packages("devtools"); devtools::install_github('katemmiller/forestNETN'))</li>
 </li>
 </ol>

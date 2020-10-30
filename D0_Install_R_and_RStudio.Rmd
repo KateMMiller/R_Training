@@ -11,8 +11,8 @@ The only thing you really need to do to prepare for R training is to install the
 
 Even if you already have R or RStudio installed, please install the latest versions of both programs. R recently went through a major version change from 3.x to 4.x with some potential code-breaking changes. The latest versions are needed to ensure everyone's code behaves the same way. 
 
-<details open><summary class='drop'>Install R 4.0.2</summary>
-The installer for the latest version of R (assuming you're using a PC) can be downloaded <a href="https://cran.r-project.org/bin/windows/base/R-4.0.2-win.exe">here</a>. After it downloads, open and run the installer with default settings. Note that there's no need to pin R to your taskbar or add a shortcut to your desktop. For 99% of your needs, you'll run R within RStudio, and won't ever open R directly.
+<details open><summary class='drop'>Install R 4.0.3</summary>
+The installer for the latest version of R (assuming you're using a PC) can be downloaded <a href="https://cran.r-project.org/bin/windows/base/R-4.0.3-win.exe">here</a>. After it downloads, open and run the installer with default settings. Note that there's no need to pin R to your taskbar or add a shortcut to your desktop. For 99% of your needs, you'll run R within RStudio, and won't ever open R directly.
 </details>
 <br>
 
@@ -49,12 +49,12 @@ We'll be using several example datasets throughout the training. It will help if
 <br>
 
 <details open><summary class='drop'>Optional Reading</summary>
-I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
+I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="https://stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
 </details>
 <br>
 
 <details open><summary class='drop'>Structure of training</summary>
-The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day's training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/DesignPage/aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview"> Feedback form </a> at the end of each day. 
+The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day's training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview">Feedback form</a> at the end of each day. 
 
 For most of the training, I'll share my screen to walk through the code. It will help a lot if you have 2 monitors, so you can have the screen I'm sharing on one monitor and your own session of RStudio open on the other. If you need an extra monitor let me know (I recently upgraded and have some older (non-gov't) ones that are looking for a new home). 
 
