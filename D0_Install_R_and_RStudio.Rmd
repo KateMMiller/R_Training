@@ -49,7 +49,7 @@ We'll be using several example datasets throughout the training. It will help if
 <br>
 
 <details open><summary class='drop'>Optional Reading</summary>
-I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
+I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="https://stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
 </details>
 <br>
 
