@@ -32,24 +32,24 @@ head(df)
 <details><summary class='ques2'>Question 4: How would you calculate the percent of trees that are dead in the df data frame?</summary>
 ```{r, c107,echo=T, results='hide'}
 # base R version (2 options)
-df$numdead <- df$numtrees - df$numLive
-df$pctdead <- df$numdead/df$numtrees*100
+df$numDead <- df$numtrees - df$numLive
+df$pctDead <- df$numDead/df$numtrees*100
 
-df$pctdead <- with(df, (numtrees - numLive)/numtrees*100)
+df$pctDead <- with(df, (numtrees - numLive)/numtrees*100)
 
 # tidyverse version (2 options)
-df <- df %>% mutate(numdead = numtrees - numLive,
-                    pctdead = numdead/numtrees*100)
+df <- df %>% mutate(numDead = numtrees - numLive,
+                    pctDead = numDead/numtrees*100)
 
-df <- df %>% mutate(pctdead = (numtrees - numLive)/numtrees*100)
+df <- df %>% mutate(pctDead = (numtrees - numLive)/numtrees*100)
 ```
 </details>
 <br>
 
 <details><summary class='ques2'>Question 5: What is the smallest number of dead trees observed in the df dataset?</summary>
 ```{r c107b, echo=T, results='show'}
-min(df$numdead) # uses numdead column calculated for previous question. 
-summary(df$numdead)[1] #Min. is the record summary reports for numeric columns
+min(df$numDead) # uses numdead column calculated for previous question. 
+summary(df$numDead)[1] #Min. is the record summary reports for numeric columns
 ```
 </details>
 <br>

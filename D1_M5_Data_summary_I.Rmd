@@ -1,7 +1,7 @@
 #### Data Summary I{.tabset}
 
 <h2>Data Summary I</h2>
-Using the df we created in the previous section, let's perform some basic summary statistics. Base R has a number of summary statistics built into it that are really useful, including mean, min, and max. These will come in handy when we start summarizing the data for our parks. 
+Using the df we created in the previous section, let's perform some basic summary statistics. Base R has a number of summary statistics built into it that are really useful, including mean, median, min, max, and sd (for standard deviation).  
 
 ```{r orgD1M5, echo=F, eval=F, include=F}
 #--------------------
@@ -16,17 +16,19 @@ mean(df$numtrees)
 range(df$numtrees) #gives min and max
 ```
 
-The summary() function in R is another really useful function in R that can take just about any named object in your R session and provide you a meaningful summary. For data frames, the summary() function gives different/meaningful summary of each type of data column. The summary() function also works well for summarizing model output, like from ANOVA, linear regression, etc. 
+The summary() function in R is another really useful function that can take just about any named Data object in your global environment and provide you a meaningful summary. For data frames, the summary() function gives different/meaningful summaries for each column depending on type (e.g. numeric vs. character). The summary() function also works well for summarizing model output, like from ANOVA, linear regression, etc. 
 ```{r, c16, echo=T, results='show'}
 summary(df)
 ```
-You can also calculate new fields from existing fields in your data.
+
+You can also calculate new columns from existing columns in your data.
 ```{r, c17, echo=T, results='show'}
-df$numdead <- df$numtrees - df$numLive # base R version
-df <- df %>% mutate(numdead = numtrees - numLive) # tidyverse version. 
+df$numDead <- df$numtrees - df$numLive # base R version
+df <- df %>% mutate(numDead = numtrees - numLive) # tidyverse version of the same operation.
+# note if the 2nd line doesn't run, load the tidyverse library (library(tidyverse)) first.
 ```
 
-The <b>mutate</b> function is in the <i>dplyr</i> package of the tidyverse. The mutate function is used to create a new column in an existing data frame, and always returns the same number of records as the existing data frame. In this example, mutate creates a new column called numdead, and tells it to equal numtrees - numLive. The results are identical to the base R version in the line above. Mutate just spares you having to write df$ over and over. 
+The <b>mutate</b> function is in the <i>dplyr</i> package of the tidyverse. The mutate function is used to create a new column in an existing data frame, and always returns the same number of records as the existing data frame. In this example, mutate creates a new column called numdDead, and tells it to equal numtrees - numLive. The results are identical to the base R version in the line above. Mutate just spares you having to write df$ over and over. 
 
 <p class='ques'>Question 4: How would you calculate the percent of trees that are dead in the df data frame? </p>
 

@@ -2,6 +2,8 @@
 <details open><summary class='drop'>Getting Started</summary>
 Now we're going to start coding. The best way to work through these lessons will be to take the code from this website and transfer it to an R Script in your R_training.Rprj. To start that, go to <b>File > New File > R Script</b> (the <img src="./images/new_script.jpg" alt="new script" width="30px"> icon will do the same), and name the script Day_1.R, and save it to your rscripts subfolder. As you get more comfortable coding in R, try pushing yourself to type the commands, rather than copying and pasting. You'll learn to code faster by typing, even if you're just mimicking what you see in the training document. 
 
+Note also that R is case sensitive. For example, R would see a data frame named "DF" and a data frame named "df" as 2 different objects. It's best to avoid naming things the same thing with different capitalization to avoid confusing yourself, but R won't be confused.
+
 Before we go too far, let's make sure you have the tidyverse package loaded by running the code chunk below. This is the only dependency we'll need for today's code.
 
 ```{r orgD1M4, echo=F, eval=F, include=F}
@@ -16,7 +18,7 @@ library(tidyverse)
 </details>
 </br>
 <details open><summary class='drop'>Types of Data</summary>
-<p>There are multiple types of data in R, including vectors, lists, arrays, matrices, data frames and tibbles. Vectors are the simplest data type. You can think of vectors as one column of data in an Excel spreadsheet. An example vector is below:
+<p>There are multiple types of data in R, including vectors, lists, arrays, matrices, data frames and tibbles. Vectors are the simplest data type. You can think of vectors as one column of data in an Excel spreadsheet, and the elements are each row in the column. An example vector is below:
 ```{r, c6b, echo=T}
 # Vector of numbers
 vec_num <- c(1, 2, 3, 4, 5)
@@ -27,13 +29,13 @@ vec_str <- c("Schoodic", "MDI-East", "MDI-West", "IAH")
 vec_str
 vec_str[1]
 ```
-Note the use of <b>c()</b>. The c() function stands for combine, and it combines the elements in a list that are separated by commas. The c() function is a fairly universal way to combine multiple elements in R, and you're going to see it over and over.  
+Note the use of <b>c()</b>. The c() function stands for combine, and it combines the elements (e.g., "Schoodic", "MDI-East", etc.) in a list that are separated by commas. The c() function is a fairly universal way to combine multiple elements in R, and you're going to see it over and over.  
 
-Data frames are essentially a collection of vectors of the same length. We will spend most of our time with data frames, and won't worry too much about the other data types. Tibbles are the tidyverse version of a data frame, but they're essentially the same thing as a data frame with a few added bells and whistles. 
+Data frames are essentially a collection of vectors of the same length. Frame means it's rectangular (like a picture frame), like a spreadsheet with multiple columns, each of which has the same number of rows. We will spend most of our time with data frames, and won't worry too much about the other data types. Tibbles are the tidyverse version of a data frame, but they're essentially the same thing as a data frame with a few added bells and whistles. 
 
-Data frames are typically organized with rows being records or observations, and columns being variables (also called tidy data). Data frames are rectangular, meaning that every column has the same number of rows. The column variables can be numbers, text, or logical (TRUE/FALSE). Before we go any further, let's create a simple data frame to look at and perform some basic functions. </p>
+Data frames are typically organized with rows being records or observations (e.g. sampling locations, individual critters, etc.), and columns being variables that characterize those observations (e.g., species, size, date collected, x/Y coordinates). This data format is also called tidy data. The column variables can be numbers, text, or logical (TRUE/FALSE). Before we go any further, let's create a simple data frame to look at and perform some basic functions. </p>
 
-Note that I have a tendency to use field (MS Access calls columns fields) and column interchangeably. Hopefully that doesn't cause confusion. Just remember that field and column are equivalent. 
+Note that I have a tendency to use field and column interchangeably (MS Access calls columns fields). Hopefully that doesn't cause confusion. Just remember that field and column are equivalent. 
 
 <p class="code">Copy the code below into the console and run it.</p>
 ```{r, c7, echo=T}
@@ -49,17 +51,19 @@ df <- data.frame(plot = c(1, 2, 3, 4, 5, 6, 'plot7'), #column for plot number
 print(df)
 ```
 
-Here we're creating a data frame object named <b>df</b> and using <b> <- </b> to assign the stuff on the right to <b>df</b>. The df data frame has 5 columns and 6 rows. You should notice that after you ran the code, df showed up in your Environment at the top right and the console printed output below. 
+Here we're creating a data frame object named <b>df</b> and using <b> <- </b> to assign the stuff on the right to an object named <b>df</b>. Note that objects in R can be a lot of things, including data frames, functions, lists, etc., and the ones that you created and/or are available to you are listed in the Environment pane and usually have a qualifier, like Data, so you have a better idea of what kind of object they are. 
+
+The df data frame we just created has 5 columns and 6 rows. You should notice that after you ran the code, df showed up in your Environment at the top right and the console printed output below. 
 
 Similar to Excel, R treats numbers and text differently. Some functions will only work with numbers, and some will only work with text. A couple of points about working with different column types in R data frames:
 <ul>
 <li>R calls text a string. If you have any text in a column, R automatically makes it a string. </li>
 <li>There are 2 types of strings in R: character (abbreviated chr) and factor. </li>
-<li>Older versions of R (i.e., R < 4.x) defaulted strings to factors. The newest R version defaults to characters, which saves us a lot of headaches (more on this later). </li>
+<li>Older versions of R (i.e., R < 4.x) defaulted strings to factors. The newest R version defaults to characters, which saves us a lot of headaches. For most of the coding you'll do in R, you probably won't need to know about factors. If you're using old code (e.g. pre-R 4.x) that relied on factors, you may need to change your default options to make the code work by running <b>options(stringsAsFactors = TRUE)</b>. Otherwise, don't worry about this for now.</li>
 <li>When you're dealing with strings, you typically have to put quotes around them. Note that 99% of the time, it doesn't matter whether you use single or double quotes, as long as the thing you're quoting is consistent.</li>
 <li>The pound sign (#) is used to tell R not to run the text following the #. This is also called commenting out text, and is a way to leave comments that won't break your code.</li>
 <li>Columns that are entirely numbers (blanks are okay too) are set to numeric by default. </li>
-<li>Integers are numeric whole numbers that will only return integers (no decimal points). That's usually not a problem, but if it ever becomes a problem, the as.numeric() function fixes it.</li> 
+<li>Integers are numeric whole numbers that will only return integers (no decimal points). That's usually not a problem, but if it ever becomes a problem, the as.numeric() function fixes it. If you want a column to be an integer, use as.integer(). </li> 
 <li>Logical is the last data type, and only consists of TRUE and FALSE.</li>
 <li>Finally NA is a blank or missing value in your data. Note that the last row in domSpp is NA (stands for not available).</li></ul>  
 </details>
@@ -68,7 +72,7 @@ Similar to Excel, R treats numbers and text differently. Some functions will onl
 There are 2 main approaches in base R for selecting/working with rows and columns: $ and [ , ]. 
 <ul>
   <li> The \$ is used to specify a data frame name and one of its columns. For example df$plot is referring to the plot column in the df data frame.</li>
-  <li> The brackets [ , ] allow you to select columns and rows. The left side of the comma in brackets handles rows, and the right side of the bracket
+  <li> The brackets [ , ] allow you to select rows and columns. The left side of the comma in brackets handles rows, and the right side of the bracket
   deals with columns, like: df[row numbers, column numbers]. </li>
 </ul> 
 
@@ -86,19 +90,27 @@ df[2, 1] # Selecting 2nd row of 1st column
 </br>
 <details open><summary class='drop'>Check and fix data structure</summary>
 <p class='code'>To check the structure of your data, run the code chunk below.</p>
-```{r, c9, echo=T}
-str(df) # to view how R is defining each column type
+
+```{r, c9b, echo=T}
 head(df) # to view the first 6 rows of df
 tail(df) # to view last 6 rows of df
+```
+Note the blank in domSpp in the last row. 
+
+```{r, c9c, echo=T}
 names(df) # to view the column names and their order
 ```
 
-Note the different data types in df. The plot column is called a chr, and not a number because of the last value. There's also a blank in domSpp. Let's modify the dataset so that plot reads in as numeric, and replace the missing value in domSpp with "white spruce". 
+```{r, c9, echo=T}
+str(df) # to view how R is defining each column type
+```
+
+Note the different data types in df. The plot column was ssigned as a chr instead of a number because of the last value (i.e., plot7). The next thing we'll do is modify the dataset so that plot reads in as numeric, and replace the missing value in domSpp with "white spruce". 
 
 <p class='code'>Copy (or type) each section of code below and run in your console.</p>
 ```{r, c10, echo=T}
 # The long way (note that I renamed the object here)
-df2 <- data.frame(plot = c(1, 2, 3, 4, 5, 6, 'plot7'), #column for plot number
+df2 <- data.frame(plot = c(1, 2, 3, 4, 5, 6, 7), #column for plot number
                  numtrees = c(24, 18, 17, 14, 31, 27, 15), 
                  numLive = c(21, 18, 16, 10, 29, 26, 14),
                  domSpp = c('red_maple', 'red_spruce', 
@@ -111,8 +123,8 @@ df$plot[7] <- 7 #takes the 7th row of the plot column and changes it to 7
 df$domSpp[7] <- "white_spruce" #takes the 7th row of domSpp and replaces it with "white_spruce"
 
 # Another shorter way
-df[7, c("plot")] <- 7 #takes the 7th row of the plot column and makes it 7
-df[7, c('domSpp')] <- "white_spruce" #takes the 7th row of the domSpp column and makes it "white_spruce"
+df[7, "plot"] <- 7 #takes the 7th row of the plot column and makes it 7
+df[7, 'domSpp'] <- "white_spruce" #takes the 7th row of the domSpp column and makes it "white_spruce"
 
 # Another shorter way
 df[7, 1] <- 7 #takes the 7th row of the first column and makes it 7
@@ -123,14 +135,14 @@ df[7, c(1, 4)] <- c(7, "white_spruce") #Takes the 7th row and the first and 4th 
 # Then the first column gets 7, and the 4th gets "white spruce"
 ```
 
-This is merely to show that there are usually 5 different ways to do something in R, and the best way is the one you can get to work. At least that's my philosophy for most of the coding I do. Having code I can pick up a year later and still understand what it does is also important. I only really care about coding for performance if I'm working with big datasets, where slow processes can really add up.
+This is merely to show that there are usually 5 different ways to do something in R, and the best way is the one you can get to work. At least that's my philosophy for most of the coding I do. Having code I can pick up a year later and still understand what it does is also important. I only really care about coding for performance if I'm working with big datasets, where slow  or memory hungry processes can really add up.
 
 I should mention that when you use numbers instead of column names, your code is pretty fragile to changes in column order (eg, you drop a column). Row numbers are similarly fragile, if you reorder your data. It's better to use names where possible and to use functions that use logic to find and replace records. For example:
 ```{r, c11, echo=T, results='hide'}
 
 df[is.na("domSpp")] <- "white_oak"
 ```
-Here R is looking for a value in the domSpp column that is NA (R's way of calling it a blank value). Since there's only 1, this works. If there were more than 1 NA, we'd need better logic to assign the proper value to each blank. We'll go into more detail about this later.
+Here R is looking for a value in the domSpp column that is NA (i.e. a blank value). Since there's only 1, this works. If there were more than 1 NA, we'd need better logic to assign the proper value to each blank. We'll go into more detail about this later.
 
 And now, here's the tidyverse way to replace the blank in df's domSpp column with "white_oak":
 ```{r, c12}

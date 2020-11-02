@@ -1,6 +1,6 @@
 #### Importing Data into R{.tabset}
 <details open><summary class='drop'>Loading csv files</summary>
-For the training modules that follow, we're going to work with a larger dataset that contains some wetland plant data. First we need to load the wetland dataset, using the code below.
+For the training modules that follow, we're going to work with a larger dataset that contains some fake wetland plant data. First we need to load the wetland dataset, using the code below.
 
 ```{r orgD1M6, echo=F, eval=F, include=F}
 #--------------------
@@ -12,13 +12,13 @@ For the training modules that follow, we're going to work with a larger dataset 
 wetdat <- read.csv("./data/example_data/ACAD_wetland_data_example.csv")
 ```
 
-After running the code above, you should see a new object in your global environment named <b>wetdat</b> You can view the structure and the data by clicking on the arrow next to the name in the global environment panel. If you click directly on <b>wetdat</b>, a separate window will open to view the data like a spreadsheet. 
+After running the code above, you should see a new object in your global environment named <b>wetdat</b>. You can view the structure and the data by clicking on the arrow next to the name in the global environment panel, or click directly on <b>wetdat</b> to display a separate window of your data in a spreadsheet format. 
 
-The read.csv() is a function in base R that reads csv (comma separated values) files, which are lightweight machine-readable files that most text readers or spreadsheet programs can read. Unlike Excel spreadsheets, they only contain values and commons and cannot save any kind of formatting, like merged cells, cell borders, formulas, etc. You also can only have one worksheet within a csv. If most of your data live in Excel spreadsheets, you can either save individual worksheets as csvs directly in Excel, or you can load individual worksheets into R using the <i>readxl</i> package that was designed to read Excel files.
+The read.csv() is a function in base R that reads csv (comma separated values) files, which are lightweight machine-readable files that most text readers or spreadsheet programs can read. Unlike Excel spreadsheets, they only contain values and commas and cannot save any kind of formatting, like merged cells, cell borders, formulas, etc. You also can only have one worksheet within a csv. If most of your data live in Excel spreadsheets, you can either save individual worksheets as csvs directly in Excel, or you can load individual worksheets into R using the <i>readxl</i> package that was designed to read Excel files.
 </details>
 <br>
 <details open><summary class='drop'>Loading Excel files</summary>
-The first step for working with Excel files (i.e., files with .xls or .xlsx extensions), is to install the readxl package. Then, load the package, as shown below. The readxl package has a couple of options for loading Excel spreadsheets, depending on whether the extension is .xls, .xlsx, or unknown. The code below shows you how to load files with .xlsx extension. The other options for loading Excel files can be viewed on the <a href="https://readxl.tidyverse.org/reference/read_excel.html">readxl help page</a>.
+The first step for working with Excel files (i.e., files with .xls or .xlsx extensions), is to install the readxl package, and then load the package as shown below. The readxl package has a couple of options for loading Excel spreadsheets, depending on whether the extension is .xls, .xlsx, or unknown. The code below shows you how to load files with .xlsx extension. The other options for loading Excel files can be viewed on the <a href="https://readxl.tidyverse.org/reference/read_excel.html">readxl help page</a>.
 ```{r, c19b, echo=T, eval=F}
 install.packages("readxl") #only need to run once. 
 ```
@@ -38,18 +38,19 @@ head(bat_capture)
 </details>
 <br>
 <details open><summary class='drop'>The file.choose() function</summary>
-If you don't remember the exact path where your file lives, the file.choose() function is a handy trick. Nesting that within a read function will open a separate window where you can select the file by hand. While this can be handy, it can also encourage lazy file organization. I prefer to organize my code and data into projects where everything lives for a given project, and so rarely use this function (I had to look it up for this section). If you want to use it, here's an example:
+If you don't remember the exact path where your file lives, the file.choose() function is a handy trick. Nesting that within a read function will open a separate window where you can select the file by hand. While this can be handy, it can also encourage lazy file organization. I prefer to organize my code and data into projects that store all of the files within the project directory, and so rarely use this function (In fact, I had to look up how to use it for this section). If you want to use it, here's an example:
 ```{r, c19c, echo=T, eval=F}
 dat <- read.csv(file.choose())
 ```
 </details>
 <br>
+<hr>
 
 #### Subsetting and Sorting {.tabset}
 <details open><summary class='drop'>Subsetting Data</summary>
-Technically, we already did some subsetting when we were trying to identify and fix problems in the df data frame. Now we're going to do it more intentionally and with a bigger dataset. Subsetting is a generic term for reducing the size of a dataset, either by reducing the number of rows, the number columns, or both, in the dataset. Filtering typically means reducing rows. Selecting usually means reducing columns. 
+Subsetting is a generic term for reducing the size of a dataset, either by reducing the number of rows, the number columns, or both, in the dataset. Filtering typically means reducing rows. Selecting usually means reducing columns. Technically, we already did some subsetting when we were trying to identify and fix problems in the df data frame. Now we're going to do it more intentionally and with a bigger dataset.
 
-Using the wetdat data frame from earlier, let's subset the data to filter out all species that are considered protected from public (eg sensitive species we don't want to publish the location to). There's a logical column called Protected in the dataset that we're going to use to filter out rows when Protected is TRUE. Let's also simplify the data frame to only select the columns we care about.
+Using the wetdat data frame from earlier, let's subset the data to filter out all species that are considered protected from public (eg sensitive species we don't want to publish the location to- also this is a fake dataset, so don't worry that we're publicizing this.). There's a logical column called Protected in the dataset that we're going to use to filter out rows when Protected is TRUE. Let's also simplify the data frame to only select the columns we care about.
 ```{r, c22, echo=T, results='hide'}
 # Filter to remove protected species
 wetdat_pub <- wetdat[wetdat$Protected == FALSE, ]
@@ -58,12 +59,14 @@ nrow(wetdat_pub) #499 rows in filtered dataset
 table(wetdat_pub$Protected) # Only Protected = FALSE
 
 # Select only fields you want
-wetdat_pub <- wetdat_pub[ , c("Site_Name", "Site_Type", "Latin_Name", "Year", "Ave_Cov", "Invasive", "Protected")]
+wetdat_pub <- wetdat_pub[ , c("Site_Name", "Site_Type", "Latin_Name", "Year", "Ave_Cov", 
+                              "Invasive", "Protected")]
 names(wetdat_pub)
 
 # Previous steps can all happen in 1 line of code:
 wetdat_pub <- wetdat[wetdat$Protected == FALSE, 
-                     c("Site_Name", "Site_Type", "Latin_Name", "Year", "Ave_Cov", "Invasive", "Protected")]
+                     c("Site_Name", "Site_Type", "Latin_Name", "Year", "Ave_Cov", 
+                       "Invasive", "Protected")]
 
 nrow(wetdat_pub) # 499 rows
 names(wetdat_pub) # Only includes fields we want
@@ -80,9 +83,9 @@ table(wetdat_pub2$Protected) #All FALSE
 ```
 A couple of comments about the above code:
 <ul>
-<li>Note the use of == to filter out Protected species. In R, when you're trying to match against something (like Protected == FALSE, or Site_Name == "RAM-44"), you use double == signs. When assigning something to an object (like mutate(newcolum = x + y)), you use a single = sign.</li>
+<li>Note the use of == to filter out Protected species. In R, when you're trying to match against something (like Protected == FALSE, or Site_Name == "RAM-44"), you use double == signs. When assigning something to an object (like mutate(newcolum = x + y)), you use a single =.</li>
 <li>If you want to pull out all records that are NOT equal to a value, you use !=. That is, in R, ! means NOT. For example Protected != TRUE means to only include records where Protected is NOT TRUE (ie FALSE).</li>
-<li>The subset() function is a base R function that is a bit easier to work with than brackets. You can filter rows, select columns, or both (as seen above). The first argument with subset is always the dataset you're subsetting.</li>
+<li>The subset() function is a base R function that is a bit easier to work with than brackets. You can filter rows, select columns, or both (as seen above). The first argument with subset is always the dataset you're  subsetting.</li>
 </ul>
 
 Now the tidyverse way do in the previous code chunk using select() and filter() functions chained together via pipes (%>%). The select function is used for columns and the filter command is used for rows. 
@@ -99,7 +102,7 @@ table(wetdat_tidy$Protected)
 wetdat_tidy <- wetdat %>% filter(Protected == FALSE) %>% select(-Common, -PctFreq)
 ```
 
-Note the %>%, called a "pipe". The way to read what the pipe is doing is it takes the wetdat data frame, pipes it into the filter function, which drops protected species, then that newly filtered dataset is piped into the select function, and the Common and PctFreq columns are dropped. Also notice that column names aren't quoted in tidy approach. One of the benefits of the tidyverse packages is that you don't have to quote column names, whereas you typically do in base R (subset() being an obvious exception). This saves time typing and was a conscious decision of the tidyverse developers. This approach is called non-standard evaluation (NSE). NSE is great most of the time, but can cause headaches when you start write your own functions. Personally I use tidyverse for most scripting purposes because it's intuitive to me and I like being able to chain steps together. I use base R when I'm writing functions/ developing packages to avoid NSE issues, and because base R functions tend to be faster. Until you get to the level that you're building functions/packages, you're free to work mostly within the tidyverse.  
+Note the %>%, called a "pipe". The way to read what the pipe is doing is it takes the wetdat data frame, pipes it into the filter function, which drops protected species, then that newly filtered dataset without protected species is piped into the select function, and the Common and PctFreq columns are dropped. Also notice that column names aren't quoted in tidy approach. One of the benefits of the tidyverse packages is that you don't have to quote column names, whereas you typically do in base R (subset() being an obvious exception). This saves time typing and was a conscious decision of the tidyverse developers. This approach is called non-standard evaluation (NSE). NSE is great most of the time, but can cause headaches when you start writing your own functions. Personally I use tidyverse for most scripting purposes because it's intuitive to me and I like being able to chain steps together. I use base R when I'm writing functions/ developing packages to avoid NSE issues, and because base R functions tend to be faster. Until you get to the level that you're building functions/packages, you're free to work within the tidyverse.  
 </details>
 <br>
 
@@ -112,7 +115,7 @@ wetdat_2sites <- wetdat[wetdat$Site_Name %in% c("SEN-01", "SEN-03"), ]
 nrow(wetdat_2sites)
 table(wetdat_2sites$Site_Name)
 
-# Tidyverse
+# Tidyverse equivalent of same operation
 wetdat_2tidy <- wetdat %>% filter(Site_Name %in% c("SEN-01", "SEN-03"))
 nrow(wetdat_2tidy)
 table(wetdat_2tidy$Site_Name)
@@ -127,16 +130,16 @@ The nice thing about using %in% is that it only pulls records that match exactly
 </details>
 </br>
 <details open><summary class='drop'>Sorting Data</summary>
-Next topic is sorting data in R, which you can do alphabetically or numerically. Typically when you read in a dataset in R, the order is exactly the order of that in the original file, and the row numbers are assigned based on that order. There are multiple ways to sort data in R, as demonstrated below. 
+Next topic is sorting data in R, which you can do alphabetically or numerically. Typically when you read in a dataset in R, the order is exactly the order of that in the original file, and the row numbers are assigned based on that order. If you want to change the original order, there are multiple ways to sort data in R, as demonstrated below. 
 ```{r, c26, echo=T, results='hide'}
- head(wetdat) # check original order before sorting
+head(wetdat) # check original order before sorting
 
 # Base R- I always forget the exact code and have to look it up.
 wetdat_sort <- wetdat[order(wetdat$Latin_Name, wetdat$Site_Name), ]
 head(wetdat_sort)
 
 # Sort in reverse
-wetdat_rev <- wetdat[order(desc(wetdat$Latin_Name), desc(wetdat$Site_Name)), ]
+wetdat_rev <- wetdat[order(desc(wetdat$Latin_Name), desc(wetdat$Site_Name)), ] #desc() stands for descending
 head(wetdat_rev)
 
 # Another example with numbers
@@ -158,6 +161,6 @@ head(wetdat_rev_tidy)
 </br>
 That's the end of Day 1! Be sure to save your Day 1 R script, try to answer the questions from today, and complete the tasks in the Assignments tab as you have time. Answers to the questions are in the Answers tab. Note that I provide one or a few solutions to get the answer to the questions, and it's fine if you come up with your own. That's how coding in R works!
 
-Lastly, don't worry if you don't understand everything. The key here was to expose you to the many different ways to work with and view data in R. Learning R requires repetition, determination, and patience. Just stick with it!
+Lastly, don't worry if you don't understand everything. The key here was to expose you to the many different ways to view and work with data in R. Learning R requires repetition, determination, and patience. Just stick with it!
 
 <hr>

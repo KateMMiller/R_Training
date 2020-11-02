@@ -1,6 +1,6 @@
 #### Getting Help{.tabset} 
 <h2>Getting Help</h2>
-There are a number of options to get help with R. If you're trying to figure out how to use a function, you can type ?function_name. For example <i>?plot</i> will show the R documentation for that function in the Help panel. <i>?dplyr::filter</i> works too, if you need to connect the package to the function (eg filter is also a function in stats, which is loaded as part of base R). 
+There are a number of options to get help with R. If you're trying to figure out how to use a function, you can type ?function_name. For example <i>?plot</i> will show the R documentation for that function in the Help panel. <i>?dplyr::filter</i> works too, if you need to connect the package to the function and/or haven't loaded that package yet. 
 
 ```{r orgD1M3, echo=F, eval=F, include=F}
 #--------------------
@@ -18,6 +18,6 @@ To view all of the functions and links to their individual help files, type in h
 help(package=dplyr)
 ```
 
-Online resources include <a href="https://stackexchange.com/">Stackexchange</a>, and <a href="https://stackoverflow.com//">Stackoverflow</a>. For tidyverse-related packages/questions, there's really good documentation for each package and function <a href="https://tidyverse.tidyverse.org/"> here</a>. Google searches are usually my first step, and I include "in R" and the package name if applicable in every search related to R code. 
+Online resources include <a href="https://stackexchange.com/">Stackexchange</a>, and <a href="https://stackoverflow.com//">Stackoverflow</a>. For tidyverse-related packages/questions, there's also really good documentation for each package and function <a href="https://tidyverse.tidyverse.org/"> here</a>. Google searches are usually my first step, and I include "in R" and the package name (if applicable) in every search related to R code. 
 
 <hr>

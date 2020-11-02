@@ -1,7 +1,7 @@
 #### Project and File Setup{.tabset}
 <h2>Project and File Setup</h2>
 First thing we're going to do is start an R project for this training and set up the same file structure, which we'll continue to use the rest of the training. To set up a project, open R Studio and go to: </br> </br><div style="text-indent:20px"> <h3>File > New Project > New Directory > New Project</h3></div></br> 
-Find the directory you're going to work from (other than avoiding saving to your desktop, anywhere is probably fine), and name the directory the R_training. 
+Find the directory you're going to work from (other than avoiding saving to your desktop, anywhere is probably fine), and name the directory R_training. 
 
 <p class='code'>Now run the code chunk below to set up the same file structure.</p> 
 
@@ -22,7 +22,7 @@ invisible(lapply(subfolders, function(x){
 
 Now, copy the data.zip file that you downloaded before we started into the <b>data</b> folder you created in the previous step. Then run the code chunk below. 
 
-If you haven't downloaded the example data yet, please do so by going to ACAD_R_Training_Info Team and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> in the files channel. 
+If you haven't downloaded the example data yet, please do so by going to ACAD_R_Training_Info Team and download <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> in the files channel. Type the code below to check that the data.zip folder is in the right place, and if it is, unzip it. You should see the data.zip and 3 folders after you run list.files("./data") the second time.
 
 ```{r c3pre, echo=FALSE, results='hide'}
 zips <- c("./data/example_data", "./data/NETN_forest_csvs", "./data/NETN_water_data", "./data/NETN_bird_data")
@@ -35,7 +35,8 @@ unzip("./data/data.zip", exdir = "./data")
 list.files("./data") # check that the unzip worked. There should be multiple folders with datasets in each.
 ```
 
-<ul><li>This approach makes sharing code easier, because the parent directly can vary across machines, as long as the project has the same sub-directory. </li>
+<ul><li>Using Projects makes sharing code easier, because the parent directly can vary across machines, as long as the project has the same sub-directory (i.e. data, figures, shapefiles, etc. folders). </li>
+<li>If you successfully started a project named R_Training, you should see it listed at the very top right of your screen. As you start new projects, you'll want to check that you're working in the right one before you start coding.</li>
 <li>The last thing to mention here is the # in the code chunk above. The # comments out anything after it on the same line, so R knows not to run it. Commenting your code allows you to document what you're doing, so it's easier for someone else (or you 3 months later) to follow your code. </li></ul>
 
 <hr>
