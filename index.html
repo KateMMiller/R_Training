@@ -415,8 +415,8 @@ summary {
 </div>
 
 
-<div id="acad-r-training-november-3---5-2020" class="section level2 tabset tabset-pills">
-<h2>ACAD R Training: November 3 - 5, 2020</h2>
+<div id="acad-r-training-november-3-5-2020" class="section level2 tabset tabset-pills">
+<h2>ACAD R Training: November 3 – 5, 2020</h2>
 <div id="prep-for-training" class="section level3 tabset">
 <h3>Prep for Training</h3>
 <h2>
@@ -966,6 +966,7 @@ Question 5: What is the smallest number of dead trees observed in the df dataset
 <p><summary class="drop">Loading csv files</summary> For the training modules that follow, we’re going to work with a larger dataset that contains some fake wetland plant data. First we need to load the wetland dataset, using the code below.</p>
 <pre class="r"><code>wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)</code></pre>
 <p>After running the code above, you should see a new object in your global environment named <b>wetdat</b>. You can view the structure and the data by clicking on the arrow next to the name in the global environment panel, or click directly on <b>wetdat</b> to display a separate window of your data in a spreadsheet format.</p>
+<p>We’re going to use this dataset throughout the rest of training. To give a little background on it, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
 The read.csv() is a function in base R that reads csv (comma separated values) files, which are lightweight machine-readable files that most text readers or spreadsheet programs can read. Unlike Excel spreadsheets, they only contain values and commas and cannot save any kind of formatting, like merged cells, cell borders, formulas, etc. You also can only have one worksheet within a csv. If most of your data live in Excel spreadsheets, you can either save individual worksheets as csvs directly in Excel, or you can load individual worksheets into R using the <i>readxl</i> package that was designed to read Excel files.
 </details>
 <br>
@@ -1167,9 +1168,9 @@ MSAccess tutorial: <a href="https://www.youtube.com/watch?v=bWKf6gT8_JI&amp;list
 <div id="data-wrangling-i" class="section level4 tabset">
 <h4>Data Wrangling I</h4>
 <details open>
-<p><summary class="drop">Data Wrangling Intro</summary> We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling refers to basically all the steps you have to take to prepare your data for analysis or plotting. Data munging or cleaning are other terms used to describe this process. This was the most checked topic in the survey you all filled out, so I’ll cover this in (painful?) detail.</p>
+<p><summary class="drop">Data Wrangling Intro</summary> We already did a bit of data wrangling with the df and wetdat data frames yesterday. Today, we take those concepts to the next level. If you’ve never heard of the term, data wrangling essentially refers to all the steps you have to take to prepare your data for analysis or plotting. Data munging or data cleaning are other terms used to describe this process. This was the most checked topic in the survey you all filled out, so I’ll cover this in (painful?) detail.</p>
 <p><b>Disclaimer: While R provides lots of ways to check and clean up data, these tools are no replacement for sound data management that prevents data issues from happening in the first place.</b></p>
-<p>For this training module, we’re going to check and clean up the wetland plant data from yesterday. In the dataset, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
+<p>For this training module, we’re going to check and clean up the wetland plant data from yesterday. Just a reminder that in this dataset each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100.</p>
 <p>Before we get started, open the R_training.Rproj project in RStudio, start a Day_2.R script. Then, load the tidyverse package and the wetland dataset we used yesterday.</p>
 <pre class="r"><code>library(tidyverse)
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)</code></pre>
@@ -1192,14 +1193,14 @@ summary(wetdat) # summarize each field based on data type</code></pre>
 <details open>
 <p><summary class="drop">Check and fix numeric fields that R reads as a character</summary> Both the summary and str functions show an issue with the Avg_Cov column: R classified this as a character, but we want it to be numeric. If R classified this as a character, it means that at least one record within this column contains something that isn’t a number. If your data frame isn’t huge, you can just run View(wetdat) to see the data and scroll/sort until you find the culprit. Strings will typically sort to the top or bottom of an otherwise numeric column.</p>
 <pre class="r"><code>View(wetdat)</code></pre>
-<p>Just by sorting Ave_Cov in the view above, you can see that there are 2 records with &lt;0.1 instead of 0.1. Also, note the row numbers to the far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code, the row numbers are updated.</p>
-<p>Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I’m going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn’t the slickest approach because I’m pretending that I don’t know which record and which symbols are causing the problems. First, I’m going to create a temporary field called Ave_Cov_num that’s a numeric version of Ave_Cov.</p>
+<p>Just by sorting Ave_Cov in the view above, you can see that there are 2 records with &lt;0.1 instead of 0.1. Also, note the row numbers to the far left, which are rows 83 and 106 in this case. the Row numbers are assigned at the time you load the data, and are maintained even when you sort in the view. If you sort the data in code (e.g. wetdat %&gt;% arrange(Site_Name)), the row numbers will be updated.</p>
+<p>Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I’m going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn’t the slickest approach because I’m pretending that I don’t know which record and which symbols are causing the problems (say, for example, that there are a lot of records with this issue). First, I’m going to create a temporary field called Ave_Cov_num that’s a numeric version of Ave_Cov.</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov) #create new field that converts Ave_Cov to numeric</code></pre>
 <pre><code>## Warning: NAs introduced by coercion</code></pre>
 <p>Note the “NAs introduced by coercion” warning message in your console. This means that when you converted the Ave_Cov to numeric, there was at least 1 record that R didn’t read as a number, and it was set to NA (blank) in the Ave_Cov_num column. We’re going to use that to find and then fix the record(s) that are causing the issue.</p>
 <pre class="r"><code>which(is.na(wetdat$Ave_Cov_num)) </code></pre>
 <pre><code>## [1]  83 106</code></pre>
-<p>The line above is asking which rows in the Ave_Cov_num field are NA, and returns 83 and 106. Now let’s use brackets to return the data from those 2 rows.</p>
+<p>The line above is asking which rows in the new Ave_Cov_num field are NA, and returns 83 and 106. Now let’s use brackets to return the data from those 2 rows.</p>
 <pre class="r"><code>wetdat[which(is.na(wetdat$Ave_Cov_num)), ] # all columns with NA in Ave_Cov_num</code></pre>
 <pre><code>##     Site_Name Site_Type            Latin_Name             Common Year PctFreq
 ## 83     SEN-03  Sentinel     Cornus canadensis bunchberry dogwood 2011     100
@@ -1212,10 +1213,11 @@ summary(wetdat) # summarize each field based on data type</code></pre>
 <pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only </code></pre>
 <pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
 <p>In the code above, we’re using brackets to subset the wetdat data frame to only return the rows that have NA in Ave_Cov_num. The first line returns all columns in those rows. The second and third lines only show us the Ave_Cov field, which is what we want to fix. Remember that brackets specify the [row, column] of a data frame. If you specify the dataframe$column then you only have the row left, and don’t need a comma in the brackets. Admittedly, subsetting with brackets can get complicated, and I’m not always sure if I need a comma in the bracket or not. If I get the “incorrect number of dimensions” error, I know I did it wrong and need to either add or delete the comma.</p>
-<p>Back to cleaning the data. We found that the records with non-numeric symbols were both “&lt;0.1”. We’re going to use that information to replace “&lt;0.1” with 0.1, instead of replace all NAs with 0.1 (just in case there are blanks in the data for other reasons).</p>
-<p>Of course the first thing you should do, when you see &lt;0.1 is to check your raw data, datasheets, etc. to make sure 0.1 is the correct replacement for the &lt;0.1 records. If you don’t know what the correct replacement should be, you should probably change the value to NA instead of “0.1”. That example is commented out in the code chunk below.</p>
+<p>Back to cleaning the data. We found that the records with non-numeric symbols were both “&lt;0.1”. We’re going to use that information to replace “&lt;0.1” with 0.1. Of course the first thing you should do, when you see &lt;0.1 is to check your raw data, datasheets, etc. to make sure 0.1 is the correct replacement for the &lt;0.1 records. If you don’t know what the correct replacement should be, you should probably change the value to NA instead of “0.1”. That example is commented out in the code chunk below.</p>
 <pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
-#wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA
+#wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA</code></pre>
+<p>Another approach is to drop the “&lt;” using gsub(). This is handy for lab-derived data that report detection limits as &lt; or &gt; a certain value, and that value varies based on the lab or the parameter.</p>
+<pre class="r"><code>wetdat$Ave_Cov &lt;- gsub(&quot;&lt;&quot;, &quot;&quot;, wetdat$Ave_Cov)
 str(wetdat)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    508 obs. of  12 variables:
 ##  $ Site_Name  : chr  &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; &quot;SEN-01&quot; ...
@@ -1230,7 +1232,8 @@ str(wetdat)</code></pre>
 ##  $ X_Coord    : num  574855 574855 574855 574855 574855 ...
 ##  $ Y_Coord    : num  4911909 4911909 4911909 4911909 4911909 ...
 ##  $ Ave_Cov_num: num  0.02 0.02 2.22 0.04 2.64 6.6 10.2 0.06 0.86 4.82 ...</code></pre>
-<p>You can now View(wetdat) to see if &lt;0.1 is still in the data frame (it shouldn’t be). However, notice that Ave_Cov is still considered a chr (text field). Once R assigns a data type to a column, you have to manually change it to something different. Now that we fixed &lt;0.1, we shouldn’t get any NAs introduced by coercion when we convert to numeric. I’m going to overwrite the Ave_Cov_num field because it’s just a temporary field for the purpose of data checking.</p>
+<p>Here gsub is looking for the “&lt;” character, and replaces it with nothing, via empty quotes. If you wanted to replace the “&lt;” with something else, like a minus sign, the 2nd argument would be “-” instead of &quot;&quot;.</p>
+<p>You can now View(wetdat) to check that &lt;0.1 is no longer in the Ave_Cov column. However, notice that Ave_Cov is still considered a chr (text field). Once R assigns a data type to a column, you have to manually change it to something different. Now that we fixed &lt;0.1, we shouldn’t get any NAs introduced by coercion when we convert to numeric. I’m going to overwrite the Ave_Cov_num field because it’s just a temporary field for the purpose of data checking.</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
 str(wetdat) </code></pre>
 <pre><code>## &#39;data.frame&#39;:    508 obs. of  12 variables:
@@ -1249,10 +1252,9 @@ str(wetdat) </code></pre>
 <p>Ave_Cov_num is now numeric and no NAs were introduced by coercion. It’s now safe to overwrite the original Ave_Cov field. The entire workflow from start to finish is below:</p>
 <pre class="r"><code>wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)</code></pre>
 <pre><code>## Warning: NAs introduced by coercion</code></pre>
-<pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # which values in Ave_Cov are forcing Ave_Cov_num to be NA</code></pre>
+<pre class="r"><code>wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # which values in Ave_Cov can&#39;t be converted to a number.</code></pre>
 <pre><code>## [1] &quot;&lt;0.1&quot; &quot;&lt;0.1&quot;</code></pre>
-<pre class="r"><code>wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
-wetdat$Ave_Cov &lt;- as.numeric(wetdat$Ave_Cov)
+<pre class="r"><code>wetdat$Ave_Cov &lt;- as.numeric(gsub(&quot;&lt;&quot;, &quot;&quot;, wetdat$Ave_Cov))
 wetdat &lt;- subset(wetdat, select = -c(Ave_Cov_num)) #now drop the temp column Ave_Cov_num
 str(wetdat) #Ave_Cov is now numeric</code></pre>
 <pre><code>## &#39;data.frame&#39;:    508 obs. of  11 variables:
@@ -1275,7 +1277,7 @@ str(wetdat) #Ave_Cov is now numeric</code></pre>
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Check and fix range of numeric data</summary> Another check I often do is to make sure there aren’t any impossible values. For example, both the Ave_Cov and PctFreq columns are percents that should range from 0 to 100. Negative values or values over 100 are errors. Let’s see if we find any in the data.Note that we couldn’t use the range() function on Ave_Cov with the original data frame until we fixed the &lt;0.1 issue and converted to numeric.</p>
+<p><summary class="drop">Check and fix range of numeric data</summary> Another check I often do is to make sure there aren’t any impossible values. For example, both the Ave_Cov and PctFreq columns are percents that should range from 0 to 100. Negative values or values over 100 are errors. Let’s see if we find any in the data. Note that we couldn’t use the range() function on Ave_Cov with the original data frame until we fixed the &lt;0.1 issue and converted to numeric.</p>
 <pre class="r"><code>range(wetdat$PctFreq, na.rm = TRUE) # 20 to 100- that looks fine.</code></pre>
 <pre><code>## [1]  20 100</code></pre>
 <pre class="r"><code>range(wetdat$Ave_Cov, na.rm = TRUE) # 0.02 to 110.0- no bueno</code></pre>
@@ -1305,7 +1307,7 @@ Now Ave_Cov values are within the acceptable range of 0 to 100.
 <pre><code>## 
 ## FALSE  TRUE 
 ##     5   503</code></pre>
-<p>While the Ave_Cov colum is all TRUE, the PctFreq has 5 NAs (FALSE in output). Now we need to decide whether the NAs should be changed to 0 or dropped from the dataset. Again, that’s up to the user and what you’re trying to do. For the purposes here, I’ll show you how the results change based on the decision you make.</p>
+<p>While the Ave_Cov column is all TRUE, the PctFreq has 5 NAs (FALSE in output). Now we need to decide whether the NAs should be changed to 0 or dropped from the dataset. Again, that’s up to the user and what you’re trying to do. For the purposes here, I’ll show you how the results change based on the decision you make.</p>
 <p>First, let’s do nothing.</p>
 <pre class="r"><code>mean(wetdat$PctFreq)</code></pre>
 <pre><code>## [1] NA</code></pre>
@@ -1321,25 +1323,21 @@ table(complete.cases(wetdat$PctFreq))</code></pre>
 ##  508</code></pre>
 <pre class="r"><code>mean(wetdat$PctFreq)</code></pre>
 <pre><code>## [1] 69.6752</code></pre>
-Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller because the 0s are included.
+Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller because the 0s are included. This is why it’s important to think about how to deal with blanks, and every situation is different.
 </details>
 <p><br></p>
 <details open>
-<p><summary class="drop">Check and fix character columns</summary> A common issue with text/character fields is inconsistent naming conventions, especially if data are being stored in a spreadsheet instead of a database with standardized look up fields. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let’s check to see if all of the Site_Name records follow that. Since we don’t have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.</p>
+<p><summary class="drop">Check and fix character columns</summary> A common issue with text/character fields is inconsistent naming conventions, especially if data are being stored in a spreadsheet instead of a database with standardized look up lists. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let’s check to see if all of the Site_Name records follow that. Since we don’t have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.</p>
 <pre class="r"><code>table(wetdat$Site_Name)</code></pre>
 <pre><code>## 
 ## RAM-05 RAM-41 RAM-44 RAM-53 RAM-62  RAM44 SEN-01 SEN-02 SEN-03  SEN-3 
 ##     98     73     34     98     52     45     34     41     32      1</code></pre>
 <p>A couple of issues show up here. First, we see that there’s a site named RAM44 that’s missing a dash. We also see that there’s one SEN-3, which should be SEN-03.</p>
 <p>Another way to do this, if you had a large dataset, would be to check if there are any Site_Name records that are not length 6 (eg RAM-01 is 6 digits) using the nchar() function, which counts the number of characters in a record.</p>
-<pre class="r"><code>wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)] #</code></pre>
-<pre><code>##  [1] &quot;SEN-3&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
-## [10] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
-## [19] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
-## [28] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
-## [37] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
-## [46] &quot;RAM44&quot;</code></pre>
-<p>You can also check if any Site_Name records are missing a dash using the grepl function. The grepl function is a string matching</p>
+<pre class="r"><code>unique(wetdat$Site_Name[which(nchar(wetdat$Site_Name) != 6)]) #</code></pre>
+<pre><code>## [1] &quot;SEN-3&quot; &quot;RAM44&quot;</code></pre>
+<p>NOte unique() returns only unique values, so you don’t get 40 RAM44 returns.</p>
+<p>You can also check if any Site_Name records are missing a dash using the grepl function. The grepl function is a partial string matching function that’s looking for “-” in the Site_Name column. The ! in front of which is telling R to return any row that doesn’t have “-” in the Site_Name column.</p>
 <pre class="r"><code>wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]</code></pre>
 <pre><code>##  [1] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
 ## [10] &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot; &quot;RAM44&quot;
@@ -1353,7 +1351,7 @@ wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]
 wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)]
 table(wetdat$Site_Name)
 sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column</code></pre>
-<p>Problems solved (character(0) means no records returned). Note that there are other more powerful solutions using functions like gsub, but they require more upfront coding and understand of regular expressions in Perl to work. I only use them when the solution above doesn’t work. If you ever need to know more about that, a decent intro is <a href="https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html">here</a>. I provide examples on how to use regular expressions for pattern matching in the answers section, but I’m not going to go down that rabbit hole during training (I barely understand them myself).</p>
+<p>Problems solved (character(0) means no records returned). Note that there are other more powerful solutions using regular expressions from the Perl language and functions like gsub or grep, but they’re more involved and tricky to work with. I only use them when the solution above doesn’t work. If you ever need to know more about that, a decent intro is <a href="https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html">here</a>. I also provide a more involved example on how to use regular expressions for pattern matching in Answer 1 for today’s questions, but I’m not going to go too far down that rabbit hole during training (I barely understand them myself).</p>
 </details>
 <p><br></p>
 <details open>
@@ -1400,7 +1398,8 @@ Question 2: Now that you’ve found it, fix it, and check that you fixed it.
 There are different flavors of joining tables. The main joins we use are:
 <ul>
 <li>
-<b>Left joins:</b> take all of the records in the primary key on the left side data frame (ie the first data frame specified in the function) and find one or more matching records in the right side data frame (ie the second data frame specified). Any records in the left data frame that don’t have a match in the right data frame will still be included in the final result, but all of the columns coming from the right data frame will be NA (blank). Records on the right data frame without a match in the left data frame are dropped from the result.
+<b>Left joins:</b> take all of the records in the primary key on the left side data frame (ie the first data frame specified in the function) and find one or more matching records in the right side data frame (ie the second data frame specified). Any records in the left data frame that don’t have a match in the right data frame will still be included in the final result, but all of the columns for those records<br />
+coming from the right data frame will be NA (blank). Records on the right data frame without a match in the left data frame are dropped from the result.
 </li>
 <li>
 <b>Right joins:</b> basically the same as left joins, except the second dataset includes all records and the first only includes records with matching primary keys.
@@ -1409,7 +1408,7 @@ There are different flavors of joining tables. The main joins we use are:
 <b>Semi joins:</b> only take records from both left and right datasets that have matching primary keys.
 </li>
 <li>
-<b>Full joins:</b> take all of the records from both sides of the join. Records on both sides without matches are included in the results with blanks in the cells that came from the table missing a match.
+<b>Full joins:</b> take all of the records from both sides of the join. Records on both sides without matches are included in the results with NAs in the cells that came from the table missing a match.
 </li>
 </ul>
 <p>In practice, I use left and full joins the most often, so I’ll focus mostly on those in the rest of this module. We’ll try this out on simple datasets first, then we’ll build up to more complex examples with our forest data. Another great example with visuals can be found <a href="https://mgimond.github.io/ES218/Week03c.html">here</a>.</p>
@@ -1495,8 +1494,8 @@ nrow(loc_event_full_tidy) # same number of rows because all events have a locati
 <pre class="r"><code>loc_event_left_tidy &lt;- left_join(loc, event, by = &quot;Location_ID&quot;)
 nrow(loc_event_left_tidy) # same number of rows because all events have a location record</code></pre>
 <pre><code>## [1] 164</code></pre>
-<p>Note that the merge() function is the base R way of joining databases. The all.x = TRUE and all.y = TRUE makes it a full join. Left join is all.x = TRUE, all.y = FALSE, and right join is all.x = FALSE, all.y = TRUE. I tend to use merge over the tidyverse join approach, because it’s a bit faster when you have huge datasets, and it’s what I’ve gotten used to. The exception, which I’ll show below, is if I’m chaining multiple steps that include a join via pipes.</p>
-<p>Let’s filter the location data to only include ACAD plots, and the event table to only include non-QAQC plots (we resample 5% of plots per year; QAQC=TRUE represents the 2nd visit).</p>
+<p>Note that the merge() function is the base R way of joining databases. The all.x = TRUE and all.y = TRUE makes it a full join. Left join is all.x = TRUE, all.y = FALSE, and right join is all.x = FALSE, all.y = TRUE. I tend to use merge() instead of tidyverse join functions, because it’s a bit faster when you have huge datasets, and it’s what I’ve gotten used to. The exception, which I’ll show below, is if I’m chaining multiple steps that include a join via pipes.</p>
+<p>Let’s filter the location data to only include ACAD plots, and the event table to only include non-QAQC plots (we resample 5% of plots per year; Event_QAQC = TRUE represents the 2nd visit).</p>
 <pre class="r"><code># Base R approach
 locev &lt;- merge(loc[loc$Park_Code == &quot;ACAD&quot;, ], 
                event[event$Event_QAQC == FALSE, ], 
@@ -2476,8 +2475,9 @@ wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks f
 <p><br></p>
 <details>
 <p><summary class="ques2">Question 2: Now that you’ve found it, fix it, and check that you fixed it.</summary></p>
-<pre class="r"><code>wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot;
-wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex approach </code></pre>
+<pre class="r"><code>wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot; # easy approach
+wetdat$Latin_Name &lt;- gsub(&quot;[+]&quot;, &quot;&quot;, wetdat$Latin_Name) # gsub approach
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # no values returned </code></pre>
 <pre><code>## character(0)</code></pre>
 <pre class="r"><code>sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach</code></pre>
 <pre><code>##  [1] &quot;Acer rubrum&quot;               &quot;Alnus incana&quot;             
@@ -2972,14 +2972,14 @@ wetdat[which(is.na(wetdat$Ave_Cov_num)), &quot;Ave_Cov&quot;] # Ave_Cov only
 wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only 
 wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
 #wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- NA
+wetdat$Ave_Cov &lt;- gsub(&quot;&lt;&quot;, &quot;&quot;, wetdat$Ave_Cov)
 str(wetdat)
 wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
 str(wetdat) 
 wetdat &lt;- read.csv(&quot;./data/example_data/ACAD_wetland_data_example.csv&quot;)
 wetdat$Ave_Cov_num &lt;- as.numeric(wetdat$Ave_Cov)
-wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # which values in Ave_Cov are forcing Ave_Cov_num to be NA
-wetdat$Ave_Cov[wetdat$Ave_Cov == &quot;&lt;0.1&quot;] &lt;- &quot;0.1&quot;
-wetdat$Ave_Cov &lt;- as.numeric(wetdat$Ave_Cov)
+wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # which values in Ave_Cov can&#39;t be converted to a number.
+wetdat$Ave_Cov &lt;- as.numeric(gsub(&quot;&lt;&quot;, &quot;&quot;, wetdat$Ave_Cov))
 wetdat &lt;- subset(wetdat, select = -c(Ave_Cov_num)) #now drop the temp column Ave_Cov_num
 str(wetdat) #Ave_Cov is now numeric
 table(complete.cases(wetdat$Ave_Cov)) #checks that there aren&#39;t any more NAs. 
@@ -2997,7 +2997,7 @@ wetdat$PctFreq[is.na(wetdat$PctFreq)] &lt;- 0
 table(complete.cases(wetdat$PctFreq))
 mean(wetdat$PctFreq)
 table(wetdat$Site_Name)
-wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)] #
+unique(wetdat$Site_Name[which(nchar(wetdat$Site_Name) != 6)]) #
 
 wetdat$Site_Name[which(!grepl(&quot;-&quot;, wetdat$Site_Name))]
 wetdat$Site_Name[wetdat$Site_Name == &quot;RAM44&quot;] &lt;- &quot;RAM-44&quot;
@@ -3468,8 +3468,9 @@ wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # looks f
   # ^ and +$ are telling R to start with first word and check every following word within a record.
   # This took longer than I&#39;d like to admit to make work, by the way.
 
-wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot;
-wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # regex approach 
+wetdat$Latin_Name[wetdat$Latin_Name == &quot;Alnus incana++&quot;] &lt;- &quot;Alnus incana&quot; # easy approach
+wetdat$Latin_Name &lt;- gsub(&quot;[+]&quot;, &quot;&quot;, wetdat$Latin_Name) # gsub approach
+wetdat$Latin_Name[grep(&quot;[^[:alpha:]]+$&quot;, wetdat$Latin_Name)] # no values returned 
 sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach
 
 # Step by step:

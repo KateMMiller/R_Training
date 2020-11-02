@@ -6,14 +6,14 @@ There are different flavors of joining tables. The main joins we use are:
 <ul>
   <li><b>Left joins:</b> take all of the records in the primary key on the left side data frame (ie the first data frame specified in 
   the function) and find one or more matching records in the right side data frame (ie the second data frame specified). Any records in 
-  the left data frame that don't have a match in the right data frame will still be included in the final result, but all of the columns 
+  the left data frame that don't have a match in the right data frame will still be included in the final result, but all of the columns for those records  
   coming from the right data frame will be NA (blank). Records on the right data frame without a match in the left data frame are 
   dropped from the result.</li>
   <li><b>Right joins:</b> basically the same as left joins, except the second dataset includes all records and the first only includes 
   records with matching primary keys.</li> 
   <li><b>Semi joins:</b> only take records from both left and right datasets that have matching primary keys.</li>
   <li><b>Full joins:</b> take all of the records from both sides of the join. Records on both sides without matches are included in 
-  the results with blanks in the cells that came from the table missing a match.</li>
+  the results with NAs in the cells that came from the table missing a match.</li>
 </ul>
 
 In practice, I use left and full joins the most often, so I'll focus mostly on those in the rest of this module. We'll try this out on simple datasets first, then we'll build up to more complex examples with our forest data. Another great example with visuals can be found <a href="https://mgimond.github.io/ES218/Week03c.html">here</a>.
@@ -97,9 +97,9 @@ loc_event_left_tidy <- left_join(loc, event, by = "Location_ID")
 nrow(loc_event_left_tidy) # same number of rows because all events have a location record
 
 ```
-Note that the merge() function is the base R way of joining databases. The all.x = TRUE and all.y = TRUE makes it a full join. Left join is all.x = TRUE, all.y = FALSE, and right join is all.x = FALSE, all.y = TRUE. I tend to use merge over the tidyverse join approach, because it's a bit faster when you have huge datasets, and it's what I've gotten used to. The exception, which I'll show below, is if I'm chaining multiple steps that include a join via pipes.
+Note that the merge() function is the base R way of joining databases. The all.x = TRUE and all.y = TRUE makes it a full join. Left join is all.x = TRUE, all.y = FALSE, and right join is all.x = FALSE, all.y = TRUE. I tend to use merge() instead of tidyverse join functions, because it's a bit faster when you have huge datasets, and it's what I've gotten used to. The exception, which I'll show below, is if I'm chaining multiple steps that include a join via pipes.
 
-Let's filter the location data to only include ACAD plots, and the event table to only include non-QAQC plots (we resample 5% of plots per year; QAQC=TRUE represents the 2nd visit). 
+Let's filter the location data to only include ACAD plots, and the event table to only include non-QAQC plots (we resample 5% of plots per year; Event_QAQC = TRUE represents the 2nd visit). 
 
 ```{r, c38, echo=T, results='hide'}
 # Base R approach

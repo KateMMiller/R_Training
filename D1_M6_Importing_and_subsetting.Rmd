@@ -14,6 +14,8 @@ wetdat <- read.csv("./data/example_data/ACAD_wetland_data_example.csv")
 
 After running the code above, you should see a new object in your global environment named <b>wetdat</b>. You can view the structure and the data by clicking on the arrow next to the name in the global environment panel, or click directly on <b>wetdat</b> to display a separate window of your data in a spreadsheet format. 
 
+We're going to use this dataset throughout the rest of training. To give a little background on it, each row represents a species that was recorded in a wetland plot. Multiple sites have been sampled twice, as indicated by the Year column. PctFreq is the % of subplots a species was found in, ranging from 0 to 100. Ave_Cov is the average % cover of the species, ranging from 0 to 100. 
+
 The read.csv() is a function in base R that reads csv (comma separated values) files, which are lightweight machine-readable files that most text readers or spreadsheet programs can read. Unlike Excel spreadsheets, they only contain values and commas and cannot save any kind of formatting, like merged cells, cell borders, formulas, etc. You also can only have one worksheet within a csv. If most of your data live in Excel spreadsheets, you can either save individual worksheets as csvs directly in Excel, or you can load individual worksheets into R using the <i>readxl</i> package that was designed to read Excel files.
 </details>
 <br>

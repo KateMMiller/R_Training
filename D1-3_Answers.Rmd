@@ -111,8 +111,9 @@ wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # looks for anythin
 
 <details><summary class='ques2'>Question 2: Now that you've found it, fix it, and check that you fixed it.</summary>
 ```{r, c110b, echo=T, results='show'}
-wetdat$Latin_Name[wetdat$Latin_Name == "Alnus incana++"] <- "Alnus incana"
-wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # regex approach 
+wetdat$Latin_Name[wetdat$Latin_Name == "Alnus incana++"] <- "Alnus incana" # easy approach
+wetdat$Latin_Name <- gsub("[+]", "", wetdat$Latin_Name) # gsub approach
+wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # no values returned 
 sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach
 
 ```

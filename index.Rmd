@@ -5,7 +5,7 @@ output:
 title: "R training for ACAD"
 ---
 
-ACAD R Training: November 3 - 5, 2020 {.tabset .tabset-pills}
+ACAD R Training: November 3 -- 5, 2020 {.tabset .tabset-pills}
 --------------------------------------------------
 ### Prep for Training{.tabset}
 
