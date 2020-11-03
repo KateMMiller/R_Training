@@ -2,7 +2,7 @@
 Please complete the assignments below (they're ordered from highest to lowest priority). Note that the readings are to expose you to new topics, but you're not expected to understand or digest 100% of the material. 
 <ul>
   <li>Answer the questions for this day and review today's code. Answers are in the Answers tab.</li>
-  <li>Complete the <a href="https://forms.office.com/Pages/DesignPage.aspx#FormId=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u&Preview=%7B%22PreviousTopView%22%3A%22None%22%7D&TopView=Preview">Feedback form</a> by the end of the day</li>
+  <li>Complete the <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u">Feedback form</a> by the end of the day</li>
   <li>R4DS: <a href="https://r4ds.had.co.nz/transform.html">Chapter 5. Data transformations</a></li>
   <li>STAT545: <a href="https://stat545.com/join-cheatsheet.html">Chapter 15. Join two tables</a></li>
   <li>R4DS: <a href="https://r4ds.had.co.nz/relational-data.html">Chapter 13. Relational Data</a></li>
