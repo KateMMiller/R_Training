@@ -26,9 +26,9 @@ In practice, I use left and full joins the most often, so I'll focus mostly on t
 
 ```{r, c34a, echo=T, results ='hide'}
 tree <- data.frame(plot = c("p1","p1","p1","p2","p2","p3","p4","p4"), 
-                  treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
-                  species = c("ACERUB" ,"PINSTR", "PINSTR", "QUERUB", "PICRUB", 
-                              "PICRUB", "PICRUB", "ACERUB"))
+                   treenum = c(1, 2, 3, 11, 12, 21, 32, 33),
+                   species = c("ACERUB" ,"PINSTR", "PINSTR", "QUERUB", "PICRUB", 
+                               "PICRUB", "PICRUB", "ACERUB"))
 tree
 
 tree_data <- data.frame(plot = c("p1", "p1", "p1", "p1", "p1","p1", "p2", "p2", "p5", "p7"),
@@ -52,13 +52,21 @@ Note the left join has fewer records, and doesn't include p5 and p7 in the plot 
 </details>
 <br>
 <details open><summary class='drop'>Advanced table joins</summary>
-Let's load some example forest data, and use the primary keys to join them together.
+Let's load some example forest data, and use the primary keys to join them together. The tables we'll join are Location, Events and Stand. The Location table includes plot level data that never changes, like GPS coordinates, elevation, etc. The Events table records every time a plot is sampled. The Stand table has a row for every time a plot is sampled and includes data like crown closure, index of deer impacts, % bare rock, etc. Their relationships are shown in the image below.
 
+<img src="./images/DB_table_relationships.jpg" alt="Database tables" width="800px">
+
+Note the GUIDS that link the tables together, including Location_ID between tbl_Locations and tbl_Events, and Event_ID between tbl_Events and tbl_Stand_Data. These primary keys are what we will use to join tables together in R as well. 
+
+First, load the tables by running to code below.
 ```{r, c32, echo=T, results='hide'}
 library(tidyverse)
 loc <- read.csv("./data/example_data/tbl_Locations_example.csv") # plot level data for forest plots in NETN
+head(loc)
 event <- read.csv("./data/example_data/tbl_Events_example.csv") # data on each visit in NETN forest plots
+head(event)
 stand <- read.csv("./data/example_data/tbl_Stand_Data_example.csv") # stand data collected in plots
+head(stand)
 ```
 ```{r, c33, echo=T, eval=F}
 View(loc) #Location_ID
@@ -67,9 +75,9 @@ View(stand) #Event_ID links stand table to event table.
 ```
 ```{r, c34, echo=T}
 intersect(names(loc), names(event)) # way to check columns two tables have in common.
-
+intersect(names(event), names(stand))
 ```
-The primary key to join the loc and event table is Location_ID, which the intersect function also shows is a column they have in common. Notice that while the loc table has a lot of important information in it, there's no information about when and how often a plot has been sampled. The event table, on the other hand has all of the dates a plot was sampled, but it doesn't have the park or plot columns to determine which parks/plots those dates are associated with. We need to join the data from both tables (I'm using data frame and table interchangeably here) together, to determine that.
+The intersect function tells you the elements that the 2 data frames share, in this case the column names they have in common. Not coincidentally, the results include the primary keys (eg Location_ID) that link the two tables. Now we're going to merge the tables.
 
 ```{r, c35, echo=T, results='hide'}
 # base R version
