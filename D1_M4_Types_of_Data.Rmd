@@ -140,7 +140,8 @@ This is merely to show that there are usually 5 different ways to do something i
 I should mention that when you use numbers instead of column names, your code is pretty fragile to changes in column order (eg, you drop a column). Row numbers are similarly fragile, if you reorder your data. It's better to use names where possible and to use functions that use logic to find and replace records. For example:
 ```{r, c11, echo=T, results='hide'}
 
-df[is.na("domSpp")] <- "white_oak"
+#df[is.na("domSpp")] <- "white_oak" #wrong
+df$domSpp[is.na(df$domSpp)]<- "white_oak"
 ```
 Here R is looking for a value in the domSpp column that is NA (i.e. a blank value). Since there's only 1, this works. If there were more than 1 NA, we'd need better logic to assign the proper value to each blank. We'll go into more detail about this later.
 

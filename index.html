@@ -885,7 +885,8 @@ df[7, c(1, 4)] &lt;- c(7, &quot;white_spruce&quot;) #Takes the 7th row and the f
 # Then the first column gets 7, and the 4th gets &quot;white spruce&quot;</code></pre>
 <p>This is merely to show that there are usually 5 different ways to do something in R, and the best way is the one you can get to work. At least that’s my philosophy for most of the coding I do. Having code I can pick up a year later and still understand what it does is also important. I only really care about coding for performance if I’m working with big datasets, where slow or memory hungry processes can really add up.</p>
 <p>I should mention that when you use numbers instead of column names, your code is pretty fragile to changes in column order (eg, you drop a column). Row numbers are similarly fragile, if you reorder your data. It’s better to use names where possible and to use functions that use logic to find and replace records. For example:</p>
-<pre class="r"><code>df[is.na(&quot;domSpp&quot;)] &lt;- &quot;white_oak&quot;</code></pre>
+<pre class="r"><code>#df[is.na(&quot;domSpp&quot;)] &lt;- &quot;white_oak&quot; #wrong
+df$domSpp[is.na(df$domSpp)]&lt;- &quot;white_oak&quot;</code></pre>
 <p>Here R is looking for a value in the domSpp column that is NA (i.e. a blank value). Since there’s only 1, this works. If there were more than 1 NA, we’d need better logic to assign the proper value to each blank. We’ll go into more detail about this later.</p>
 <p>And now, here’s the tidyverse way to replace the blank in df’s domSpp column with “white_oak”:</p>
 <pre class="r"><code>df$domSpp &lt;- df$domSpp %&gt;% replace_na(&quot;white_oak&quot;)</code></pre>
@@ -1469,8 +1470,11 @@ tree_left_join &lt;- left_join(tree, tree_data, by = c(&quot;plot&quot;, &quot;t
 <p>First, load the tables by running to code below.</p>
 <pre class="r"><code>library(tidyverse)
 loc &lt;- read.csv(&quot;./data/example_data/tbl_Locations_example.csv&quot;) # plot level data for forest plots in NETN
+head(loc)
 event &lt;- read.csv(&quot;./data/example_data/tbl_Events_example.csv&quot;) # data on each visit in NETN forest plots
-stand &lt;- read.csv(&quot;./data/example_data/tbl_Stand_Data_example.csv&quot;) # stand data collected in plots</code></pre>
+head(event)
+stand &lt;- read.csv(&quot;./data/example_data/tbl_Stand_Data_example.csv&quot;) # stand data collected in plots
+head(stand)</code></pre>
 <pre class="r"><code>View(loc) #Location_ID
 View(event) #Location_ID links to tbl_Location; Event_ID links other visit-level tables to this table
 View(stand) #Event_ID links stand table to event table. </code></pre>
@@ -2854,7 +2858,8 @@ df[7, 4] &lt;- &quot;white_spruce&quot; #takes the 7th row of the 4th column and
 df[7, c(1, 4)] &lt;- c(7, &quot;white_spruce&quot;) #Takes the 7th row and the first and 4th column, which happen to be plot and domSpp.
 # Then the first column gets 7, and the 4th gets &quot;white spruce&quot;
 
-df[is.na(&quot;domSpp&quot;)] &lt;- &quot;white_oak&quot;
+#df[is.na(&quot;domSpp&quot;)] &lt;- &quot;white_oak&quot; #wrong
+df$domSpp[is.na(df$domSpp)]&lt;- &quot;white_oak&quot;
 df$domSpp &lt;- df$domSpp %&gt;% replace_na(&quot;white_oak&quot;)
 
 str(df) #still a char
@@ -3044,8 +3049,11 @@ print(tree_full_join)
 print(tree_left_join)
 library(tidyverse)
 loc &lt;- read.csv(&quot;./data/example_data/tbl_Locations_example.csv&quot;) # plot level data for forest plots in NETN
+head(loc)
 event &lt;- read.csv(&quot;./data/example_data/tbl_Events_example.csv&quot;) # data on each visit in NETN forest plots
+head(event)
 stand &lt;- read.csv(&quot;./data/example_data/tbl_Stand_Data_example.csv&quot;) # stand data collected in plots
+head(stand)
 View(loc) #Location_ID
 View(event) #Location_ID links to tbl_Location; Event_ID links other visit-level tables to this table
 View(stand) #Event_ID links stand table to event table. 
