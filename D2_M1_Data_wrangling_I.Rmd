@@ -50,22 +50,26 @@ Just by sorting Ave_Cov in the view above, you can see that there are 2 records 
 Knowing what you just learned, you could open this file in Excel and fix the data, then reload the file in R. But I'm going to do it in code, so that it works any time you add new data to the dataset that might have the same issues. This isn't the slickest approach because I'm pretending that I don't know which record and which symbols are causing the problems (say, for example, that there are a lot of records with this issue). First, I'm going to create a temporary field called Ave_Cov_num that's a numeric version of Ave_Cov.
 
 ```{r c20c, echo=T, results='show'}
-wetdat$Ave_Cov_num <- as.numeric(wetdat$Ave_Cov) #create new field that converts Ave_Cov to numeric
+wetdat$Ave_Cov_Num <- as.numeric(wetdat$Ave_Cov) #create new field that converts Ave_Cov to numeric
 ```
 Note the "NAs introduced by coercion" warning message in your console. This means that when you converted the Ave_Cov to numeric, there was at least 1 record that R didn't read as a number, and it was set to NA (blank) in the Ave_Cov_num column. We're going to use that to find and then fix the record(s) that are causing the issue. 
 
 ```{r c20d, echo=T, results='show'}
-which(is.na(wetdat$Ave_Cov_num)) 
+which(is.na(wetdat$Ave_Cov_Num)) 
 ```
 The line above is asking which rows in the new Ave_Cov_num field are NA, and returns 83 and 106. Now let's use brackets to return the data from those 2 rows.
 
 ```{r, c20e, echo=T, results='show'}
-wetdat[which(is.na(wetdat$Ave_Cov_num)), ] # all columns with NA in Ave_Cov_num
-wetdat[which(is.na(wetdat$Ave_Cov_num)), "Ave_Cov"] # Ave_Cov only
-wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # Another way to see Ave_Cov only 
+wetdat[which(is.na(wetdat$Ave_Cov_Num)), ] # all columns with NA in Ave_Cov_num
+
+wetdat[which(is.na(wetdat$Ave_Cov_Num)), "Ave_Cov"] # Ave_Cov only
+
+wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_Num))] # Another way to see Ave_Cov only 
 ```
 
-In the code above, we're using brackets to subset the wetdat data frame to only return the rows that have NA in Ave_Cov_num. The first line returns all columns in those rows. The second and third lines only show us the Ave_Cov field, which is what we want to fix. Remember that brackets specify the [row, column] of a data frame. If you specify the dataframe$column then you only have the row left, and don't need a comma in the brackets. Admittedly, subsetting with brackets can get complicated, and I'm not always sure if I need a comma in the bracket or not. If I get the "incorrect number of dimensions" error, I know I did it wrong and need to either add or delete the comma. 
+In the code above, we're using brackets to subset the wetdat data frame to only return the rows that have NA in Ave_Cov_Num. The first line returns all columns in those rows. The second and third lines only show us the Ave_Cov field, which is what we want to fix. Notice that I'm using the NAs in Ave_Cov_Num to return the records causing problems in Ave_Cov. 
+
+Also, just a reminder that brackets specify the [row, column] of a data frame. If you specify the dataframe$column then you only have the row left, and don't need a comma in the brackets. Admittedly, subsetting with brackets can get complicated, and I'm not always sure if I need a comma in the bracket or not. If I get the "incorrect number of dimensions" error, I know I did it wrong and need to either add or delete the comma. 
 
 Back to cleaning the data. We found that the records with non-numeric symbols were both "<0.1". We're going to use that information to replace "<0.1" with 0.1. Of course the first thing you should do, when you see <0.1 is to check your raw data, datasheets, etc. to make sure 0.1 is the correct replacement for the <0.1 records. If you don't know what the correct replacement should be, you should probably change the value to NA instead of "0.1". That example is commented out in the code chunk below. 
 
@@ -74,28 +78,29 @@ wetdat$Ave_Cov[wetdat$Ave_Cov == "<0.1"] <- "0.1"
 #wetdat$Ave_Cov[wetdat$Ave_Cov == "<0.1"] <- NA
 ```
 
-Another approach is to drop the "<" using gsub(). This is handy for lab-derived data that report detection limits as < or > a certain value, and that value varies based on the lab or the parameter.
+Another approach is to drop the "<" using gsub(). This is handy for lab-derived data that report detection limits as < ## or > ##, and when you just want the number after the < or >. 
 ```{r, c20ga, echo=T, results='show'}
 wetdat$Ave_Cov <- gsub("<", "", wetdat$Ave_Cov)
+
 str(wetdat)
 ```
-Here gsub is looking for the "<" character, and replaces it with nothing, via empty quotes. If you wanted to replace the "<" with something else, like a minus sign, the 2nd argument would be "-" instead of "".
+Here gsub is looking for the "<" symbol, and replaces it with nothing, via empty quotes. If you wanted to replace the "<" with something else, like a minus sign, the 2nd argument would be "-" instead of "". You can now View(wetdat) to check that <0.1 is no longer in the Ave_Cov column. Rows 83 and 106 were the culprits. 
 
-You can now View(wetdat) to check that <0.1 is no longer in the Ave_Cov column. However, notice that Ave_Cov is still considered a chr (text field). Once R assigns a data type to a column, you have to manually change it to something different. Now that we fixed <0.1, we shouldn't get any NAs introduced by coercion when we convert to numeric. I'm going to overwrite the Ave_Cov_num field because it's just a temporary field for the purpose of data checking.
+However, notice that str(wetdat$Ave_Cov) shows that Ave_Cov is still considered a character. Once R assigns a data type to a column, you have to manually change it to something different. Now that we fixed <0.1, we shouldn't get any NAs introduced by coercion when we convert to numeric. I'm going to overwrite the Ave_Cov_Num field because it's just a temporary field for the purpose of data checking.
 
 ```{r, c20h, echo=T, results='show'}
-wetdat$Ave_Cov_num <- as.numeric(wetdat$Ave_Cov)
+wetdat$Ave_Cov_Num <- as.numeric(wetdat$Ave_Cov)
 str(wetdat) 
 ```
-Ave_Cov_num is now numeric and no NAs were introduced by coercion. It's now safe to overwrite the original Ave_Cov field. The entire workflow from start to finish is below:
+Ave_Cov_Num is now numeric and no NAs were introduced by coercion. It's now safe to overwrite the original Ave_Cov field. The entire workflow from start to finish is below:
 ```{r, c20h2, echo=F, results='hide'}
 wetdat <- read.csv("./data/example_data/ACAD_wetland_data_example.csv")
 ```
 ```{r, c20i, echo=T, results='show'}
-wetdat$Ave_Cov_num <- as.numeric(wetdat$Ave_Cov)
-wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_num))] # which values in Ave_Cov can't be converted to a number.
-wetdat$Ave_Cov <- as.numeric(gsub("<", "", wetdat$Ave_Cov))
-wetdat <- subset(wetdat, select = -c(Ave_Cov_num)) #now drop the temp column Ave_Cov_num
+wetdat$Ave_Cov_Num <- as.numeric(wetdat$Ave_Cov)
+wetdat$Ave_Cov[which(is.na(wetdat$Ave_Cov_Num))] # Identify which values in Ave_Cov can't be converted to a number and what you need to do to fix them.
+wetdat$Ave_Cov <- as.numeric(gsub("<", "", wetdat$Ave_Cov)) # replace < with nothing
+wetdat <- subset(wetdat, select = -c(Ave_Cov_Num)) #now drop the temp column Ave_Cov_Num
 str(wetdat) #Ave_Cov is now numeric
 table(complete.cases(wetdat$Ave_Cov)) #checks that there aren't any more NAs. 
 # If there were NAs, you'd have a column named FALSE with the number of NAs below it.
@@ -130,7 +135,7 @@ Now Ave_Cov values are within the acceptable range of 0 to 100.
 <br>
 
 <details open><summary class='drop'>Finding and fixing blanks (NA)</summary>
-As I've mentioned before, R calls blanks in your data NA. R by default is very conservative about how it handles NAs. If you have an NA in an otherwise numeric column and are trying to do a mathematical operation (eg calculate sum or mean), R will most likely return NA as the result. The philosophy behind that is the user must decide how to deal with NAs- either replace them with a logical value, like 0, or remove them from the calculation. Every situation is different. You, the user, will need to decide the correct way to deal with NAs in your data.
+As I've mentioned before, R calls blanks in your data NA. R by default is very conservative about how it handles NAs. If you have an NA in an otherwise numeric column and are trying to do a mathematical operation (eg calculate sum or mean), R will most likely return NA as the result. The philosophy behind that is the user must decide how to deal with NAs- either replace them with a logical value, like 0, or remove them from the calculation. Every situation is different. You, the user, need to decide the correct way to deal with NAs in your data.
 
 First, let's look to see if there are NAs in the PctFreq and Ave_Cov columns (the main data of interest in the wetdat dataset). 
 ```{r c21d, echo=T, results='show'}
@@ -156,12 +161,12 @@ wetdat$PctFreq[is.na(wetdat$PctFreq)] <- 0
 table(complete.cases(wetdat$PctFreq))
 mean(wetdat$PctFreq)
 ```
-Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller because the 0s are included. This is why it's important to think about how to deal with blanks, and every situation is different.
+Now all records in PctFreq are TRUE/complete, and the mean is slightly smaller because the 0s are included in the calculation. This is why it's important to think about how to deal with blanks, and every situation is different.
 </details>
 <br>
 
 <details open><summary class='drop'>Check and fix character columns</summary>
-A common issue with text/character fields is inconsistent naming conventions, especially if data are being stored in a spreadsheet instead of a database with standardized look up lists. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let's check to see if all of the Site_Name records follow that. Since we don't have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.
+A common issue with text/character fields is inconsistent naming conventions, especially if data are being stored in a spreadsheet instead of a database with standardized look ups. In the wetdat data frame, we have a column called Site_Name, which should be a unique name for each site that starts with a 3-letter code (either SEN or RAM), is followed by a dash, then a 2 digit site number. Let's check to see if all of the Site_Name records follow that. Since we don't have a huge dataset here, we can use the table() function, which will count the number of records in each unique value of a column.
 ```{r, c21h, echo=T, results='show'}
 table(wetdat$Site_Name)
 ```
@@ -173,23 +178,24 @@ Another way to do this, if you had a large dataset, would be to check if there a
 unique(wetdat$Site_Name[which(nchar(wetdat$Site_Name) != 6)]) #
 
 ```
-NOte unique() returns only unique values, so you don't get 40 RAM44 returns.
+Note unique() returns only unique values, so you don't get 40 RAM44 returns (run it without unique() if you don't quite follow.
 
-You can also check if any Site_Name records are missing a dash using the grepl function. The grepl function is a partial string matching function that's looking for "-" in the Site_Name column. The ! in front of which is telling R to return any row that doesn't have "-" in the Site_Name column.
+You can also check if any Site_Name records are missing a dash using the grepl function. The grepl function is a pattern matching function that we will use to look for "-" in the Site_Name column. The ! in front of which is telling R to return any row that doesn't have a match for "-" in the Site_Name column.
 ```{r, c21k, echo=T, results='show'}
 wetdat$Site_Name[which(!grepl("-", wetdat$Site_Name))]
+
 ```
 
 Now to fix and then check both of the issues:
 ```{r, c21i, echo= T, results='hide', eval=T}
 wetdat$Site_Name[wetdat$Site_Name == "RAM44"] <- "RAM-44"
 wetdat$Site_Name[wetdat$Site_Name == "SEN-3"] <- "SEN-03"
-wetdat$Site_Name[which(!grepl("-", wetdat$Site_Name))]
+wetdat$Site_Name[which(!grepl("-", wetdat$Site_Name))] #character(0) means nothing returned
 wetdat$Site_Name[which(nchar(wetdat$Site_Name)!=6)]
 table(wetdat$Site_Name)
 sort(unique(wetdat$Site_Name)) #another way to see all the unique values in a column
 ```
-Problems solved (character(0) means no records returned). Note that there are other more powerful solutions using regular expressions from the Perl language and functions like gsub or grep, but they're more involved and tricky to work with. I only use them when the solution above doesn't work. If you ever need to know more about that, a decent intro is <a href="https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html">here</a>. I also provide a more involved example on how to use regular expressions for pattern matching in Answer 1 for today's questions, but I'm not going to go too far down that rabbit hole during training (I barely understand them myself).
+Problems solved (character(0) means no records returned). Note that there are other more powerful solutions using regular expressions from the POSIX or Perl language and functions like gsub() or grep(), but they're more involved and tricky to work with. I only use them when the solution above doesn't work. If you ever need to know more about that, a decent intro is <a href="https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html">here</a>. I also provide a more involved example on how to use regular expressions for pattern matching in Answer 1 for today's questions, but I'm not going to go too far down that rabbit hole during training (I can barely make these work myself, and always have to look them up).
 
 </details>
 <br>
@@ -197,7 +203,7 @@ Problems solved (character(0) means no records returned). Note that there are ot
 <details open><summary class='drop'>Checking your work</summary>
 If you plan to calculate summary statistics, like average or standard error, or are doing a lot of filtering, reshaping, etc. to your data, you always want to check your work and make sure you've still got the correct number of sites, individuals, visits, etc. before moving on to the next step. Just because you didn't get an error or warning, doesn't mean the code you ran worked the way you intended it to! 
 
-In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. I will show you different ways to check that in the code below. I also often skim the unique values in each field for anything weird (hence the sort(unique()) line).
+In the case of the wetdat, there should be 508 total rows, 7 sites, and three different years. The code below shows how to verify that. I also often skim the unique values in each field for anything weird, hence the sort(unique()) line.
 ```{r, c21l, echo=T, results='show'}
 dim(wetdat) # reports # rows then # cols
 nrow(wetdat) # reports # rows only
@@ -206,7 +212,7 @@ length(unique(wetdat$Site_Name)) # number of unique values in Site_Name
 length(unique(wetdat$Year)) # number of unique years
 
 table(wetdat$Site_Name, wetdat$Year) # distribution of sites across years
-sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset (truncated for printing here).
+sort(unique(wetdat$Common))[1:10] # see all the common names in the dataset (truncated to first 10 common names for printing here).
 
 ```
 

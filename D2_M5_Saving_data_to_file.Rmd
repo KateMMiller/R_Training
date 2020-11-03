@@ -1,7 +1,7 @@
 #### Saving tabular data to file 
 
 The last thing today is how to write the data you're working on to a file in your computer.
-<p class='code'>The following code saves the wetland data you cleaned up to file:</p>
+<p class='code'>The following code saves the wetland data using a different file name:</p>
 
 ```{r orgD2M5, echo=F, eval=F, include=F}
 #--------------------
@@ -10,12 +10,12 @@ The last thing today is how to write the data you're working on to a file in you
 ```
 
 ```{r,c30, echo=T, results='hide'}
-write.csv(wetdat, "./data/ACAD_wetland_data_clean.csv")
+write.csv(wetdat, "./data/ACAD_wetland_data2.csv")
 ```
-You should now see a new file in your data folder. Note that csv stands for comma separated values, and is a generic version of a spreadsheet that most programs can read. They're lightweight, can open in most spreadsheet-like and text editing software. They don't save any kind of formatting though (eg cell borders, bolded text, merged cells, etc). We'll use the csv format to save all of our data to file, until we want to format it for publication, which we'll use .xlsx for. 
+You should now see a new file in your data folder. 
 
 We're not actually going to use that file for anything, so you can delete it now (either manually, or running the following code.)
 ```{r, c31, echo=T, results='hide'}
-file.remove("./data/ACAD_wetland_data_clean.csv")
+file.remove("./data/ACAD_wetland_data2.csv")
 ```
 <hr>

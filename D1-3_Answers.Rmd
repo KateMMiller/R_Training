@@ -8,6 +8,17 @@
 ```
 
 ```{r, c105, echo=T, results='show'}
+# If starting from scratch
+library(tidyverse)
+df <- data.frame(plot = c(1, 2, 3, 4, 5, 6, 'plot7'), #column for plot number
+                 numtrees = c(24, 18, 17, 14, 31, 27, 15), 
+                 numLive = c(21, 18, 16, 10, 29, 26, 14),
+                 domSpp = c('red_maple', 'red_spruce', 
+                            'red_spruce','white_cedar','white_pine',
+                            'white_spruce', NA),
+                 invasive_pres = c(TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE))
+
+
 df[3, c("domSpp")] # option 1
 df[3, 4] # option 2
 ```
@@ -49,13 +60,16 @@ df <- df %>% mutate(pctDead = (numtrees - numLive)/numtrees*100)
 <details><summary class='ques2'>Question 5: What is the smallest number of dead trees observed in the df dataset?</summary>
 ```{r c107b, echo=T, results='show'}
 min(df$numDead) # uses numdead column calculated for previous question. 
-summary(df$numDead)[1] #Min. is the record summary reports for numeric columns
+summary(df$numDead)[1] #Min. is the first record that summary reports for numeric columns
 ```
 </details>
 <br>
 
 <details><summary class='ques2'>Question 6: How would you select only Invasive species records?</summary>
 ```{r, c108, echo=T, results='hide'}
+# If starting from scratch
+wetdat<-read.csv("./data/example_data/ACAD_wetland_data_clean.csv")
+
 wetinv <- wetdat[wetdat$Invasive == TRUE, ] # base R bracket-based solution
 wetinv2 <- subset(wetdat, Invasive == TRUE) # another base R solution
 wetinv_tidy <- wetdat %>% filter(Invasive == TRUE) # tidyverse solution
@@ -99,6 +113,10 @@ head(wetdat_sort_tidy)
 
 ```{r, c110, echo=T, results='show'}
 sort(unique(wetdat$Latin_Name))[1:10] # Low-tech way: use your eyes to spot the "Alnus incana++". I truncated to first 10.
+```
+Hopefully you noticed Alnus incana++ when you sorted unique latin names. The ++ are errors that we want to remove (see Question 2). If you wanted to identify any non-alphabetical symbol in a column, and if your dataset was too big to spot all of them, you can use regular expressions like the code chunk below. The pattern in the grep is specifying that you want to return any non-alphabetical symbol (via alpha) in Latin_Name. Note that "^" is interpreted as NOT in regular expressions. To use the whole record for your search, rather than stopping at the first word (since Latin Names are usually 2 words), you add +$. The + specifies that you can have multiple matches within 1 record, and the \$ tells you to do the search to the end of the record.
+
+```{r, c110bb, echo=T, results='show'}
 
 # The regular expression way to find non-alphabetical symbols (now you know why I didn't cover this).
 wetdat$Latin_Name[grep("[^[:alpha:]]+$", wetdat$Latin_Name)] # looks for anything not A-Z or a-z in entire record 
@@ -122,12 +140,16 @@ sort(unique(wetdat$Latin_Name))[1:10] # using your eyes approach
 
 <details><summary class='ques2'>Question 3: How would you take only the plots on MDI (eg Unit_ID = "ACAD_MDI") in the loc table and join them to their corresponding visits in the events table?</summary>
 ```{r, c111,echo=T, results='hide'}
-# Step by step:
-head(loc)
+# In case you need to load the tables
+loc <- read.csv("./data/example_data/tbl_Locations_example.csv")
+event <- read.csv("./data/example_data/tbl_Events_example.csv")  
+stand <- read.csv("./data/example_data/tbl_Stand_Data_example.csv") 
+
+# Filter then join
 loc_MDI <- loc %>% filter(Unit_ID == "ACAD_MDI")
 locev_MDI <- left_join(loc_MDI, event, by = "Location_ID")
 
-# All in one:
+# All in one via pipes:
 locev_MDI2 <- loc %>% filter(Unit_ID == "ACAD_MDI") %>% 
                       left_join(event, by = "Location_ID")
 
@@ -151,7 +173,8 @@ locev_stand_tidy <- full_join(locev, stand, by = "Event_ID") #tidyverse full joi
 head(wetdat)
 wetmin_max <- wetdat %>% mutate(present = ifelse(Ave_Cov >0 & !is.na(Ave_Cov), 1, 0)) %>% 
                          group_by(Site_Name, Year) %>% 
-                         summarize(numspp = sum(present)) %>% 
+                         summarize(numspp = sum(present), 
+                                   .groups = "drop") %>% 
                          group_by(Year) %>% 
                          summarize(minspp = min(numspp),
                                    maxspp = max(numspp), 
@@ -176,8 +199,7 @@ wetinv <- wetinv1 %>% group_by(Year) %>%
                       summarize(tot_inv_plots = (sum(plot_inv)/n())*100,
                                 .groups = "drop")
 
-wetinv #40 % of plots both years
-
+wetinv 
 ```
 Note that logical fields (ie TRUE/FALSE) are interpreted as numbers in R when you use sum. If the value is TRUE, R interprets it as 1. If it's FALSE, R interprets it as 0. So sum(Invasive) is summing all of the TRUEs in the Invasive column. 
 
@@ -246,11 +268,16 @@ Note that I used distinct() instead of expand() because not every site is sample
 <br>
 <details><summary class='ques2'>Question 3: How would you create a wide matrix for ACAD plots in 2019 that has plots for rows, and exotic species as columns?</summary>
 
-```{r, c114,echo=T}
+```{r, c114,echo=T, results='hide'}
+# Starting from scratch
+library(forestNETN)
+importCSV("./data/NETN_forest_csvs")
 acad_exo <- makeSppList(park = "ACAD", from = 2019, to = 2019, speciesType = "exotic") 
 acad_exo <- acad_exo %>% mutate(present = ifelse(Exotic == TRUE & !is.na(Exotic), 1, 0))
 head(acad_exo)
-
+```
+```{r, c114b, echo=T}
+# Now to answer the question
 # Old school spread version
 acad_wide_spread <- acad_exo %>% select(Plot_Name, Latin_Name, present) %>% 
                                  arrange(Latin_Name, Plot_Name) %>% 
@@ -271,11 +298,41 @@ head(acad_wide_pivot)
 <details><summary class='ques2'>Question 4: Take the acad_final graph and make 2 more changes to it.</summary>
 
 You may have chosen other things to do than I did. Here are a couple of changes to the ggplot bar chart
-```{r, c115,echo=T}
+```{r, c115, echo=T, results='hide', eval=FALSE}
+# Starting from scratch
+library(forestNETN)
+importCSV("./data/NETN_forest_csvs")
+acad_regen <- joinRegenData(park = "ACAD", from = 2016, to = 2019, canopyForm = "canopy")
 
- ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_dens))+
+acad_regen2 <- acad_regen %>% group_by(Plot_Name) %>% 
+                              summarize(seed15_30 = sum(seed15.30),
+                                        seed30_100 = sum(seed30.100),
+                                        seed100_150 = sum(seed100.150),
+                                        seed150p = sum(seed150p),
+                                        sapling = sum(sap.den),
+                                        .groups = 'drop') %>% 
+                              arrange(Plot_Name)
+
+acad_regen_long <- acad_regen2 %>% pivot_longer(-Plot_Name, 
+                                                names_to = "size_class", 
+                                                values_to = "density")
+
+# Now we calculate the mean and se for each size class at the park level
+acad_stats <- acad_regen_long %>% group_by(size_class) %>% 
+                                  summarize(mean_dens = mean(density),
+                                            se_dens = sd(density)/sqrt(n()),
+                                            .groups = 'drop')
+
+acad_stats$size_class_fact <- ordered(acad_stats$size_class, 
+                                      levels = c('seed15_30', 'seed30_100', 
+                                                 'seed100_150', 'seed150p', 'sapling'))
+```
+```{r c115bb, echo=T}
+# Now to answer the question
+ggplot(data = acad_stats, aes(x = size_class_fact, y = mean_dens))+
               geom_bar(stat = 'identity', fill = "steelblue4")+
-              geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens), width = 0.2, lwd = 0.7)+
+              geom_errorbar(aes(ymin = mean_dens - se_dens, ymax = mean_dens + se_dens),
+                            width = 0.2, lwd = 0.7)+
               labs(x = "Regeneration Size Class", y = "Stems per sq.m")+
               theme_FHM()+
               theme(axis.text.x = element_text(angle = 45, hjust = 1))+ #hjust is centering horizontally
@@ -289,7 +346,33 @@ Note that width = 0.2 in the geom_errorbar is the width of the caps on the bars.
 
 <details><summary class='ques2'>Question 5: Filter the acad_ph_final data frame to only include 2019 data and create a plot with months as the X axis, and includes points, a loess smooth with span = 1, and a facet on site.</summary>
 ```{r, c115b, echo=T}
-head(acad_ph_final)
+# Starting from scratch
+library(NCRNWater)
+
+netnwd<-importNCRNWater(Dir = "./data/NETN_water_data", 
+                        Data = "Water Data.csv", 
+                        MetaData = "VizMetaData.csv")
+
+acad_all_sites <- data.frame(sitecode = getSiteInfo(netnwd, parkcode = "ACAD", info = "SiteCode"),
+                             type = getSiteInfo(netnwd, parkcode = "ACAD", info = "type"),
+                             fullname = getSiteInfo(netnwd, parkcode = "ACAD", info = "SiteName"))
+
+acad_lakes <- acad_all_sites %>% filter(type == "Lake")  #list of site codes and full names for ACAD lakes
+
+acad_ph <- getWData(netnwd, parkcode = "ACAD", years = 2006:2019, charname = 'pH')
+acad_lakes_ph <- acad_ph %>% filter(Site %in% acad_lakes$sitecode)
+annual_lakes <- data.frame(table(acad_lakes_ph$Site)) %>% filter(Freq > 90) 
+
+acad_ph2 <- acad_lakes_ph %>% filter(Site %in% annual_lakes$Var1) %>% 
+                              mutate(month = format(Date, "%m"),
+                                     year = format(Date, "%Y"))
+
+acad_ph_final <- left_join(acad_ph2, acad_lakes[, c("sitecode", "fullname")], 
+                           by= c("Site" = "sitecode")) # how to join if columns have diff. names
+
+#head(acad_ph_final)
+
+# Now to answer the question
 acad_ph_2019 <- acad_ph_final %>% filter(year == 2019) %>% mutate(mon_abr = format(Date, "%b"))
 
 plot19 <- ggplot(acad_ph_2019, aes(x = Date, y = Value))+
@@ -303,7 +386,6 @@ plot19 <- ggplot(acad_ph_2019, aes(x = Date, y = Value))+
 
 plot19
 ```
-
 
 </details>
 <hr>

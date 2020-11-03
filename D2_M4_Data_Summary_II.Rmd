@@ -28,9 +28,17 @@ wetsum <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0
 head(wetdat)
 ```
 
-In the code above, we added a column named "present" using mutate, and we set present to 1 if a species has an Ave_Cov > 0 and isn't NA. In case you've never seen if/then or if/else statements, these are conditional statements that run a different set of commands depending on whether an expression is true or false. They're foundational to most programming, can be done in Excel, Access, R, and most programming languages. In the code above, the ifelse statement takes the statement to check for true/false (Ave_Cov > 0 & !is.na(Ave_Cov). )
+In the code above, we added a column named "present" using mutate, and we set present to 1 if a species has an Ave_Cov > 0 and isn't NA. In case you've never seen if/then or if/else statements, these are conditional statements that run a different set of commands depending on whether an expression is true or false. They're foundational to most programming, can be done in Excel, Access, R, and most programming languages. In the code above, the ifelse statement takes the statement to check for TRUE/FALSE (Ave_Cov > 0 & !is.na(Ave_Cov)), if the result is TRUE, then it returns a 1. If it's false, it returns a 0. 
 
-We then set the grouping to be by Site_Name and Year. Finally, we summarized the number of species per site by summing the present column.   
+If you're unclear on what the mutate did, you can break the steps up via the code below.
+```{r, c28bb, echo=T, results='hide'}
+wetdat <- wetdat %>% mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0)) 
+wetdat_sum <- wetdat %>% group_by(Site_Name, Year) %>% 
+                         summarize(numspp = sum(present),
+                                  .groups = 'drop')
+```
+
+After the mutate, we then set the grouping to be by Site_Name and Year and then summarized the number of species per site by summing the present column.   
 
 A couple of things to note: 
 <ol>
@@ -56,7 +64,8 @@ Taking this a step further, let's pretend that we want to know what the average 
 wetsum_pre <- wetdat %>% filter(Site_Type == "RAM") %>% 
                          mutate(present = ifelse(Ave_Cov > 0 & !is.na(Ave_Cov), 1, 0)) %>% 
                          group_by(Site_Name, Site_Type, Year) %>% 
-                         summarize(numspp = sum(present), .groups = 'drop')
+                         summarize(numspp = sum(present), 
+                                   .groups = 'drop')
 
 wetsum_yr <- wetsum_pre %>% group_by(Year) %>% 
                             summarize(mean_numspp = mean(numspp),
