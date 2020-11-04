@@ -87,7 +87,7 @@ When I first started with NETN, the workflow below was how we operated. There's 
 
 This is the dream. Again there's no judgment if you're not here. This is something to aspire to, as you have time and gain more skills in R. I'm proud to report that we're really close to achieving this with most of our protocols in NETN, but it's been a long road (4+ years). RStudio has also come a long way in the last 5 years and has made this transition easier with improvements to R Markdown (automated reporting), R Shiny (interactive websites), and the tidyverse.  
 
-<center><img src="./images/DataWorkflow_2-0.jpg" alt="Database WF1.0" width="650px"></center>
+<center><img src="./images/DataWorkflow_2-0.jpg" alt="Database WF2.0" width="650px"></center>
 
 
 ```{r D3_Assignments, child = "D3_Reading_Assignments.Rmd"}
