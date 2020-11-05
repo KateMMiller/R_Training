@@ -107,7 +107,7 @@ That's a little better, but I still don't like it. And, I never remember exactly
 acad_bar2+theme_FHM()
 ```
 
-Much better! But, I still prefer the bars be a different color than grey. Let's fill the bars with a nice blue color. I'll start over on the code too, so you can see it all together. Note the use of "#5E79A8" to the fill bar color. I used the hex code for a blue-grey color I like. Hex codes are a universal color code that specify the intensity of red, green, blue, and makes it easier to use the same color across multiple programs. If you want to pick your own color, you can use <a href="htmlcolorcodes.com">HTML Color Codes</a> website to pick a color and see the code. I also like the color picker, mixer and shades in <a href="https://www.w3schools.com/colors/">w3schools.com</a>. 
+Much better! But, I still prefer the bars be a different color than grey. Let's fill the bars with a nice blue color. I'll start over on the code too, so you can see it all together. Note the use of "#5E79A8" to the fill bar color. I used the hex code for a blue-grey color I like. Hex codes are a universal color code that specify the intensity of red, green, blue, and makes it easier to use the same color across multiple programs. If you want to pick your own color, you can use <a href="https://htmlcolorcodes.com">HTML Color Codes</a> website to pick a color and see the code. I also like the color picker, mixer and shades in <a href="https://www.w3schools.com/colors/">w3schools.com</a>. 
 
 ```{r, c71, echo=T}
 

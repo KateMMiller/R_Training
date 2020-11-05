@@ -94,6 +94,29 @@ This is the dream. Again there's no judgment if you're not here. This is somethi
 
 ```
 
+### Useful websites
+There's a lot of great online material for learning new applications of R. The ones I've used the most are listed below. 
+
+<u>Online Books</u><br>
+<ul>
+<li><a href="https://r4ds.had.co.nz/">R for Data Science</a>: First author is Hadley Wickham, the programmer behind the tidyverse. There's a lot of good stuff in here, including a chapter on using R Markdown, which is what I used to generate the website we used for training.</li>
+<li><a href="https://ggplot2-book.org//">ggplot2: Elegant Graphics for Data Analysis</a> A great reference on ggplot2 also by Hadley Wickham.</li> 
+<li><a href="https://bookdown.org/rdpeng/RProgDA/">Mastering Software Development in R</a> First author is Roger Peng, a Biostatistics professors at John Hopkins, who has taught a lot of undergrad/grad students how to use R. He's also one of the hosts of Not So Standard Deviations podcast. I like his intro to ggplot a lot. He's also got a lot of more advanced topics in this book, like making functions and packages.</li>
+<li><a href="https://r-pkgs.org/">R Packages</a> Another book by Hadley Wickham that teaches you how to build, debug, and test R packages.</li>
+<li><a href="http://adv-r.had.co.nz/">Advanced R</a> Yet another book by Hadley Wickham that helps you understand more about how R works under the hood, how it relates to other programming languages, and how to build packages.</li>
+<li><a href="https://mastering-shiny.org/">Mastering Shiny</a> And another Hadley Wickham book on building shiny apps.</li>
+</ul>
+
+<u>Other useful sites</u><br>
+<ul>
+<li><a href="https://stat545.com/index.html">STAT545</a> Jenny Bryan's site that accompanies the graduate level stats class of the same name. I like that she includes topics on best practices for coding, and not just how to make scripts work.</li> 
+<li><a href="https://rstudio.com/">RStudio home page</a> There's a ton of info in the Resources tab on this site, including cheatsheets for each package developed by RStudio (ie tidyverse packages), webinars, presentations from past RStudio Conferences, etc.</li>
+<li><a href="https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages">RStudio list of useful R packages by topic</a></li>
+<li><a href="https://happygitwithr.com/">Happy Git with R</a> If you find yourself wanting to go down the path of hosting your code on github, this site will walk you through the process of linking github to RStudio.</li>
+<li><a href="https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html">R-spatial mapping in ggplot</a> The r-spatial.org site is a blog with lots of interesting topics covered. The blog I linked to helped me figure out how to map shapefiles in ggplot.</li>
+</ul>
+
+
 ### Answers
 ```{r Answers, child = "D1-3_Answers.Rmd"}
 

@@ -25,14 +25,14 @@ bat_long <- bat_long %>% mutate(sppcode = toupper(paste0(substr(word(Latin, 1), 
                                                          substr(word(Latin, 2), 1, 3))))
 
 bat_long_sum <- bat_long %>% group_by(Site, Year, sppcode) %>% 
-                          summarize(numindiv = sum(!is.na(sppcode)),
-                                    .groups = 'drop')
+                             summarize(numindiv = sum(!is.na(sppcode)),
+                                       .groups = 'drop')
 
 head(bat_long_sum)
 ```
-If you didn't follow what I just did, there are 3 main steps that happened above. First, we used the word() function to pull out the genus (word(Latin, 1)) and species (word(Latin, 2)). The substr() function is taking the first through third characters of each genus and species. The paste0 function is pasting the first three characters of genus and species together. The toupper is making them all capitalized. Note that the 0 after paste means not to separate the elements of the paste. If you wanted to separate the elements by a underscore, you'd use paste instead of paste0, like paste(element1, element2, sep = "_").
+If you didn't follow what I just did, there are 3 main steps that happened above. First, we used the word() function (another tidyverse function) to pull out the genus (word(Latin, 1)) and species (word(Latin, 2)). The substr() function is taking the first through third characters of each genus and species. The paste0 function is pasting the first three characters of genus and species together. The toupper is making them all capitalized. Note that the 0 after paste means not to separate the elements of the paste. If you wanted to separate the elements by a underscore, you'd use paste instead of paste0, like paste(element1, element2, sep = "_").
 
-To make this wide, we're essentially going to make a pivot table using functions in tidyr. There are two functions you can use. The spread() function was original to tidyr, is what I know the best, and still performs faster on larger datasets than pivot_wider(), the replacement for spread. I show both options, so you can use whichever function makes the most sense to you. 
+To make this wide, we're essentially going to make a pivot table using functions in tidyr (another tidyverse package). There are two functions you can use. The spread() function was original to tidyr, is what I know the best, and still performs faster on larger datasets than pivot_wider(), the replacement for spread. I show both options, so you can use whichever function makes the most sense to you. 
 ```{r,c59, echo=T}
 bat_wide <- bat_long_sum %>% spread(key = "sppcode", value = "numindiv") #retired spread function
 bat_wide2 <- bat_long_sum %>% pivot_wider(names_from = "sppcode", values_from = "numindiv") #replacement in tidyr
