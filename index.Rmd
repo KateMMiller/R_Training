@@ -99,7 +99,7 @@ There's a lot of great online material for learning new applications of R. The o
 
 <u>Online Books</u><br>
 <ul>
-<li><a href="https://r4ds.had.co.nz/">R for Data Science</a>: First author is Hadley Wickham, the programmer behind the tidyverse. There's a lot of good stuff in here, including a chapter on using R Markdown, which is what I used to generate the website we used for training.</li>
+<li><a href="https://r4ds.had.co.nz/">R for Data Science</a> First author is Hadley Wickham, the programmer behind the tidyverse. There's a lot of good stuff in here, including a chapter on using R Markdown, which is what I used to generate the website we used for training.</li>
 <li><a href="https://ggplot2-book.org//">ggplot2: Elegant Graphics for Data Analysis</a> A great reference on ggplot2 also by Hadley Wickham.</li> 
 <li><a href="https://bookdown.org/rdpeng/RProgDA/">Mastering Software Development in R</a> First author is Roger Peng, a Biostatistics professors at John Hopkins, who has taught a lot of undergrad/grad students how to use R. He's also one of the hosts of Not So Standard Deviations podcast. I like his intro to ggplot a lot. He's also got a lot of more advanced topics in this book, like making functions and packages.</li>
 <li><a href="https://r-pkgs.org/">R Packages</a> Another book by Hadley Wickham that teaches you how to build, debug, and test R packages.</li>
