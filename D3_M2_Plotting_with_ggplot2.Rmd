@@ -15,7 +15,7 @@ First you need to load the forestNETN package and import the data.
 ```
 
 ```{r, c66, echo=T, results='hide'}
-library(forestNETN)
+library(forestNETNarch)
 library(tidyverse)
 importCSV("./data/NETN_forest_csvs")
 ```

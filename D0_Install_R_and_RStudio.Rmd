@@ -11,13 +11,13 @@ The only thing you really need to do to prepare for R training is to install the
 
 Even if you already have R or RStudio installed, please install the latest versions of both programs. R recently went through a major version change from 3.x to 4.x with some potential code-breaking changes. The latest versions are needed to ensure everyone's code behaves the same way. 
 
-<details open><summary class='drop'>Install R 4.0.3 (R 4.0.2 is fine too)</summary>
-The installer for the latest version of R (assuming you're using a PC) can be downloaded <a href="https://cran.r-project.org/bin/windows/base/R-4.0.3-win.exe">here</a>. After it downloads, open and run the installer with default settings. Note that there's no need to pin R to your taskbar or add a shortcut to your desktop. For 99% of your needs, you'll run R within RStudio, and won't ever open R directly.
+<details open><summary class='drop'>Install the latest version of R (4.0.4 as of March 2021)</summary>
+Assuming you're on a PC, the installer for the latest version of R can be downloaded from <a href="https://cran.r-project.org/bin/windows/base/">The Comprehensive R Archive Network (CRAN)</a>. You'll want to download the R installer by clicking on "Download R 4.0.4 for Windows", or whatever the latest version number happens to be. After it downloads, open and run the installer with default settings. Note that there's no need to pin R to your taskbar or add a shortcut to your desktop. For 99% of your needs, you'll run R within RStudio, and won't ever open R directly.
 </details>
 <br>
 
 <details open><summary class='drop'>Install RStudio</summary>
-The installer for RStudio for PCs can be downloaded <a href="https://download1.rstudio.org/desktop/windows/RStudio-1.3.1093.exe">here</a>. After it downloads, open and run the installer with default settings. I like having RStudio pinned to my taskbar, so it's easier to find/open, but it's up to you and your preferences.
+The installer for RStudio for PCs can be downloaded <a href="https://rstudio.com/products/rstudio/download/#download">here</a>. You'll need to click on the large blue "DOWNLOAD RSTUDIO FOR WINDOWS" button to download the installer. After it downloads, open and run the installer with default settings. I like having RStudio pinned to my taskbar, so it's easier to find/open, but it's up to you and your preferences.
 </details>
 <br>
 
@@ -32,7 +32,7 @@ One of the great things about R is that users can build and share their own pack
 
 ```{r install_packages, echo=T, eval=F}
 install.packages(c("tidyverse", "devtools", "rgdal", "ggspatial", "leaflet"))
-devtools::install_github("katemmiller/forestNETN")
+devtools::install_github("katemmiller/forestNETNarch")
 devtools::install_github("NCRN/NCRNWater")
 ```
 

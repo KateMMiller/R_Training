@@ -270,7 +270,7 @@ Note that I used distinct() instead of expand() because not every site is sample
 
 ```{r, c114,echo=T, results='hide'}
 # Starting from scratch
-library(forestNETN)
+library(forestNETNarch)
 importCSV("./data/NETN_forest_csvs")
 acad_exo <- makeSppList(park = "ACAD", from = 2019, to = 2019, speciesType = "exotic") 
 acad_exo <- acad_exo %>% mutate(present = ifelse(Exotic == TRUE & !is.na(Exotic), 1, 0))

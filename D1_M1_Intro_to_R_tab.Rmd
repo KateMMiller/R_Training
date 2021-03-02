@@ -104,7 +104,7 @@ There are also a number of packages NETN or collaborators have built to work wit
 
 ```{r, c1, echo=T, eval=FALSE}
 install.packages(c("tidyverse", "rgdal", "devtools"))
-devtools::install_github("katemmiller/forestNETN")
+devtools::install_github("katemmiller/forestNETNarch")
 devtools::install_github("NCRN/NCRNWater")
 ```
 
@@ -121,7 +121,7 @@ You only need to run the previous code chunk once. After these packages are inst
 ```{r, c2, echo=T, results='hide', message=FALSE, eval=FALSE}
 library(tidyverse)
 library(rgdal)
-library(forestNETN)
+library(forestNETNarch)
 library(NCRNWater)
 ```
 
@@ -138,7 +138,7 @@ If you run into issues installing from GitHub (eg using install_github function)
   <ol style="list-style-type:upper-alpha">
   <li>Download the <a href="https://cran.r-project.org/bin/windows/contrib/4.0/backports_1.1.10.zip">Windows Binaries</a> for backports.</li>
   <li>Install backports from file in RStudio by going to <i>Tools> Install Packages> Install From:</i> Change the Install From option to "Package Archive File" and select backports_1.1.10.zip.</li></ol>
-  <li>Now try installing devtools and forestNETN (install.packages("devtools"); devtools::install_github('katemmiller/forestNETN'))</li>
+  <li>Now try installing devtools and forestNETN (install.packages("devtools"); devtools::install_github('katemmiller/forestNETNarch'))</li>
 </li>
 </ol>
 </details>
